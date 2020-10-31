@@ -1,4 +1,4 @@
-package net.den3.den3Account;
+package net.den3.den3Account.Entity;
 
 public class AdminAccount extends AccountEntity implements IAccount {
     private boolean admin = false;
