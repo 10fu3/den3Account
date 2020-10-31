@@ -7,6 +7,7 @@ package net.den3.den3Account.Entity;
 
 public class AccountEntity implements IAccount{
 
+    private String LastLogin = "2020/01/01 13:05:15";
     private String MailAddress = "";
     private String PasswordHash = "";
     private String IconURL = "";
@@ -46,5 +47,14 @@ public class AccountEntity implements IAccount{
     @Override
     public String getIconURL() {
         return this.IconURL;
+    }
+
+    /**
+     * 最終ログイン時刻を返す (形式: YYYY/MM/DD HH:MM:SS)
+     * @return 最終ログイン時刻
+     */
+    @Override
+    public String getLastLoginTime() {
+        return this.LastLogin;
     }
 }
