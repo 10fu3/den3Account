@@ -7,6 +7,7 @@ package net.den3.den3Account.Entity;
 
 public class AccountEntity implements IAccount{
 
+    private String UUID = "";
     private String LastLogin = "2020/01/01 13:05:15";
     private String MailAddress = "";
     private String PasswordHash = "";
@@ -56,5 +57,14 @@ public class AccountEntity implements IAccount{
     @Override
     public String getLastLoginTime() {
         return this.LastLogin;
+    }
+
+    /**
+     * 内部IDを返す このIDで外部サービスは個人を識別する
+     * @return UUID
+     */
+    @Override
+    public String getUUID() {
+        return this.UUID;
     }
 }
