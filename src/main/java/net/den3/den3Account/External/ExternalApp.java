@@ -1,4 +1,4 @@
-package net.den3.den3Account;
+package net.den3.den3Account.External;
 
 import java.util.ArrayList;
 import java.util.List;
