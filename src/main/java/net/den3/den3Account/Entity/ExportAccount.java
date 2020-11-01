@@ -3,7 +3,7 @@ package net.den3.den3Account.Entity;
 /**
  * 外部サービスとやりとりするためのアカウントを表すクラス
  */
-public class IExportAccount extends AccountEntity {
+public class ExportAccount extends AccountEntity {
 
     /**
      * 外部サービスとやりとりするアカウントの情報をJSON出力する
