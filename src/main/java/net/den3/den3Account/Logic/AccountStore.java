@@ -4,11 +4,12 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.den3.den3Account.Entity.AccountEntity;
 import net.den3.den3Account.Entity.IAccount;
-import net.den3.den3Account.Entity.Result;
+//import net.den3.den3Account.Entity.Result;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 class AccountStore implements IStore{
@@ -67,51 +68,47 @@ class AccountStore implements IStore{
 
 
     @Override
-    public Result<IAccount> getAccountByMail(String mail) {
-        final Result<IAccount> result = new Result<>();
-        getAccountBySQL((con)->{
-            try{
+    public Optional<IAccount> getAccountByMail(String mail) {
+        final Optional[] result = new Optional[1];
+        result[0] = getAccountBySQL((con) -> {
+            try {
+                //account_repositoryからmailの一致するものを探してくる
                 PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository WHERE mail = ?");
-                pS.setString(1,mail);
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(1, mail);
                 return pS;
-            }catch (SQLException sqlex){
+            } catch (SQLException sqlex) {
                 sqlex.printStackTrace();
                 return null;
             }
-        }).setOnSucceed((v)->{
-            for(int i = 0;i<v.size();i++){
-                result.setValue(v.get(i));
-            }
-        }).setOnFailed(result::setFailed);
-        return result;
+        }).flatMap(i -> i.stream().findAny());
+        return result[0];
     }
 
     @Override
-    public Result<IAccount> getAccountByUUID(String id) {
-        final Result<IAccount> result = new Result<>();
-        getAccountBySQL((con)->{
-            try{
+    public Optional<IAccount> getAccountByUUID(String id) {
+        final Optional<IAccount>[] result = new Optional[1];
+        result[0] = getAccountBySQL((con) -> {
+            try {
+                //account_repositoryからmailの一致するものを探してくる
                 PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository WHERE uuid = ?");
-                pS.setString(1,id);
+                //SQL文の1個めの?にuuidを代入する
+                pS.setString(1, id);
                 return pS;
-            }catch (SQLException sqlex){
+            } catch (SQLException sqlex) {
                 sqlex.printStackTrace();
                 return null;
             }
-        }).setOnSucceed((v)->{
-            for(int i = 0;i<v.size();i++){
-                result.setValue(v.get(i));
-            }
-        }).setOnFailed(result::setFailed);
-        return result;
+        }).flatMap(i -> i.stream().findAny());
+        return result[0];
     }
 
     @Override
-    public Result<List<IAccount>> getAccountBySQL(Function<Connection, PreparedStatement> statement) {
+    public Optional<List<IAccount>> getAccountBySQL(Function<Connection, PreparedStatement> statement) {
         //結果格納用リスト
         List<IAccount> resultList = new ArrayList<>();
         //結果そのものを表す
-        Result<List<IAccount>> returnResult = new Result<>();
+        Optional<List<IAccount>> returnResult = Optional.empty();
         //データベースに接続
         try(Connection con = hikari.getConnection()){
             //ラムダ式内で作られたSQL文を発行して結果を得る
@@ -134,10 +131,11 @@ class AccountStore implements IStore{
         }catch (SQLException ex){
             //SQL文の発行に失敗すると実行される
             ex.printStackTrace();
-            return new Result<>().setFailed();
+            return returnResult;
         }
         //正常にSQLが発行されたことを保証し
         //値も取得できる
-        return returnResult.setValue(resultList);
+        returnResult = Optional.of(resultList);
+        return  returnResult;
     }
 }
