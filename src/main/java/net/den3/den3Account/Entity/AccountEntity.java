@@ -120,7 +120,7 @@ public class AccountEntity implements IAccount{
 
     /**
      * アカウントエンティティにニックネームを設定する
-     * @param nickName
+     * @param nickName ニックネーム
      * @return アカウントエンティティ
      */
     public AccountEntity setNickName(String nickName) {
