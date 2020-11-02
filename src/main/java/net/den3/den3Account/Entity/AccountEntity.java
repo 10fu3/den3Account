@@ -67,4 +67,64 @@ public class AccountEntity implements IAccount{
     public String getUUID() {
         return this.UUID;
     }
+
+    /**
+     * アカウントエンティティにUUIDを設定する
+     * @param UUID UUID
+     * @return アカウントエンティティ
+     */
+    public AccountEntity setUUID(String UUID) {
+        this.UUID = UUID;
+        return this;
+    }
+
+    /**
+     * アカウントエンティティに最終ログイン時刻を設定する
+     * @param lastLogin 最終ログイン時刻
+     * @return アカウントエンティティ
+     */
+    public AccountEntity setLastLogin(String lastLogin) {
+        LastLogin = lastLogin;
+        return this;
+    }
+
+    /**
+     * アカウントエンティティにメールアドレスを設定する
+     * @param mailAddress メールアドレス
+     * @return アカウントエンティティ
+     */
+    public AccountEntity setMailAddress(String mailAddress) {
+        MailAddress = mailAddress;
+        return this;
+    }
+
+    /**
+     * アカウントエンティティにパスワードハッシュ(文字列)を設定する
+     * @param passwordHash パスワードハッシュ(文字列)
+     * @return アカウントエンティティ
+     */
+    public AccountEntity setPasswordHash(String passwordHash) {
+        PasswordHash = passwordHash;
+        return this;
+    }
+
+    /**
+     * アカウントエンティティにアイコンの保存先URLを設定する
+     * @param iconURL アイコンの保存先URL
+     * @return アカウントエンティティ
+     */
+    public AccountEntity setIconURL(String iconURL) {
+        IconURL = iconURL;
+        return this;
+    }
+
+    /**
+     * アカウントエンティティにニックネームを設定する
+     * @param nickName
+     * @return アカウントエンティティ
+     */
+    public AccountEntity setNickName(String nickName) {
+        NickName = nickName;
+        return this;
+    }
 }
