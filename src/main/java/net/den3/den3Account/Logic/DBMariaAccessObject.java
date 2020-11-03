@@ -54,7 +54,6 @@ public class DBMariaAccessObject implements IDBAccess {
     /**
      * SQLの接続を解放する 終了時必須処理
      */
-    @Override
     public void closeDB(){
         if(hikari != null){
             hikari.close();
