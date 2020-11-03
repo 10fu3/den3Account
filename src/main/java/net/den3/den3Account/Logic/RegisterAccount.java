@@ -1,13 +1,28 @@
 package net.den3.den3Account.Logic;
 
+import net.den3.den3Account.Entity.AccountEntity;
+import net.den3.den3Account.Entity.ExportAccount;
+import net.den3.den3Account.Entity.TemporaryAccountEntity;
 import net.den3.den3Account.Store.AccountStore;
 import net.den3.den3Account.Store.CheckAccountResult;
 import net.den3.den3Account.StringChecker;
 
+import java.util.UUID;
+
 
 public class RegisterAccount {
-    public RegisterAccount(){
+    //staticおじさん
 
+    /**
+     * 仮アカウントを発行してキューに追加しておく
+     * @param tae 仮アカウントエンティティ
+     * @return 待機用UUID (これを登録されたメールアドレスに送信する)
+     */
+    public static String addQueueDBRegister(TemporaryAccountEntity tae){
+        //キューでの管理に使う一時的なIDを発行
+        String queueID = UUID.randomUUID().toString().replaceAll("-","");
+        AccountStore.getInstance().putMemory(queueID,((ExportAccount)((AccountEntity)tae)).getJSON());
+        return queueID;
     }
 
     /**
