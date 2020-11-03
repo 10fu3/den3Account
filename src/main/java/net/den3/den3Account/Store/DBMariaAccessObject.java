@@ -66,7 +66,11 @@ public class DBMariaAccessObject implements IDBAccess {
         setupHikariCP();
     }
 
-
+    /**
+     * 指定したメールアドレスをもつアカウントを取得する
+     * @param mail
+     * @return Optional<IAccount></>
+     */
     @Override
     public Optional<IAccount> getAccountByMail(String mail) {
         final Optional[] result = new Optional[1];
@@ -85,6 +89,11 @@ public class DBMariaAccessObject implements IDBAccess {
         return result[0];
     }
 
+    /**
+     * 指定したuuidをもつアカウントを取得する
+     * @param id
+     * @return Optional<IAccount></>
+     */
     @Override
     public Optional<IAccount> getAccountByUUID(String id) {
         final Optional<IAccount>[] result = new Optional[1];
@@ -103,6 +112,29 @@ public class DBMariaAccessObject implements IDBAccess {
         return result[0];
     }
 
+    /**
+     * DBに登録されたすべてのアカウントを取得する
+     * @return  Optional<List<IAccount>>
+     */
+    @Override
+    public Optional<List<IAccount>> getAccountsAll(){
+        return getAccountBySQL((con)->{
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository");
+                return pS;
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return null;
+            }
+        });
+    }
+
+    /**
+     * 発行したSQLに合致するアカウントを取得する
+     * @param statement Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
+     * @return Optional<List<IAccount>>
+     */
     @Override
     public Optional<List<IAccount>> getAccountBySQL(Function<Connection, PreparedStatement> statement) {
         //結果格納用リスト
@@ -120,7 +152,7 @@ public class DBMariaAccessObject implements IDBAccess {
                     //アカウントエンティティを作る
                     //もし管理者権限持ちなら,管理者権限用のサブクラスを使う
                     if(sqlResult.getBoolean("admin")){
-                        ae = new AdminAccount().setAdminAccount(true);
+                        ae = new AdminAccount();
                     }
                     ae = ae
                          .setUUID(sqlResult.getString("uuid"))
