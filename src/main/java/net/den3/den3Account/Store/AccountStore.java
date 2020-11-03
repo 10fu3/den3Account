@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class AccountStore implements IStore{
+public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
 
     private final static AccountStore SINGLE = new AccountStore();
     private final DBMariaAccessObject rdbmsAccess = new DBMariaAccessObject();
@@ -31,6 +31,11 @@ public class AccountStore implements IStore{
     @Override
     public IInMemoryDB getMemory(){
         return inmemoryAccess;
+    }
+
+    @Override
+    public Optional<List<IAccount>> getAccountsAll() {
+        return rdbmsAccess.getAccountsAll();
     }
 
     @Override
