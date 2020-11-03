@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public interface IDBAccess {
     /**
-     * DBに保存されたすべてのアカウントを取得する
+     * DBに登録されたすべてのアカウントを取得する
      * @return Optional<List<IAccount>>
      */
     Optional<List<IAccount>> getAccountsAll();
