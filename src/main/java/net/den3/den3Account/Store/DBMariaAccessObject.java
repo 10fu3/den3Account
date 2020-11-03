@@ -3,6 +3,7 @@ package net.den3.den3Account.Store;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.den3.den3Account.Entity.AccountEntity;
+import net.den3.den3Account.Entity.AdminAccount;
 import net.den3.den3Account.Entity.IAccount;
 
 import java.sql.Connection;
@@ -112,17 +113,21 @@ public class DBMariaAccessObject implements IDBAccess {
         try(Connection con = hikari.getConnection()){
             //ラムダ式内で作られたSQL文を発行して結果を得る
             try (ResultSet sqlResult = statement.apply(con).executeQuery()){
-                AccountEntity ae;
+                AccountEntity ae = new AccountEntity();
                 //読み込まれていない結果が複数ある限りWhileの中が実行される
                 while (sqlResult.next()){
+                    ae = new AccountEntity();
                     //アカウントエンティティを作る
-                    ae = new AccountEntity()
-                            .setUUID(sqlResult.getString("uuid"))
-                            .setMailAddress(sqlResult.getString("mail"))
-                            .setPasswordHash(sqlResult.getString("pass"))
-                            .setNickName(sqlResult.getString("nick"))
-                            .setIconURL(sqlResult.getString("icon"))
-                            .setLastLogin(sqlResult.getString("last_login_time"));
+                    if(sqlResult.getBoolean("admin")){
+                        ae = new AdminAccount();
+                    }
+                    ae = ae
+                         .setUUID(sqlResult.getString("uuid"))
+                         .setMailAddress(sqlResult.getString("mail"))
+                         .setPasswordHash(sqlResult.getString("pass"))
+                         .setNickName(sqlResult.getString("nick"))
+                         .setIconURL(sqlResult.getString("icon"))
+                         .setLastLogin(sqlResult.getString("last_login_time"));
                     //結果格納用リストに追加
                     resultList.add(ae);
                 }
