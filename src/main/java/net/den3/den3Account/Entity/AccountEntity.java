@@ -1,5 +1,9 @@
 package net.den3.den3Account.Entity;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
 /**
  * データベースに存在するアカウントを表すクラス
  * NULLを返すメソッドは存在しない
@@ -7,12 +11,19 @@ package net.den3.den3Account.Entity;
 
 public class AccountEntity implements IAccount{
 
-    private String UUID = "";
+    private String Uuid = "";
     private String LastLogin = "2020/01/01 13:05:15";
     private String MailAddress = "";
     private String PasswordHash = "";
     private String IconURL = "";
     private String NickName = "";
+
+    public AccountEntity(){
+        this.Uuid = UUID.randomUUID().toString();
+        this.LastLogin = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        this.IconURL = "https://i.imgur.com/R6tktJ6.jpg";//ただの人
+        this.NickName = "First time";
+    }
 
     /**
      * アカウントのメールアドレスを返す
@@ -65,7 +76,7 @@ public class AccountEntity implements IAccount{
      */
     @Override
     public String getUUID() {
-        return this.UUID;
+        return this.Uuid;
     }
 
     /**
@@ -74,7 +85,7 @@ public class AccountEntity implements IAccount{
      * @return アカウントエンティティ
      */
     public AccountEntity setUUID(String UUID) {
-        this.UUID = UUID;
+        this.Uuid = UUID;
         return this;
     }
 
