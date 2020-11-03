@@ -13,6 +13,16 @@ public class ExportAccount extends AccountEntity {
         return buildAccount().toString();
     }
 
+    /**
+     * 仮アカウント受付時に保存されるアカウント情報をJSON出力する
+     * @return JSON ユニークID(id) ハッシュ化されたパスワード(pass_hash) メールアドレス(mail)
+     */
+    public String getInternalTemporaryJSON(){
+        return buildTemporaryAccount().toString();
+    };
+
+
+
     private StringBuilder buildAccount(){
         return new StringBuilder()
                 .append("{")
@@ -23,6 +33,18 @@ public class ExportAccount extends AccountEntity {
                 .append(buildWord("icon",super.getIconURL()))
                 .append("}");
     }
+
+    private StringBuilder buildTemporaryAccount(){
+        return new StringBuilder()
+                .append("{")
+                .append(buildWord("id",super.getUUID()))
+                .append(" , ")
+                .append(buildWord("pass_hash",super.getPasswordHash()))
+                .append(" , ")
+                .append(buildWord("mail",super.getMailAddress()))
+                .append("}");
+    }
+
     private StringBuilder buildWord(String key,String value){
         return new StringBuilder()
                 .append("\"")
