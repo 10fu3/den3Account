@@ -11,18 +11,30 @@ public class InMemoryRedis implements IInMemoryDB{
 
     private JedisPool pool = new JedisPool(new JedisPoolConfig(),"localhost");
 
+    /**
+     * インメモリデータベースとの接続を解放する
+     */
     public void closeDB(){
         pool.close();
     }
 
+    /**
+     * インメモリデータベースとのやりとりを行う
+     * @param doSomething 引数Jedis型のラムダ式/クロージャ
+     */
     private void doIt(Consumer<Jedis> doSomething){
         try(Jedis jedis = pool.getResource()){
             doSomething.accept(jedis);
         }
     }
 
+    /**
+     * インメモリデータベース(key:value形式)から値を得る
+     * @param key キー
+     * @return 保存した値
+     */
     @Override
-    public Optional<String> get(String key) {
+    public Optional<String> getMemory(String key) {
         final Optional<String>[] a = new Optional[1];
         doIt((r)->{
             a[0] = Optional.ofNullable(r.get(key));
@@ -30,8 +42,13 @@ public class InMemoryRedis implements IInMemoryDB{
         return a[0];
     }
 
+    /**
+     * インメモリデータベース(key:value形式)に値を保存する
+     * @param key キー
+     * @param value 保存した値
+     */
     @Override
-    public void put(String key, String value) {
+    public void putMemory(String key, String value) {
         doIt((r)->{
             r.set(key,value);
         });
