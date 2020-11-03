@@ -1,5 +1,7 @@
 package net.den3.den3Account.Logic;
 
+import net.den3.den3Account.Store.AccountStore;
+import net.den3.den3Account.Store.CheckAccountResult;
 import net.den3.den3Account.StringChecker;
 
 
@@ -8,7 +10,13 @@ public class RegisterAccount {
 
     }
 
-    public static CheckAccountResult checkAccount (String mail,String pass){
+    /**
+     * 登録申請されたアカウントの情報が正しくかつ,すでに入力されたものではないかを調べる
+     * @param mail 登録申請用メールアドレス
+     * @param pass 登録申請用パスワード
+     * @return CheckAccountResult列挙体
+     */
+    public static CheckAccountResult checkAccount (String mail, String pass){
         if(!StringChecker.isMailAddress(mail)){
             //return "{ \"status\" : \"ERROR\" , \"message\" : \"Invalid e-address\" }";
             return CheckAccountResult.ERROR_MAIL;
