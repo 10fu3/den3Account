@@ -12,12 +12,12 @@ public class TemporaryAccountEntity extends AccountEntity implements IAccount{
      * @param pass パスワード
      * @return TemporaryAccountEntity 仮アカウントエンティティ
      */
-    public TemporaryAccountEntity create(String mail,String pass){
+    public static TemporaryAccountEntity create(String mail,String pass){
         String passHash = getHash(pass).orElse("HASH_ERROR");
         return (TemporaryAccountEntity) new TemporaryAccountEntity().setPasswordHash(passHash).setMailAddress(mail);
     }
 
-    private Optional<String> getHash(String hash){
+    private static Optional<String> getHash(String hash){
         String hashed = "";
         try{
             // メッセージダイジェストのインスタンスを生成
