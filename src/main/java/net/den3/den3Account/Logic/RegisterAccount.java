@@ -14,6 +14,33 @@ public class RegisterAccount {
     //staticおじさん
 
     /**
+     * 仮登録申請されたアカウントの情報をチェックを依頼し,可能なら仮登録処理まで行う
+     * @param mail 仮登録申請されたメールアドレス
+     * @param pass 仮登録申請されたパスワード
+     * @return クライアントに返されるJSON statusが成功/失敗を表し messageがエラーの原因を返す
+     */
+    public static String entryFlow(String mail,String pass){
+        //基準に満たない/ルール違反をしているメールアドレス/パスワードか調べる
+        CheckAccountResult checkAccountResult = RegisterAccount.checkAccount(mail, pass);
+
+        //チェックにひっかかるアカウント情報ならばここで弾く
+        if(checkAccountResult != CheckAccountResult.SUCCESS){
+            //ここに到達するときは登録処理に失敗している
+            return "{ \"status\" : \"ERROR\" , \"message\" : \"" +checkAccountResult.getString() + "\" }";
+        }
+
+        //<-- ここまでで基準に満たないアカウント登録はすべて却下されている -->
+
+        //TODO ここに仮登録処理を書く
+        TemporaryAccountEntity tempAccount = TemporaryAccountEntity.create(mail, pass);
+        //ここで待機させておいて, ここで発行したキーの書かれたメールからアクセスされたリンクをもとに有効化判定をする
+        String tempKey = RegisterAccount.addQueueDBRegister(tempAccount);
+        //TODO 登録されたメールアドレスにメールを送信する
+
+        return "{ \"status\" : \"SUCCESS\" }";
+    }
+
+    /**
      * 仮アカウントを発行してキューに追加しておく
      * @param tae 仮アカウントエンティティ
      * @return 待機用UUID (これを登録されたメールアドレスに送信する)
