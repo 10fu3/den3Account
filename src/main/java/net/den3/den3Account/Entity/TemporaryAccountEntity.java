@@ -18,7 +18,6 @@ public class TemporaryAccountEntity extends AccountEntity implements IAccount{
     }
 
     private static Optional<String> getHash(String hash){
-        String hashed = "";
         try{
             // メッセージダイジェストのインスタンスを生成
             MessageDigest md5 = MessageDigest.getInstance("MD5");
