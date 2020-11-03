@@ -1,4 +1,4 @@
-package net.den3.den3Account.Logic;
+package net.den3.den3Account.Store;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

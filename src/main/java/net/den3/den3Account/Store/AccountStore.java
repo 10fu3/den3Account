@@ -1,4 +1,4 @@
-package net.den3.den3Account.Logic;
+package net.den3.den3Account.Store;
 
 import net.den3.den3Account.Entity.IAccount;
 
@@ -8,10 +8,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-class AccountStore implements IStore{
+public class AccountStore implements IStore{
 
+    private final static AccountStore SINGLE = new AccountStore();
     private final DBMariaAccessObject rdbmsAccess = new DBMariaAccessObject();
     private final InMemoryRedis inmemoryAccess = new InMemoryRedis();
+
+    public static AccountStore getInstance() {
+        return SINGLE;
+    }
 
     public void closeStore(){
         rdbmsAccess.closeDB();
