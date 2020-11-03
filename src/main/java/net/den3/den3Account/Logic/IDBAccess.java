@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public interface IDBAccess {
-    void closeDB();
     Optional<IAccount> getAccountByMail(String mail);
     Optional<IAccount> getAccountByUUID(String id);
     Optional<List<IAccount>> getAccountBySQL(Function<Connection, PreparedStatement> query);
