@@ -118,8 +118,9 @@ public class DBMariaAccessObject implements IDBAccess {
                 while (sqlResult.next()){
                     ae = new AccountEntity();
                     //アカウントエンティティを作る
+                    //もし管理者権限持ちなら,管理者権限用のサブクラスを使う
                     if(sqlResult.getBoolean("admin")){
-                        ae = new AdminAccount();
+                        ae = new AdminAccount().setAdminAccount(true);
                     }
                     ae = ae
                          .setUUID(sqlResult.getString("uuid"))
