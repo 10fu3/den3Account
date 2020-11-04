@@ -2,6 +2,7 @@ package net.den3.den3Account.Store;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import net.den3.den3Account.Config;
 import net.den3.den3Account.Entity.AccountEntity;
 import net.den3.den3Account.Entity.AdminAccount;
 import net.den3.den3Account.Entity.IAccount;
@@ -25,31 +26,11 @@ public class DBMariaAccessObject implements IDBAccess {
     private void setupHikariCP(){
         //https://jyn.jp/java-hikaricp-mysql-sqlite/
 
-        // HikariCPの初期化
-        HikariConfig config = new HikariConfig();
-
-        // MySQL用ドライバを設定
-        config.setDriverClassName("com.mariadb.jdbc.Driver");
-
-        // 「jdbc:mysql://ホスト:ポート/DB名」の様なURLで指定
-        config.setJdbcUrl("jdbc:mysql://localhost:3306/DB名");
-
-        // ユーザ名、パスワード指定
-        config.addDataSourceProperty("user", "root");
-        config.addDataSourceProperty("password", "123");
-
-        // キャッシュ系の設定(任意)
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        // サーバサイドプリペアードステートメントを使用する(任意)
-        config.addDataSourceProperty("useServerPrepStmts", "true");
-
-        // 接続をテストするためのクエリ
-        config.setConnectionInitSql("SELECT 1");
-
-        // 接続
-        hikari = new HikariDataSource(config);
+        HikariDataSource ds = new HikariDataSource();
+        ds.setJdbcUrl("jdbc:mariadb://localhost:3306/den3_account");
+        ds.setUsername(Config.get().getDBAccountName());
+        ds.setPassword(Config.get().getDBAccountPassword());
+        hikari = ds;
     }
 
     /**
