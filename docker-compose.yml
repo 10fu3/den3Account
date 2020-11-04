@@ -1,0 +1,34 @@
+version: '3'
+services:
+  app:
+    image: den3accountinjar:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+    #必ず本番環境ではDBのパスワードは変更すること
+    environment:
+      D3A_DBACCOUNT: "user"
+      D3A_DBPASSWORD: "password"
+    command: java -jar target/den3Account-1.0-all.jar
+  db:
+    image: mariadb:latest
+    #必ず本番環境ではDBのパスワードは変更すること
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: den3_account
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    volumes:
+      - mariadb:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+volumes: # ← Volumesでデータ領域をコンテナとして定義
+  mariadb:
+    driver: local
