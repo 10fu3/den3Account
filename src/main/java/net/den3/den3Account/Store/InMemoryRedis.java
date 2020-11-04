@@ -8,8 +8,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class InMemoryRedis implements IInMemoryDB{
+    private JedisPool pool = new JedisPool(new JedisPoolConfig(),"redis",6379);
 
-    private JedisPool pool = new JedisPool(new JedisPoolConfig(),"localhost");
+    public InMemoryRedis(){
+
+    }
 
     /**
      * インメモリデータベースとの接続を解放する

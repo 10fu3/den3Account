@@ -27,7 +27,7 @@ public class DBMariaAccessObject implements IDBAccess {
         //https://jyn.jp/java-hikaricp-mysql-sqlite/
 
         HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl("jdbc:mariadb://localhost:3306/den3_account");
+        ds.setJdbcUrl("jdbc:mariadb://db:3306/den3_account");
         ds.setUsername(Config.get().getDBAccountName());
         ds.setPassword(Config.get().getDBAccountPassword());
         hikari = ds;
