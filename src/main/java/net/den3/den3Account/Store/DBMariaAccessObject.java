@@ -6,6 +6,7 @@ import net.den3.den3Account.Config;
 import net.den3.den3Account.Entity.AccountEntity;
 import net.den3.den3Account.Entity.AdminAccount;
 import net.den3.den3Account.Entity.IAccount;
+import net.den3.den3Account.Entity.TemporaryAccountEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,26 +49,95 @@ public class DBMariaAccessObject implements IDBAccess {
     }
 
     /**
+     * アカウントをDBに登録する
+     * @param tempAccount 仮アカウントエンティティ
+     * @return DBに存在するアカウントエンティティ
+     */
+    @Override
+    public Optional<IAccount> addAccountInSQL(TemporaryAccountEntity tempAccount) {
+        boolean result = controlSQL((con)->{
+            try {
+                //INSET文の発行 uuid mail pass nick icon last_login_timeの順
+                PreparedStatement pS = con.prepareStatement("INSERT INTO account_repository VALUES (?,?,?,?,?,?,?) ;");
+                //
+                pS.setString(1, tempAccount.getUUID());
+                //
+                pS.setString(2, tempAccount.getMailAddress());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(3, tempAccount.getPasswordHash());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(4, tempAccount.getNickName());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(5, tempAccount.getIconURL());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(6, tempAccount.getLastLoginTime());
+
+                pS.setBoolean(7,false);
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        });
+        //DBへの追加がうまくいくと
+        if(result){
+            return Optional.of(new AccountEntity(tempAccount));
+        }else{
+            //失敗したときはNullを返す
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * アカウントの情報を更新する
+     * @param account 更新するエンティティ
+     * @return 更新されたエンティティ
+     */
+    @Override
+    public boolean updateAccountInSQL(IAccount account) {
+        return controlSQL((con)->{
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("UPDATE account_repository SET mail=?, pass=?, nick=?, icon=?, last_login_time=?,admin=? WHERE id=?;");
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(1, account.getMailAddress());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(2, account.getPasswordHash());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(3, account.getNickName());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(4, account.getIconURL());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(5, account.getLastLoginTime());
+                //SQL文の1個めの?にmailを代入する
+                pS.setBoolean(6, account instanceof AdminAccount);
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        });
+    }
+
+    /**
      * 指定したメールアドレスをもつアカウントを取得する
      * @param mail
      * @return Optional<IAccount></>
      */
     @Override
     public Optional<IAccount> getAccountByMail(String mail) {
-        final Optional[] result = new Optional[1];
-        result[0] = getAccountBySQL((con) -> {
+        return getAccountBySQL((con) -> {
             try {
                 //account_repositoryからmailの一致するものを探してくる
                 PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository WHERE mail = ?");
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(1, mail);
-                return pS;
+                return Optional.of(pS);
             } catch (SQLException sqlex) {
                 sqlex.printStackTrace();
-                return null;
+                return Optional.empty();
             }
         }).flatMap(i -> i.stream().findAny());
-        return result[0];
     }
 
     /**
@@ -77,20 +147,19 @@ public class DBMariaAccessObject implements IDBAccess {
      */
     @Override
     public Optional<IAccount> getAccountByUUID(String id) {
-        final Optional<IAccount>[] result = new Optional[1];
-        result[0] = getAccountBySQL((con) -> {
+        Optional<List<IAccount>> accountBySQL = getAccountBySQL((con) -> {
             try {
                 //account_repositoryからmailの一致するものを探してくる
                 PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository WHERE uuid = ?");
                 //SQL文の1個めの?にuuidを代入する
                 pS.setString(1, id);
-                return pS;
+                return Optional.of(pS);
             } catch (SQLException sqlex) {
                 sqlex.printStackTrace();
-                return null;
+                return Optional.empty();
             }
-        }).flatMap(i -> i.stream().findAny());
-        return result[0];
+        });
+        return  accountBySQL.flatMap(i -> i.stream().findAny());
     }
 
     /**
@@ -103,10 +172,10 @@ public class DBMariaAccessObject implements IDBAccess {
             try {
                 //account_repositoryからmailの一致するものを探してくる
                 PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository");
-                return pS;
+                return Optional.of(pS);
             } catch (SQLException sqlex) {
                 sqlex.printStackTrace();
-                return null;
+                return Optional.empty();
             }
         });
     }
@@ -117,7 +186,7 @@ public class DBMariaAccessObject implements IDBAccess {
      * @return Optional<List<IAccount>>
      */
     @Override
-    public Optional<List<IAccount>> getAccountBySQL(Function<Connection, PreparedStatement> statement) {
+    public Optional<List<IAccount>> getAccountBySQL(Function<Connection, Optional<PreparedStatement>> statement) {
         //結果格納用リスト
         List<IAccount> resultList = new ArrayList<>();
         //結果そのものを表す
@@ -125,7 +194,11 @@ public class DBMariaAccessObject implements IDBAccess {
         //データベースに接続
         try(Connection con = hikari.getConnection()){
             //ラムダ式内で作られたSQL文を発行して結果を得る
-            try (ResultSet sqlResult = statement.apply(con).executeQuery()){
+            Optional<PreparedStatement> sqlGenerateResult = statement.apply(con);
+            if(!sqlGenerateResult.isPresent()){
+                return Optional.empty();
+            }
+            try (ResultSet sqlResult = sqlGenerateResult.get().executeQuery()){
                 AccountEntity ae = new AccountEntity();
                 //読み込まれていない結果が複数ある限りWhileの中が実行される
                 while (sqlResult.next()){
@@ -157,4 +230,39 @@ public class DBMariaAccessObject implements IDBAccess {
         return  returnResult;
     }
 
+    /**
+     * アカウントをDBから削除する
+     *
+     * @param deleteAccount 削除対象のアカウントエンティティ
+     * @return true → 削除成功 false → 失敗
+     */
+    @Override
+    public boolean deleteAccountInSQL(IAccount deleteAccount) {
+        return deleteAccountInSQL(deleteAccount.getUUID());
+    }
+
+    private boolean deleteAccountInSQL(String uuid){
+        return controlSQL((con)->{
+            PreparedStatement statement;
+            try {
+                statement = con.prepareStatement("DELETE FROM account_repository WHERE uuid = ?;");
+                statement.setString(1,uuid);
+                return Optional.of(statement);
+            }catch (SQLException ignore){
+                return Optional.empty();
+            }
+        });
+    }
+
+    private boolean controlSQL(Function<Connection,Optional<PreparedStatement>> mission){
+        try(Connection con = hikari.getConnection()){
+            if(mission.apply(con).isPresent()){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (SQLException ex){
+            return false;
+        }
+    }
 }
