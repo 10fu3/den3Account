@@ -5,7 +5,10 @@ package net.den3.den3Account.Entity;
  */
 
 public class AdminAccount extends AccountEntity implements IAccount {
-    AdminAccount(AccountEntity old){
+    public AdminAccount(){
+
+    };
+    public AdminAccount(AccountEntity old){
         super.setMailAddress(old.getMailAddress());
         super.setIconURL(old.getIconURL());
         super.setPasswordHash(old.getPasswordHash());
