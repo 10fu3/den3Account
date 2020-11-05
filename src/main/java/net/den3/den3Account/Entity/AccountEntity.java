@@ -25,6 +25,15 @@ public class AccountEntity implements IAccount{
         this.NickName = "First time";
     }
 
+    public AccountEntity(IAccount account){
+        this.Uuid = account.getUUID();
+        this.LastLogin = account.getLastLoginTime();
+        this.MailAddress = account.getMailAddress();
+        this.PasswordHash = account.getPasswordHash();
+        this.IconURL = account.getIconURL();
+        this.NickName = getNickName();
+    }
+
     /**
      * アカウントのメールアドレスを返す
      * @return メールアドレス
