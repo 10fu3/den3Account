@@ -1,6 +1,7 @@
 package net.den3.den3Account.Store;
 
 import net.den3.den3Account.Entity.IAccount;
+import net.den3.den3Account.Entity.TemporaryAccountEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,5 +34,26 @@ public interface IDBAccess {
      * @param query Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
      * @return Optional<List<IAccount>>
      */
-    Optional<List<IAccount>> getAccountBySQL(Function<Connection, PreparedStatement> query);
+    Optional<List<IAccount>> getAccountBySQL(Function<Connection, Optional<PreparedStatement>> query);
+
+    /**
+     * アカウントの情報を更新する
+     * @param account 更新するエンティティ
+     * @return true → 削除成功 false → 失敗
+     */
+    boolean updateAccountInSQL(IAccount account);
+
+    /**
+     * アカウントをDBに登録する
+     * @param tempAccount 仮アカウントエンティティ
+     * @return 登録されたアカウントエンティティ
+     */
+    Optional<IAccount> addAccountInSQL(TemporaryAccountEntity tempAccount);
+
+    /**
+     * アカウントをDBから削除する
+     * @param deleteAccount 削除対象のアカウントエンティティ
+     * @return true → 削除成功 false → 失敗
+     */
+    boolean deleteAccountInSQL(IAccount deleteAccount);
 }
