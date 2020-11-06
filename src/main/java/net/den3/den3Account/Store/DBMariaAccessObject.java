@@ -1,6 +1,5 @@
 package net.den3.den3Account.Store;
 
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.den3.den3Account.Config;
 import net.den3.den3Account.Entity.AccountEntity;
@@ -28,7 +27,7 @@ public class DBMariaAccessObject implements IDBAccess {
         //https://jyn.jp/java-hikaricp-mysql-sqlite/
 
         HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl("jdbc:mariadb://db:3306/den3_account");
+        ds.setJdbcUrl(Config.get().getDBURL());
         ds.setUsername(Config.get().getDBAccountName());
         ds.setPassword(Config.get().getDBAccountPassword());
         hikari = ds;
@@ -199,22 +198,20 @@ public class DBMariaAccessObject implements IDBAccess {
                 return Optional.empty();
             }
             try (ResultSet sqlResult = sqlGenerateResult.get().executeQuery()){
-                AccountEntity ae = new AccountEntity();
+                AccountEntity ae;
                 //読み込まれていない結果が複数ある限りWhileの中が実行される
                 while (sqlResult.next()){
-                    ae = new AccountEntity();
-                    //アカウントエンティティを作る
                     //もし管理者権限持ちなら,管理者権限用のサブクラスを使う
-                    if(sqlResult.getBoolean("admin")){
-                        ae = new AdminAccount();
-                    }
-                    ae = ae
-                         .setUUID(sqlResult.getString("uuid"))
-                         .setMailAddress(sqlResult.getString("mail"))
-                         .setPasswordHash(sqlResult.getString("pass"))
-                         .setNickName(sqlResult.getString("nick"))
-                         .setIconURL(sqlResult.getString("icon"))
-                         .setLastLogin(sqlResult.getString("last_login_time"));
+                    ae = sqlResult.getBoolean("admin")?
+                            new AdminAccount():
+                            new AccountEntity();
+                    ae
+                    .setUUID(sqlResult.getString("uuid"))
+                    .setMailAddress(sqlResult.getString("mail"))
+                    .setPasswordHash(sqlResult.getString("pass"))
+                    .setNickName(sqlResult.getString("nick"))
+                    .setIconURL(sqlResult.getString("icon"))
+                    .setLastLogin(sqlResult.getString("last_login_time"));
                     //結果格納用リストに追加
                     resultList.add(ae);
                 }
