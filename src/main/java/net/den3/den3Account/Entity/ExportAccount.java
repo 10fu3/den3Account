@@ -26,7 +26,7 @@ public class ExportAccount extends AccountEntity {
     private StringBuilder buildAccount(){
         return new StringBuilder()
                 .append("{")
-                .append(buildWord("id",super.getUUID()))
+                .append(buildWord("uuid",super.getUUID()))
                 .append(" , ")
                 .append(buildWord("name",super.getNickName()))
                 .append(" , ")
@@ -37,11 +37,13 @@ public class ExportAccount extends AccountEntity {
     private StringBuilder buildTemporaryAccount(){
         return new StringBuilder()
                 .append("{")
-                .append(buildWord("id",super.getUUID()))
+                .append(buildWord("uuid",super.getUUID()))
                 .append(" , ")
                 .append(buildWord("pass_hash",super.getPasswordHash()))
                 .append(" , ")
                 .append(buildWord("mail",super.getMailAddress()))
+                .append(" , ")
+                .append(buildWord("nick",super.getNickName()))
                 .append("}");
     }
 
