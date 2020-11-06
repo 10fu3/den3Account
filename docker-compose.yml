@@ -14,6 +14,7 @@ services:
       D3A_DBACCOUNT: "user"
       D3A_DBPASSWORD: "password"
       D3A_ISDOCKER: "DOCKER"
+      D3A_: "?"
     command: java -jar target/den3Account-1.0-all.jar
   db:
     image: mariadb:latest
