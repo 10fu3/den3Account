@@ -8,4 +8,8 @@ public class StringChecker {
         java.util.regex.Pattern p = Pattern.compile(pattern);
         return mail.matches(pattern);
     }
+
+    public static boolean containsNotAllowCharacter(String words){
+        return (words.contains("{") || words.contains("}") || words.contains(",") || words.contains("\""));
+    }
 }
