@@ -21,7 +21,16 @@ public class ExportAccount extends AccountEntity {
         return buildTemporaryAccount().toString();
     };
 
-
+    public static ExportAccount convert(AccountEntity ae){
+        ExportAccount ea = new ExportAccount();
+        ea.setMailAddress(ae.getMailAddress())
+          .setIconURL(ae.getIconURL())
+          .setUUID(ae.getUUID())
+          .setPasswordHash(ae.getPasswordHash())
+          .setNickName(ae.getNickName())
+          .setLastLogin(ae.getLastLoginTime());
+        return ea;
+    }
 
     private StringBuilder buildAccount(){
         return new StringBuilder()
