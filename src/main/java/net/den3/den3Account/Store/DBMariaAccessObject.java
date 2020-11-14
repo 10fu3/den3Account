@@ -251,6 +251,11 @@ public class DBMariaAccessObject implements IDBAccess {
         });
     }
 
+    /**
+     * 発行したSQLに合致するアカウントを取得する
+     * @param mission Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
+     * @return boolean クロージャのSQLの結果 true→成功 false→失敗
+     */
     private boolean controlSQL(Function<Connection,Optional<PreparedStatement>> mission){
         try(Connection con = hikari.getConnection()){
             if(mission.apply(con).isPresent()){
