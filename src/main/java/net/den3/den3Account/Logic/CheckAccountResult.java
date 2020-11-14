@@ -3,7 +3,7 @@ package net.den3.den3Account.Logic;
 public enum CheckAccountResult {
     ERROR_MAIL("Invalid e-address"), //メールアドレスではない
     ERROR_PASSWORD_LENGTH("Need 8 characters or more"), //パスワードが基準
-    ERROR_SAME("Already registered e-address"), //8文字以上ではない
+    ERROR_SAME("Already registered e-address"), //すでに登録されたメールアドレス
     ERROR_NOT_ALLOW_CHAR("Not allowed characters contain"), // { } , が含まれている
     SUCCESS("");//成功したのでメッセージはとくにない
 
