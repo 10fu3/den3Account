@@ -9,4 +9,5 @@ public interface IAccount {
     String getNickName();
     String getIconURL();
     String getLastLoginTime();
+    String toString();
 }
