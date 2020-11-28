@@ -1,5 +1,7 @@
 package net.den3.den3Account.Entity;
 
+import net.den3.den3Account.Logic.ParseJSON;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -86,6 +88,27 @@ public class AccountEntity implements IAccount{
     @Override
     public String getUUID() {
         return this.Uuid;
+    }
+
+    /**
+     * アカウントの情報を文字列化する
+     * @return アカウント情報 文字列
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("{ ")
+                .append(ParseJSON.buildWord("uuid",this.getUUID()))
+                .append(" , ")
+                .append(ParseJSON.buildWord("pass",this.getPasswordHash()))
+                .append(" , ")
+                .append(ParseJSON.buildWord("icon",this.getIconURL()))
+                .append(" , ")
+                .append(ParseJSON.buildWord("nick",this.getNickName()))
+                .append(" , ")
+                .append(ParseJSON.buildWord("last_login_time",this.getLastLoginTime()))
+                .append(" }")
+                .toString();
     }
 
     /**
