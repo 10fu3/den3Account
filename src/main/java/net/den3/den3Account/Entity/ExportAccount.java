@@ -56,7 +56,7 @@ public class ExportAccount extends AccountEntity {
                 .append("}");
     }
 
-    private StringBuilder buildWord(String key,String value){
+    public static StringBuilder buildWord(String key,String value){
         return new StringBuilder()
                 .append("\"")
                 .append(key)
