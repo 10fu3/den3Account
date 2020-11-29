@@ -18,6 +18,7 @@ import java.util.function.Function;
 
 public class DBMariaAccessObject implements IDBAccess {
 
+
     private HikariDataSource hikari;
 
     /**
@@ -30,6 +31,7 @@ public class DBMariaAccessObject implements IDBAccess {
         ds.setJdbcUrl(Config.get().getDBURL());
         ds.setUsername(Config.get().getDBAccountName());
         ds.setPassword(Config.get().getDBAccountPassword());
+        ds.setDriverClassName("org.mariadb.jdbc.Driver");
         hikari = ds;
     }
 
@@ -96,8 +98,10 @@ public class DBMariaAccessObject implements IDBAccess {
     public boolean updateAccountInSQL(IAccount account) {
         return controlSQL((con)->{
             try {
-                //account_repositoryからmailの一致するものを探してくる
-                PreparedStatement pS = con.prepareStatement("UPDATE account_repository SET mail=?, pass=?, nick=?, icon=?, last_login_time=?,admin=? WHERE id=?;");
+                //account_repositoryからidの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("UPDATE account_repository SET mail=?, pass=?, nick=?, icon=?, last_login_time=?,admin=? WHERE uuid=?;");
+                //SQL文の1個めの?にuuidを代入する
+                pS.setString(1, account.getMailAddress());
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(1, account.getMailAddress());
                 //SQL文の1個めの?にmailを代入する
@@ -110,6 +114,8 @@ public class DBMariaAccessObject implements IDBAccess {
                 pS.setString(5, account.getLastLoginTime());
                 //SQL文の1個めの?にmailを代入する
                 pS.setBoolean(6, account instanceof AdminAccount);
+                //UUIDを指定する
+                pS.setString(7,account.getUUID());
                 return Optional.of(pS);
             } catch (SQLException sqlex) {
                 sqlex.printStackTrace();
@@ -252,18 +258,20 @@ public class DBMariaAccessObject implements IDBAccess {
     }
 
     /**
-     * 発行したSQLに合致するアカウントを取得する
+     * 発行したSQLを使ってデータベースを更新する
      * @param mission Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
      * @return boolean クロージャのSQLの結果 true→成功 false→失敗
      */
     private boolean controlSQL(Function<Connection,Optional<PreparedStatement>> mission){
         try(Connection con = hikari.getConnection()){
             if(mission.apply(con).isPresent()){
+                mission.apply(con).get().executeUpdate();
                 return true;
             }else{
                 return false;
             }
         }catch (SQLException ex){
+            ex.printStackTrace();
             return false;
         }
     }
