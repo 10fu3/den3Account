@@ -9,6 +9,10 @@ import java.util.function.Function;
 
 public interface IDBAccess {
     /**
+     * DBとのコネクションを閉じる
+     */
+    void closeDB();
+    /**
      * 発行したSQLに合致する行をリストで返す
      * SQLに登録したデータはすべて文字列であるという前提なので数字を含むテーブルの場合は使わないこと
      * @param statement Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
