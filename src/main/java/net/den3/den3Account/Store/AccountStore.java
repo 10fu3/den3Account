@@ -28,11 +28,11 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      * アカウントの情報を更新する
      *
      * @param account 更新するエンティティ
-     * @return true → 削除成功 false → 失敗
+     * @return true → 成功 false → 失敗
      */
     @Override
     public boolean updateAccountInSQL(IAccount account) {
-        return false;
+        return rdbmsAccess.updateAccountInSQL(account);
     }
 
     /**
@@ -43,7 +43,7 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      */
     @Override
     public Optional<IAccount> addAccountInSQL(TemporaryAccountEntity tempAccount) {
-        return Optional.empty();
+        return rdbmsAccess.addAccountInSQL(tempAccount);
     }
 
     /**
@@ -54,7 +54,7 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      */
     @Override
     public boolean deleteAccountInSQL(IAccount deleteAccount) {
-        return false;
+        return rdbmsAccess.deleteAccountInSQL(deleteAccount);
     }
 
     @Override
