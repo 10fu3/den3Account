@@ -1,59 +1,24 @@
 package net.den3.den3Account.Store;
 
-import net.den3.den3Account.Entity.IAccount;
-import net.den3.den3Account.Entity.TemporaryAccountEntity;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
 public interface IDBAccess {
     /**
-     * DBに登録されたすべてのアカウントを取得する
-     * @return Optional<List<IAccount>>
+     * 発行したSQLに合致する行をリストで返す
+     * SQLに登録したデータはすべて文字列であるという前提なので数字を含むテーブルの場合は使わないこと
+     * @param statement Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
+     * @return Optional<List<Map<列名,値>>>
      */
-    Optional<List<IAccount>> getAccountsAll();
-
+    Optional<List<Map<String,String>>> getLineBySQL(Function<Connection, Optional<PreparedStatement>> statement, String tableName);
     /**
-     * 指定したメールアドレスをもつアカウントを取得する
-     * @param mail
-     * @return Optional<IAccount></>
+     * 発行したSQLを使ってデータベースを更新する
+     * @param mission Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
+     * @return boolean クロージャのSQLの結果 true→成功 false→失敗
      */
-    Optional<IAccount> getAccountByMail(String mail);
-    /**
-     * 指定したuuidをもつアカウントを取得する
-     * @param id
-     * @return Optional<IAccount></>
-     */
-    Optional<IAccount> getAccountByUUID(String id);
-
-    /**
-     * 発行したSQLに合致するアカウントを取得する
-     * @param query Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
-     * @return Optional<List<IAccount>>
-     */
-    Optional<List<IAccount>> getAccountBySQL(Function<Connection, Optional<PreparedStatement>> query);
-
-    /**
-     * アカウントの情報を更新する
-     * @param account 更新するエンティティ
-     * @return true → 削除成功 false → 失敗
-     */
-    boolean updateAccountInSQL(IAccount account);
-
-    /**
-     * アカウントをDBに登録する
-     * @param tempAccount 仮アカウントエンティティ
-     * @return 登録されたアカウントエンティティ
-     */
-    Optional<IAccount> addAccountInSQL(TemporaryAccountEntity tempAccount);
-
-    /**
-     * アカウントをDBから削除する
-     * @param deleteAccount 削除対象のアカウントエンティティ
-     * @return true → 削除成功 false → 失敗
-     */
-    boolean deleteAccountInSQL(IAccount deleteAccount);
+    boolean controlSQL(Function<Connection,Optional<PreparedStatement>> mission);
 }
