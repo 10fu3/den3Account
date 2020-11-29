@@ -8,5 +8,6 @@ public class RegisterAccount {
             return RegisterAccountResult.ERROR_NOT_EXIST_QUEUE;
         }
         return RegisterAccountResult.SUCCESS;
-    };
+    }
+
 }
