@@ -2,15 +2,10 @@ package net.den3.den3Account.Store;
 
 import com.zaxxer.hikari.HikariDataSource;
 import net.den3.den3Account.Config;
-import net.den3.den3Account.Entity.AccountEntity;
-import net.den3.den3Account.Entity.AdminAccount;
-import net.den3.den3Account.Entity.IAccount;
-import net.den3.den3Account.Entity.TemporaryAccountEntity;
 
 import java.sql.*;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.IntStream;
 
 public class DBAccess implements IDBAccess{
 
