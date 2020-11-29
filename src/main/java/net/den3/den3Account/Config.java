@@ -11,9 +11,9 @@ public class Config {
     }
 
     public Config(){
-        this.DBAccountName = System.getenv("D3A_DBACCOUNT");
-        this.DBAccountPassword = System.getenv("D3A_DBPASSWORD");
         this.DockerMODE = (System.getenv("D3A_ISDOCKER") != null) && System.getenv("D3A_ISDOCKER").equalsIgnoreCase("DOCKER");
+        this.DBAccountName = System.getenv("D3A_DBACCOUNT") != null ? System.getenv("D3A_DBACCOUNT") : "user";
+        this.DBAccountPassword = System.getenv("D3A_DBPASSWORD") != null ? System.getenv("D3A_DBPASSWORD") : "password";
     }
 
     public String getDBAccountName() {
