@@ -10,8 +10,8 @@ RESTful な アカウント管理/外部連携アプリの管理サービス
 
 # 動かし方
 - このプロジェクトの.gitをcloneする
-- docker build -t den3accountinjar . && docker run den3accountinjar を実行
-- docker-compose up を実行
+- "docker build -t den3accountinjar ."を実行
+- "docker-compose up" を実行
 
 # DBのテーブルについて
 | 列名 | uuid | mail | pass | nick | icon | last_login_time | admin |
