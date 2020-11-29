@@ -98,7 +98,7 @@ public class InMemoryRedis implements IInMemoryDB{
     public boolean containsKey(String key) {
         AtomicReference<Boolean> flag = new AtomicReference<>();
         doIt((r)->{
-            flag.set(r.exists("key"));
+            flag.set(r.exists(key));
         });
         return flag.get();
     }
