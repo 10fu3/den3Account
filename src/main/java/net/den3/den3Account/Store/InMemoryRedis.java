@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class InMemoryRedis implements IInMemoryDB{
-    private JedisPool pool = new JedisPool(new JedisPoolConfig(), Config.get().getRedisURL(),6379);
+    private JedisPool pool;
 
     public InMemoryRedis(){
-
+        pool = new JedisPool(new JedisPoolConfig(), Config.get().getRedisURL(),6379);
     }
 
     /**
