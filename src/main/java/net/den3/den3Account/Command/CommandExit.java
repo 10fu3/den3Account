@@ -1,6 +1,7 @@
 package net.den3.den3Account.Command;
 
-import spark.Spark;
+import net.den3.den3Account.Router.URLTask;
+import net.den3.den3Account.Store.AccountStore;
 
 public class CommandExit implements ICommand{
 
@@ -12,7 +13,8 @@ public class CommandExit implements ICommand{
     @Override
     public boolean run(String[] option) {
         System.out.println("Shutdown...");
-        Spark.stop();
+        URLTask.webApp.stop();
+        AccountStore.getInstance().closeStore();
         return true;
     }
 }
