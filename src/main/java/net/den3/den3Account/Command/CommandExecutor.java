@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class CommandExecutor {
     public final static CommandExecutor SINGLE = new CommandExecutor();
     private Map<String,ICommand> commandStore = new HashMap<>();
-    private final Scanner scan;
+    public final Scanner scan;
 
     public CommandExecutor(){
         scan = new Scanner(System.in);
@@ -45,6 +45,9 @@ public class CommandExecutor {
 
     public boolean runCommand(String[] arg){
         if(arg.length < 1){
+            return false;
+        }
+        if(!commandStore.containsKey(arg[0])){
             return false;
         }
         String[] args = new String[arg.length-1];
