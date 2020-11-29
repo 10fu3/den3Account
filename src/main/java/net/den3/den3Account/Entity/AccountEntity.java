@@ -133,21 +133,21 @@ public class AccountEntity implements IAccount{
 
     /**
      * アカウントエンティティにメールアドレスを設定する
-     * @param mailAddress メールアドレス
+     * @param mail メールアドレス
      * @return アカウントエンティティ
      */
-    public AccountEntity setMailAddress(String mailAddress) {
-        MailAddress = mailAddress;
+    public AccountEntity setMailAddress(String mail) {
+        MailAddress = mail;
         return this;
     }
 
     /**
      * アカウントエンティティにパスワードハッシュ(文字列)を設定する
-     * @param passwordHash パスワードハッシュ(文字列)
+     * @param pass パスワードハッシュ(文字列)
      * @return アカウントエンティティ
      */
-    public AccountEntity setPasswordHash(String passwordHash) {
-        PasswordHash = passwordHash;
+    public AccountEntity setPasswordHash(String pass) {
+        PasswordHash = pass;
         return this;
     }
 
