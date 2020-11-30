@@ -1,6 +1,4 @@
 package net.den3.den3Account.Router;
-import net.den3.den3Account.Logic.EntryAccount;
-import net.den3.den3Account.Store.AccountStore;
 
 public class URLTask {
 

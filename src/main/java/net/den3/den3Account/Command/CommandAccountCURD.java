@@ -3,8 +3,8 @@ package net.den3.den3Account.Command;
 import net.den3.den3Account.Entity.IAccount;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
 import net.den3.den3Account.Logic.ParseJSON;
-import net.den3.den3Account.Store.AccountStore;
-import net.den3.den3Account.Store.IAccountStore;
+import net.den3.den3Account.Store.Account.AccountStore;
+import net.den3.den3Account.Store.Account.IAccountStore;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

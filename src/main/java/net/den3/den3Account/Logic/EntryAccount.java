@@ -1,9 +1,7 @@
 package net.den3.den3Account.Logic;
 
-import net.den3.den3Account.Entity.AccountEntity;
-import net.den3.den3Account.Entity.ExportAccount;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
-import net.den3.den3Account.Store.AccountStore;
+import net.den3.den3Account.Store.Account.AccountStore;
 import net.den3.den3Account.Store.IStore;
 import net.den3.den3Account.StringChecker;
 

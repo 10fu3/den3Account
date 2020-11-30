@@ -1,4 +1,4 @@
-package net.den3.den3Account.Store;
+package net.den3.den3Account.Store.Account;
 
 import net.den3.den3Account.Entity.IAccount;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;

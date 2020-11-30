@@ -1,8 +1,10 @@
-package net.den3.den3Account.Store;
+package net.den3.den3Account.Store.Service;
 
 import net.den3.den3Account.Entity.ServicePermission;
 import net.den3.den3Account.External.IService;
 import net.den3.den3Account.External.Service;
+import net.den3.den3Account.Store.IDBAccess;
+import net.den3.den3Account.Store.IStore;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
