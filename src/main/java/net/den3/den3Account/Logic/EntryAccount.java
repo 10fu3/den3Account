@@ -53,10 +53,11 @@ public class EntryAccount {
     public static String addQueueDBRegister(TemporaryAccountEntity tae, IStore store){
         //キューでの管理に使う一時的なIDを発行
 
-        //UUIDの-を取り除く
-        String queueID = UUID.randomUUID().toString().replaceAll("-","");
-        //Redisにショートタイムセッションとして格納
-        store.getMemory().putShortSession(queueID,((ExportAccount)((AccountEntity)tae)).getJSON());
+        //UUIDを発行する
+        String queueID = UUID.randomUUID().toString();
+
+
+        //TODO 仮登録テーブルに登録する
         return queueID;
     }
 
