@@ -31,7 +31,7 @@ public interface IAccountStore {
      * @param tempAccount 仮アカウントエンティティ
      * @return 登録されたアカウントエンティティ
      */
-    Optional<IAccount> addAccountInSQL(TemporaryAccountEntity tempAccount);
+    Optional<IAccount> addAccountInSQL(IAccount tempAccount);
     /**
      * アカウントをDBから削除する
      *
