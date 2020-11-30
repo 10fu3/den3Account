@@ -23,7 +23,7 @@ public class ExportAccount extends AccountEntity {
 
     public static ExportAccount convert(AccountEntity ae){
         ExportAccount ea = new ExportAccount();
-        ea.setMailAddress(ae.getMailAddress())
+        ea.setMail(ae.getMail())
           .setIconURL(ae.getIconURL())
           .setUUID(ae.getUUID())
           .setPasswordHash(ae.getPasswordHash())
@@ -50,7 +50,7 @@ public class ExportAccount extends AccountEntity {
                 .append(" , ")
                 .append(buildWord("pass_hash",super.getPasswordHash()))
                 .append(" , ")
-                .append(buildWord("mail",super.getMailAddress()))
+                .append(buildWord("mail",super.getMail()))
                 .append(" , ")
                 .append(buildWord("nick",super.getNickName()))
                 .append("}");
