@@ -4,6 +4,7 @@ import net.den3.den3Account.Entity.IAccount;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
 import net.den3.den3Account.Logic.ParseJSON;
 import net.den3.den3Account.Store.AccountStore;
+import net.den3.den3Account.Store.IAccountStore;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -37,14 +38,14 @@ public class CommandAccountCURD implements ICommand{
             String temp;
             System.out.println("メールアドレスを入力してください");
             temp = CommandExecutor.SINGLE.scan.nextLine();
-            e.setMailAddress(temp);
+            e.setMail(temp);
             System.out.println("パスワードを入力してください");
             temp = CommandExecutor.SINGLE.scan.nextLine();
             e.setPasswordHash(getHash(temp).orElse(temp));
             System.out.println("ニックネームを入力してください");
             temp = CommandExecutor.SINGLE.scan.nextLine();
             e.setNickName(temp);
-            if(AccountStore.getInstance().addAccountInSQL(e).isPresent()){
+            if(IAccountStore.getInstance().addAccountInSQL(e).isPresent()){
                 System.out.println("アカウントの作成に成功しました");
             }else{
                 System.out.println("アカウントの作成に失敗しました");
