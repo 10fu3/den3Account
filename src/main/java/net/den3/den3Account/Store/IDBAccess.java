@@ -24,5 +24,5 @@ public interface IDBAccess {
      * @param mission Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
      * @return boolean クロージャのSQLの結果 true→成功 false→失敗
      */
-    boolean controlSQL(Function<Connection,Optional<PreparedStatement>> mission);
+    boolean controlSQL(Function<Connection,Optional<List<PreparedStatement>>> mission);
 }
