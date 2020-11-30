@@ -106,14 +106,19 @@ public class DBAccess implements IDBAccess{
 
     /**
      * 発行したSQLを使ってデータベースを更新する
-     * @param mission Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
+     * @param mission Connectionを引数に持ち戻り値がList<PreparedStatement>>のラムダ式/クロージャ
      * @return boolean クロージャのSQLの結果 true→成功 false→失敗
      */
-    public boolean controlSQL(Function<Connection,Optional<PreparedStatement>> mission){
+    public boolean controlSQL(Function<Connection,Optional<List<PreparedStatement>>> mission){
         try(Connection con = hikari.getConnection()){
             if(mission.apply(con).isPresent()){
-                mission.apply(con).get().executeUpdate();
+                con.setAutoCommit(false);
+                for (int i = 0; i < mission.apply(con).get().size(); i++) {
+                    mission.apply(con).get().get(i).executeUpdate();
+                }
+                con.commit();
                 return true;
+
             }else{
                 return false;
             }
