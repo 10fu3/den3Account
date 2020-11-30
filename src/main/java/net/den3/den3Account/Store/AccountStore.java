@@ -1,27 +1,24 @@
 package net.den3.den3Account.Store;
 
+import net.den3.den3Account.Entity.AccountEntity;
 import net.den3.den3Account.Entity.IAccount;
+import net.den3.den3Account.Entity.Permission;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.List;
-import java.util.Optional;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
+public class AccountStore implements IAccountStore{
 
     private final static AccountStore SINGLE = new AccountStore();
-    private final DBMariaAccessObject rdbmsAccess = new DBMariaAccessObject();
-    private final InMemoryRedis inmemoryAccess = new InMemoryRedis();
+    private final IDBAccess store = IStore.getInstance().getDB();
 
     public static AccountStore getInstance() {
         return SINGLE;
-    }
-
-    public void closeStore(){
-        rdbmsAccess.closeDB();
-        inmemoryAccess.closeDB();
     }
 
     /**
@@ -32,7 +29,28 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      */
     @Override
     public boolean updateAccountInSQL(IAccount account) {
-        return rdbmsAccess.updateAccountInSQL(account);
+        return store.controlSQL((con)->{
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("UPDATE account_repository SET mail=?, pass=?, nick=?, icon=?, last_login_time=?,admin=? WHERE id=?;");
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(1, account.getMail());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(2, account.getPasswordHash());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(3, account.getNickName());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(4, account.getIconURL());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(5, account.getLastLoginTime());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(6, (account.getPermission() == Permission.ADMIN)?"ADMIN":"NORMAL");
+                return Optional.of(Arrays.asList(pS));
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        });
     }
 
     /**
@@ -43,7 +61,37 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      */
     @Override
     public Optional<IAccount> addAccountInSQL(TemporaryAccountEntity tempAccount) {
-        return rdbmsAccess.addAccountInSQL(tempAccount);
+        boolean result = store.controlSQL((con)->{
+            try {
+                //INSET文の発行 uuid mail pass nick icon last_login_timeの順
+                PreparedStatement pS = con.prepareStatement("INSERT INTO account_repository VALUES (?,?,?,?,?,?,?) ;");
+                //
+                pS.setString(1, tempAccount.getUUID());
+                //
+                pS.setString(2, tempAccount.getMail());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(3, tempAccount.getPasswordHash());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(4, tempAccount.getNickName());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(5, tempAccount.getIconURL());
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(6, tempAccount.getLastLoginTime());
+
+                pS.setString(7,(tempAccount.getPermission()== Permission.ADMIN)?"ADMIN":"NORMAL");
+                return Optional.of(Arrays.asList(pS));
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        });
+        //DBへの追加がうまくいくと
+        if(result){
+            return Optional.of(new AccountEntity(tempAccount));
+        }else{
+            //失敗したときはNullを返す
+            return Optional.empty();
+        }
     }
 
     /**
@@ -54,70 +102,18 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      */
     @Override
     public boolean deleteAccountInSQL(IAccount deleteAccount) {
-        return rdbmsAccess.deleteAccountInSQL(deleteAccount);
+        return store.controlSQL((con)->{
+            PreparedStatement statement;
+            try {
+                statement = con.prepareStatement("DELETE FROM account_repository WHERE uuid = ?;");
+                statement.setString(1,deleteAccount.getUUID());
+                return Optional.of(Arrays.asList(statement));
+            }catch (SQLException ignore){
+                return Optional.empty();
+            }
+        });
     }
 
-    @Override
-    public Optional<String> getMemory(String key) {
-        return inmemoryAccess.getMemory(key);
-    }
-
-    @Override
-    public void putMemory(String key, String value) {
-        inmemoryAccess.putMemory(key,value);
-    }
-
-    /**
-     * 30分で消滅するKey value
-     *
-     * @param key   キー
-     * @param value 保存した値
-     */
-    @Override
-    public void putShortSession(String key, String value) {
-
-    }
-
-    /**
-     * 1ヶ月で消滅するKey Value
-     *
-     * @param key
-     * @param value
-     */
-    @Override
-    public void putLongSession(String key, String value) {
-
-    }
-
-    /**
-     * キーの存在確認
-     *
-     * @param key
-     * @return true → 存在する /  false → 存在しない
-     */
-    @Override
-    public boolean containsKey(String key) {
-        return false;
-    }
-
-
-    /**
-     * 抽象化データベースへのアクセス
-     * @return 抽象化データベース
-     */
-    @Override
-    public IDBAccess getDB(){
-        return rdbmsAccess;
-    }
-
-    /**
-     * 抽象化インメモリデータベースへのアクセス
-     * @return 抽象化インメモリデータベース
-     */
-    @Override
-    public IInMemoryDB getMemory(){
-        return inmemoryAccess;
-    }
 
     /**
      * データベースに登録されたアカウントをすべて取得する
@@ -125,7 +121,16 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      */
     @Override
     public Optional<List<IAccount>> getAccountsAll() {
-        return rdbmsAccess.getAccountsAll();
+        return getAccountBySQL((con)->{
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository");
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        });
     }
 
     /**
@@ -135,7 +140,18 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      */
     @Override
     public Optional<IAccount> getAccountByMail(String mail) {
-        return rdbmsAccess.getAccountByMail(mail);
+        return getAccountBySQL((con) -> {
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository WHERE mail = ?");
+                //SQL文の1個めの?にmailを代入する
+                pS.setString(1, mail);
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        }).flatMap(i -> i.stream().findAny());
     }
 
     /**
@@ -145,7 +161,19 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      */
     @Override
     public Optional<IAccount> getAccountByUUID(String id) {
-        return rdbmsAccess.getAccountByUUID(id);
+        Optional<List<IAccount>> accountBySQL = getAccountBySQL((con) -> {
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository WHERE uuid = ?");
+                //SQL文の1個めの?にuuidを代入する
+                pS.setString(1, id);
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        });
+        return  accountBySQL.flatMap(i -> i.stream().findAny());
     }
 
     /**
@@ -155,6 +183,15 @@ public class AccountStore implements IStore,IDBAccess,IInMemoryDB{
      */
     @Override
     public Optional<List<IAccount>> getAccountBySQL(Function<Connection, Optional<PreparedStatement>> query) {
-        return rdbmsAccess.getAccountBySQL(query);
+        Optional<List<Map<String, String>>> wrapResultList = store.getLineBySQL(query, "account_repository");
+        return wrapResultList.map(maps -> maps.stream().map(m -> new AccountEntity()
+                .setUUID(m.get("uuid"))
+                .setMail(m.get("mail"))
+                .setPasswordHash("pass")
+                .setNickName("nick")
+                .setIconURL("icon")
+                .setLastLogin("last_login_time")
+                .setPermission("ADMIN".equalsIgnoreCase(m.get("permission")) ? Permission.ADMIN : Permission.NORMAL))
+                .collect(Collectors.toList()));
     }
 }
