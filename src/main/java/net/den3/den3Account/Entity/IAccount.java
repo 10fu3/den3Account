@@ -4,8 +4,8 @@ import java.util.Date;
 
 public interface IAccount {
     String getUUID();
-    String getMailAddress();
-    IAccount setMailAddress(String mail);
+    String getMail();
+    IAccount setMail(String mail);
     String getPasswordHash();
     IAccount setPasswordHash(String pass);
     String getNickName();
@@ -15,4 +15,6 @@ public interface IAccount {
     String getLastLoginTime();
     IAccount setLastLogin(String time);
     String toString();
+    IAccount setPermission(Permission perm);
+    Permission getPermission();
 }

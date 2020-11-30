@@ -13,27 +13,29 @@ import java.util.UUID;
 
 public class AccountEntity implements IAccount{
 
-    private String Uuid = "";
-    private String LastLogin = "2020/01/01 13:05:15";
-    private String MailAddress = "";
-    private String PasswordHash = "";
-    private String IconURL = "";
-    private String NickName = "";
+    private String uuid = "";
+    private String lastLogin = "2020/01/01 13:05:15";
+    private String mail = "";
+    private String passwordHash = "";
+    private String iconURL = "";
+    private String nickName = "";
+    private Permission permission = Permission.NORMAL;
 
     public AccountEntity(){
-        this.Uuid = UUID.randomUUID().toString();
-        this.LastLogin = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
-        this.IconURL = "https://i.imgur.com/R6tktJ6.jpg";//ただの人
-        this.NickName = "First time";
+        this.uuid = UUID.randomUUID().toString();
+        this.lastLogin = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        this.iconURL = "https://i.imgur.com/R6tktJ6.jpg";//ただの人
+        this.nickName = "First time";
     }
 
     public AccountEntity(IAccount account){
-        this.Uuid = account.getUUID();
-        this.LastLogin = account.getLastLoginTime();
-        this.MailAddress = account.getMailAddress();
-        this.PasswordHash = account.getPasswordHash();
-        this.IconURL = account.getIconURL();
-        this.NickName = getNickName();
+        this.uuid = account.getUUID();
+        this.lastLogin = account.getLastLoginTime();
+        this.mail = account.getMail();
+        this.passwordHash = account.getPasswordHash();
+        this.iconURL = account.getIconURL();
+        this.nickName = account.getNickName();
+        this.permission = account.getPermission();
     }
 
     /**
@@ -41,8 +43,8 @@ public class AccountEntity implements IAccount{
      * @return メールアドレス
      */
     @Override
-    public String getMailAddress() {
-        return this.MailAddress;
+    public String getMail() {
+        return this.mail;
     }
 
     /**
@@ -51,7 +53,7 @@ public class AccountEntity implements IAccount{
      */
     @Override
     public String getPasswordHash() {
-        return this.PasswordHash;
+        return this.passwordHash;
     }
 
     /**
@@ -60,7 +62,7 @@ public class AccountEntity implements IAccount{
      */
     @Override
     public String getNickName() {
-        return this.NickName;
+        return this.nickName;
     }
 
     /**
@@ -69,7 +71,7 @@ public class AccountEntity implements IAccount{
      */
     @Override
     public String getIconURL() {
-        return this.IconURL;
+        return this.iconURL;
     }
 
     /**
@@ -78,7 +80,7 @@ public class AccountEntity implements IAccount{
      */
     @Override
     public String getLastLoginTime() {
-        return this.LastLogin;
+        return this.lastLogin;
     }
 
     /**
@@ -87,7 +89,7 @@ public class AccountEntity implements IAccount{
      */
     @Override
     public String getUUID() {
-        return this.Uuid;
+        return this.uuid;
     }
 
     /**
@@ -111,13 +113,24 @@ public class AccountEntity implements IAccount{
                 .toString();
     }
 
+    @Override
+    public IAccount setPermission(Permission perm) {
+        this.permission = perm;
+        return this;
+    }
+
+    @Override
+    public Permission getPermission() {
+        return this.permission;
+    }
+
     /**
      * アカウントエンティティにUUIDを設定する
      * @param UUID UUID
      * @return アカウントエンティティ
      */
     public AccountEntity setUUID(String UUID) {
-        this.Uuid = UUID;
+        this.uuid = UUID;
         return this;
     }
 
@@ -127,7 +140,7 @@ public class AccountEntity implements IAccount{
      * @return アカウントエンティティ
      */
     public AccountEntity setLastLogin(String lastLogin) {
-        LastLogin = lastLogin;
+        this.lastLogin = lastLogin;
         return this;
     }
 
@@ -136,8 +149,8 @@ public class AccountEntity implements IAccount{
      * @param mail メールアドレス
      * @return アカウントエンティティ
      */
-    public AccountEntity setMailAddress(String mail) {
-        MailAddress = mail;
+    public AccountEntity setMail(String mail) {
+        this.mail = mail;
         return this;
     }
 
@@ -147,7 +160,7 @@ public class AccountEntity implements IAccount{
      * @return アカウントエンティティ
      */
     public AccountEntity setPasswordHash(String pass) {
-        PasswordHash = pass;
+        passwordHash = pass;
         return this;
     }
 
@@ -157,7 +170,7 @@ public class AccountEntity implements IAccount{
      * @return アカウントエンティティ
      */
     public AccountEntity setIconURL(String iconURL) {
-        IconURL = iconURL;
+        this.iconURL = iconURL;
         return this;
     }
 
@@ -167,7 +180,7 @@ public class AccountEntity implements IAccount{
      * @return アカウントエンティティ
      */
     public AccountEntity setNickName(String nickName) {
-        NickName = nickName;
+        this.nickName = nickName;
         return this;
     }
 }
