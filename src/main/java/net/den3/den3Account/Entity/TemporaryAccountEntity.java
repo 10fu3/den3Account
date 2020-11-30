@@ -14,7 +14,7 @@ public class TemporaryAccountEntity extends AccountEntity implements IAccount{
      */
     public static TemporaryAccountEntity create(String mail,String pass){
         String passHash = getHash(pass).orElse("HASH_ERROR");
-        return (TemporaryAccountEntity) new TemporaryAccountEntity().setPasswordHash(passHash).setMailAddress(mail);
+        return (TemporaryAccountEntity) new TemporaryAccountEntity().setPasswordHash(passHash).setMail(mail);
     }
 
     private static Optional<String> getHash(String hash){
@@ -49,7 +49,7 @@ public class TemporaryAccountEntity extends AccountEntity implements IAccount{
         return new AccountEntity()
                 .setIconURL(super.getIconURL())
                 .setLastLogin(super.getLastLoginTime())
-                .setMailAddress(super.getMailAddress())
+                .setMail(super.getMail())
                 .setPasswordHash(super.getPasswordHash())
                 .setUUID(super.getUUID());
     }
