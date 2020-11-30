@@ -1,7 +1,7 @@
 package net.den3.den3Account.Command;
 
 import net.den3.den3Account.Router.URLTask;
-import net.den3.den3Account.Store.AccountStore;
+import net.den3.den3Account.Store.Store;
 
 public class CommandExit implements ICommand{
 
@@ -14,7 +14,7 @@ public class CommandExit implements ICommand{
     public boolean run(String[] option) {
         System.out.println("Shutdown...");
         URLTask.webApp.stop();
-        AccountStore.getInstance().closeStore();
+        Store.getInstance().closeStore();
         return true;
     }
 }
