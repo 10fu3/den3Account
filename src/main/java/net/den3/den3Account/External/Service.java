@@ -1,38 +1,34 @@
 package net.den3.den3Account.External;
 
+import net.den3.den3Account.Entity.ServicePermission;
+
 import java.util.ArrayList;
 import java.util.List;
 
-enum Permission{
-    READ_ID,
-    READ_MAIL
-}
-
-public class ExternalApp implements IApp {
+public class Service implements IService {
     private String AppID = "";
     private String AdminID = "";
     private String AppName = "";
     private String RedirectURL = "";
     private String AppIconURL = "";
     private String AppDescription = "";
-    private List<Permission> UsedPermission = new ArrayList<>();
+    private List<ServicePermission> UsedPermission = new ArrayList<>();
 
     /**
      * 外部連携アプリのIDを返すメソッド
      * @return 外部連携アプリのID
      */
     @Override
-    public String getAppID() {
+    public String getServiceID() {
         return AppID;
     }
 
     /**
-     * @deprecated 設定ページ以外のロジックからはアクセスしてほしくない
      * 外部連携アプリのIDをクラスに割り当てる
      * @param appID
      * @return 外部連携アプリクラスのインスタンス
      */
-    public ExternalApp setAppID(String appID) {
+    public Service setServiceID(String appID) {
         AppID = appID;
         return this;
     }
@@ -47,12 +43,11 @@ public class ExternalApp implements IApp {
     }
 
     /**
-     * @deprecated 設定ページ以外のロジックからはアクセスしてほしくない
      * 外部連携アプリの管理者IDをクラスに設定するメソッド
      * @param adminID
      * @return
      */
-    public ExternalApp setAdminID(String adminID) {
+    public Service setAdminID(String adminID) {
         AdminID = adminID;
         return this;
     }
@@ -62,17 +57,16 @@ public class ExternalApp implements IApp {
      * @return 外部連携アプリの名前
      */
     @Override
-    public String getAppName() {
+    public String getServiceName() {
         return AppName;
     }
 
     /**
-     * @deprecated 設定ページ以外のロジックからはアクセスしてほしくない
      * 外部連携アプリの名前をクラスに設定するメソッド
      * @param appName
      * @return
      */
-    public ExternalApp setAppName(String appName) {
+    public Service setServiceName(String appName) {
         AppName = appName;
         return this;
     }
@@ -87,12 +81,11 @@ public class ExternalApp implements IApp {
     }
 
     /**
-     * @deprecated 設定ページ以外のロジックからはアクセスしてほしくない
      * 認証後にリダイレクトするURLを設定するメソッド
      * @param redirectURL
      * @return
      */
-    public ExternalApp setRedirectURL(String redirectURL) {
+    public Service setRedirectURL(String redirectURL) {
         RedirectURL = redirectURL;
         return this;
     }
@@ -102,17 +95,16 @@ public class ExternalApp implements IApp {
      * @return 外部連携アプリのアイコン(画像)のURL
      */
     @Override
-    public String getAppIconURL() {
+    public String getServiceIconURL() {
         return AppIconURL;
     }
 
     /**
-     * @deprecated 設定ページ以外のロジックからはアクセスしてほしくない
      * 外部連携アプリのアイコン(画像)のURLを設定する
      * @param appIconURL
      * @return 外部連携アプリクラスのインスタンス
      */
-    public ExternalApp setAppIconURL(String appIconURL) {
+    public Service setServiceIconURL(String appIconURL) {
         AppIconURL = appIconURL;
         return this;
     }
@@ -122,17 +114,16 @@ public class ExternalApp implements IApp {
      * @return 外部連携アプリの説明文
      */
     @Override
-    public String getAppDescription() {
+    public String getServiceDescription() {
         return AppDescription;
     }
 
     /**
-     * @deprecated 設定ページ以外のロジックからはアクセスしてほしくない
      * 外部連携アプリの説明文をクラスに設定するメソッド
      * @param appDescription
      * @return 外部連携アプリクラスのインスタンス
      */
-    public ExternalApp setAppDescription(String appDescription) {
+    public Service setServiceDescription(String appDescription) {
         AppDescription = appDescription;
         return this;
     }
@@ -142,17 +133,16 @@ public class ExternalApp implements IApp {
      * @return 使用する権限のリスト
      */
     @Override
-    public List<Permission> getUsedPermission() {
+    public List<ServicePermission> getUsedPermission() {
         return UsedPermission;
     }
 
     /**
-     * @deprecated 設定ページ以外のロジックからはアクセスしてほしくない
      *
-     * @param usedPermission
-     * @return
+     * @param usedPermission 認証されたアカウントに要求する権限
+     * @return 外部連携アプリクラスのインスタンス
      */
-    public ExternalApp setUsedPermission(Permission usedPermission) {
+    public Service setUsedPermission(ServicePermission usedPermission) {
         UsedPermission.add(usedPermission);
         return this;
     }
