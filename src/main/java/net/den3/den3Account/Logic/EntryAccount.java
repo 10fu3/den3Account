@@ -1,8 +1,9 @@
 package net.den3.den3Account.Logic;
 
+import net.den3.den3Account.Entity.IAccount;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
 import net.den3.den3Account.Store.Account.AccountStore;
-import net.den3.den3Account.Store.IStore;
+import net.den3.den3Account.Store.Account.IAccountStore;
 import net.den3.den3Account.StringChecker;
 
 import java.util.UUID;
@@ -18,10 +19,10 @@ public class EntryAccount {
      * @param mail 仮登録申請されたメールアドレス
      * @param pass 仮登録申請されたパスワード
      * @param nickname 仮登録申請されたニックネーム
-     * @param store データストア
+     * @param store アカウントストア
      * @return クライアントに返されるJSON statusが成功/失敗を表し messageがエラーの原因を返す
      */
-    public static String entryFlow(String mail,String pass,String nickname,IStore store){
+    public static String entryFlow(String mail,String pass,String nickname,IAccountStore store){
         //基準に満たない/ルール違反をしているメールアドレス/パスワードか調べる
         CheckAccountResult checkAccountResult = EntryAccount.checkAccount(mail, pass,nickname);
 
@@ -36,7 +37,7 @@ public class EntryAccount {
         //TODO ここに仮登録処理を書く
         TemporaryAccountEntity tempAccount = TemporaryAccountEntity.create(mail, pass);
         //ここで待機させておいて, ここで発行したキーの書かれたメールからアクセスされたリンクをもとに有効化判定をする
-        String tempKey = EntryAccount.addQueueDBRegister(tempAccount,store);
+        String tempKey = EntryAccount.addQueueDBRegister(tempAccount,IAccountStore.getInstance());
         //TODO 登録されたメールアドレスにメールを送信する
 
         return "{ \"status\" : \"SUCCESS\" }";
@@ -45,10 +46,9 @@ public class EntryAccount {
     /**
      * 仮アカウントを発行してキューに追加しておく
      * @param tae 仮アカウントエンティティ
-     * @param store データストア
      * @return 待機用UUID (これを登録されたメールアドレスに送信する)
      */
-    public static String addQueueDBRegister(TemporaryAccountEntity tae, IStore store){
+    public static String addQueueDBRegister(TemporaryAccountEntity tae, IAccountStore store){
         //キューでの管理に使う一時的なIDを発行
 
         //UUIDを発行する
