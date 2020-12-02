@@ -45,14 +45,15 @@ public class ServiceStore implements IServiceStore{
      */
     @Override
     public Optional<List<IService>> getServices() {
-        Optional<List<Map<String, String>>> lineBySQL = store.getLineBySQL((con) -> {
+        List<String> columns = Arrays.asList("uuid","name","admin_id","url","icon","description","read_uuid","read_mail","read_profile","read_last_login_time");
+        Optional<List<Map<String, String>>> lineBySQL = store.getLineBySQL(columns,(con) -> {
             try {
                 return Optional.of(con.prepareStatement("SELECT * FROM service"));
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 return Optional.empty();
             }
-        },"service");
+        });
         return lineBySQL.map(maps -> maps
                 .stream()
                 .map(map -> {
@@ -76,7 +77,8 @@ public class ServiceStore implements IServiceStore{
      */
     @Override
     public Optional<IService> getService(String id) {
-        Optional<List<Map<String, String>>> lineBySQL = store.getLineBySQL((con) -> {
+        List<String> columns = Arrays.asList("name","admin_id","url","icon","description","read_uuid","read_mail","read_profile","read_last_login_time");
+        Optional<List<Map<String, String>>> lineBySQL = store.getLineBySQL(columns,(con) -> {
             try {
                 PreparedStatement pS = con.prepareStatement("SELECT * FROM service where uuid = ?");
                 pS.setString(1,id);
@@ -85,7 +87,7 @@ public class ServiceStore implements IServiceStore{
                 ex.printStackTrace();
                 return Optional.empty();
             }
-        },"service");
+        });
         return lineBySQL.map(maps -> maps
                 .stream()
                 .map(map -> {
