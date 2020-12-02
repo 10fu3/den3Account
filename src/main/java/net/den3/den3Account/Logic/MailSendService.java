@@ -1,6 +1,6 @@
 package net.den3.den3Account.Logic;
 
-import net.den3.den3Account.Entity.IMailEntity;
+import net.den3.den3Account.Entity.Mail.IMailEntity;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;

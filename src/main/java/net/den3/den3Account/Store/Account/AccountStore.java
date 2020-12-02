@@ -1,6 +1,9 @@
 package net.den3.den3Account.Store.Account;
 
 import net.den3.den3Account.Entity.*;
+import net.den3.den3Account.Entity.Account.AccountEntity;
+import net.den3.den3Account.Entity.Account.IAccount;
+import net.den3.den3Account.Entity.Account.ITempAccount;
 import net.den3.den3Account.Store.IDBAccess;
 import net.den3.den3Account.Store.IStore;
 

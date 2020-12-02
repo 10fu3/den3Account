@@ -1,6 +1,6 @@
 package net.den3.den3Account.Store.Account;
 
-import net.den3.den3Account.Entity.ITempAccount;
+import net.den3.den3Account.Entity.Account.ITempAccount;
 
 import java.util.List;
 import java.util.Optional;

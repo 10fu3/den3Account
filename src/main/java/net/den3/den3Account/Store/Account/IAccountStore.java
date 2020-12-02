@@ -1,8 +1,7 @@
 package net.den3.den3Account.Store.Account;
 
-import net.den3.den3Account.Entity.IAccount;
-import net.den3.den3Account.Entity.ITempAccount;
-import net.den3.den3Account.Entity.TemporaryAccountEntity;
+import net.den3.den3Account.Entity.Account.IAccount;
+import net.den3.den3Account.Entity.Account.ITempAccount;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

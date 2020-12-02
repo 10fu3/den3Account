@@ -1,6 +1,6 @@
 package net.den3.den3Account.Logic;
 
-import net.den3.den3Account.External.IService;
+import net.den3.den3Account.Entity.Service.IService;
 import net.den3.den3Account.Store.Service.IServiceStore;
 
 public class EntryService {

@@ -1,8 +1,8 @@
 package net.den3.den3Account.Logic;
 
 import net.den3.den3Account.Config;
-import net.den3.den3Account.Entity.ITempAccount;
-import net.den3.den3Account.Entity.MailEntity;
+import net.den3.den3Account.Entity.Account.ITempAccount;
+import net.den3.den3Account.Entity.Mail.MailEntity;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
 import net.den3.den3Account.Store.Account.AccountStore;
 import net.den3.den3Account.Store.Account.ITemporaryAccountStore;

@@ -1,10 +1,13 @@
 package net.den3.den3Account.Entity;
 
+import net.den3.den3Account.Entity.Account.AccountEntity;
+import net.den3.den3Account.Entity.Account.ITempAccount;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
-public class TemporaryAccountEntity extends AccountEntity implements ITempAccount{
+public class TemporaryAccountEntity extends AccountEntity implements ITempAccount {
 
     private String registeredDate = "";
     private String key = "";

@@ -1,6 +1,6 @@
 package net.den3.den3Account.Logic;
 
-import net.den3.den3Account.Entity.IAccount;
+import net.den3.den3Account.Entity.Account.IAccount;
 
 import java.util.List;
 import java.util.stream.Collectors;
