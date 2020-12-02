@@ -8,6 +8,7 @@ import net.den3.den3Account.Store.Account.IAccountStore;
 import net.den3.den3Account.Store.Account.ITempAccountStore;
 import net.den3.den3Account.StringChecker;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -36,6 +37,11 @@ public class EntryAccount {
             return "{ \"status\" : \"ERROR\" , \"message\" : \"" +checkAccountResult.getString() + "\" }";
         }
 
+        //すでに仮登録されていたら上書きする
+        Optional<ITempAccount> sameAccount = store.getAccountByMail(mail);
+        //ここでDBから削除する
+        sameAccount.ifPresent(account -> store.removeAccountInTemporaryDB(account.getKey()));
+
         //<-- ここまでで基準に満たないアカウント登録はすべて却下されている -->
         //管理に使う一時的なキーを発行
         //UUIDを発行する
@@ -47,6 +53,7 @@ public class EntryAccount {
         if(!store.addAccountInTemporaryDB(tempAccount)){
             return "{ \"status\" : \"ERROR\" , \"message\" : \""+"Internal Error"+ "\" }";
         }
+
         mailService.send(
                 new MailEntity()
                 .setTo(mail)
