@@ -94,6 +94,7 @@ public class DBAccess implements IDBAccess{
         }catch (SQLException ex){
             //SQL文の発行に失敗すると実行される
             ex.printStackTrace();
+            DBAccess.columnCache.remove(tableName);
             return Optional.empty();
         }
         //正常にSQLが発行されたことを保証し
