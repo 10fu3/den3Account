@@ -21,26 +21,17 @@ public class ServiceStore implements IServiceStore{
     public ServiceStore(){
         store.controlSQL((con)->{
             try{
-                List<PreparedStatement> createTables = new ArrayList<>();
-                for(ServicePermission p : ServicePermission.values()){
-                    PreparedStatement s = con.prepareStatement
-                                            ("CREATE TABLE IF NOT EXISTS service_perm_"+p.getName()+
-                                                    "("
-                                             + "uuid VARCHAR(256) PRIMARY KEY)");
-                    createTables.add(s);
-                }
-
-                //テーブルがなかったら作る仕組み
-                createTables.add(con.prepareStatement("CREATE TABLE IF NOT EXISTS service ("
-                        +"uuid VARCHAR(256) PRIMARY KEY,"
-                        +"name VARCHAR(256),"
-                        +"admin_id VARCHAR(256),"
-                        +"url VARCHAR(256),"
-                        +"icon VARCHAR(256),"
-                        +"description VARCHAR(256)"
-                        +")"));
-
-                return Optional.of(createTables);
+                return Optional.of(Collections.singletonList(
+                        //テーブルがなかったら作る仕組み
+                        con.prepareStatement("CREATE TABLE IF NOT EXISTS service ("
+                                +"uuid VARCHAR(256) PRIMARY KEY, "
+                                +"name VARCHAR(256), "
+                                +"admin_id VARCHAR(256), "
+                                +"url VARCHAR(256), "
+                                +"icon VARCHAR(256), "
+                                +"description VARCHAR(256), "
+                                +ServicePermission.names.stream().map(p->p+" VARCHAR(5)").collect(Collectors.joining(","))
+                                +");")));
             }catch (SQLException ex){
                 ex.printStackTrace();
             }
@@ -64,13 +55,17 @@ public class ServiceStore implements IServiceStore{
         },"service");
         return lineBySQL.map(maps -> maps
                 .stream()
-                .map(map -> new Service()
-                        .setServiceID(map.get("uuid"))
-                        .setServiceName(map.get("name"))
-                        .setAdminID(map.get("admin_id"))
-                        .setRedirectURL(map.get("url"))
-                        .setServiceIconURL(map.get("icon"))
-                        .setServiceDescription(map.get("description")))
+                .map(map -> {
+                    Service s = new Service()
+                            .setServiceID(map.get("uuid"))
+                            .setServiceName(map.get("name"))
+                            .setAdminID(map.get("admin_id"))
+                            .setRedirectURL(map.get("url"))
+                            .setServiceIconURL(map.get("icon"))
+                            .setServiceDescription(map.get("description"));
+                    Arrays.stream(ServicePermission.values()).filter(p->"true".equalsIgnoreCase(p.getName())).forEach(s::setUsedPermission);
+                    return s;
+                })
                 .collect(Collectors.toList()));
     }
 
@@ -93,13 +88,17 @@ public class ServiceStore implements IServiceStore{
         },"service");
         return lineBySQL.map(maps -> maps
                 .stream()
-                .map(map -> (IService) new Service()
-                    .setServiceID(map.get("uuid"))
-                    .setServiceName(map.get("name"))
-                    .setAdminID(map.get("admin_id"))
-                    .setRedirectURL(map.get("url"))
-                    .setServiceIconURL(map.get("icon"))
-                    .setServiceDescription(map.get("description")))
+                .map(map -> {
+                    Service s = new Service()
+                            .setServiceID(map.get("uuid"))
+                            .setServiceName(map.get("name"))
+                            .setAdminID(map.get("admin_id"))
+                            .setRedirectURL(map.get("url"))
+                            .setServiceIconURL(map.get("icon"))
+                            .setServiceDescription(map.get("description"));
+                    Arrays.stream(ServicePermission.values()).filter(p->"true".equalsIgnoreCase(p.getName())).forEach(s::setUsedPermission);
+                    return (IService)s;
+                })
                 .collect(Collectors.toList()).stream().findFirst()).flatMap(l->l);
     }
 
@@ -113,7 +112,9 @@ public class ServiceStore implements IServiceStore{
     public boolean updateService(IService service) {
         return store.controlSQL((con)->{
             try {
-                PreparedStatement pS = con.prepareStatement("UPDATE service SET name=?, admin_id=?, url=?, icon=?, description=? WHERE uuid=?;");
+                String sql = "UPDATE service SET name=?, admin_id=?, url=?, icon=?, description=?, ";
+                sql = sql + Arrays.stream(ServicePermission.values()).map(p->p.getName()+"=?").collect(Collectors.joining(","))+" WHERE uuid=?;";
+                PreparedStatement pS = con.prepareStatement(sql);
                 pS.setString(1,service.getServiceName());
                 pS.setString(2,service.getAdminID());
                 pS.setString(3,service.getRedirectURL());
@@ -136,13 +137,6 @@ public class ServiceStore implements IServiceStore{
                 PreparedStatement servicePS = con.prepareStatement("DELETE FROM service WHERE uuid = ?;");
                 servicePS.setString(1,id);
                 sqlRequests.add(servicePS);
-                PreparedStatement permPS;
-                for (int i = 0; (i < ServicePermission.values().length); i++) {
-                    permPS = con.prepareStatement("DELETE FROM service_perm_? WHERE uuid = ?;");
-                    permPS.setString(1,ServicePermission.values()[i].getName());
-                    permPS.setString(2,id);
-                    sqlRequests.add(permPS);
-                }
                 return Optional.of(sqlRequests);
             }catch (SQLException ex){
                 ex.printStackTrace();
@@ -155,9 +149,8 @@ public class ServiceStore implements IServiceStore{
     public boolean addService(IService service) {
         return store.controlSQL((con)->{
             try {
-                List<PreparedStatement> lps = new ArrayList<>();
                 //INSET文の発行
-                PreparedStatement pS = con.prepareStatement("INSERT INTO service VALUES (?,?,?,?,?,?) ;");
+                PreparedStatement pS = con.prepareStatement("INSERT INTO service VALUES (?,?,?,?,?,?,?,?,?,?) ;");
                 //SQL文の個めの?にを代入する
                 pS.setString(1, service.getServiceID());
                 //SQL文の個めの?にを代入する
@@ -170,17 +163,15 @@ public class ServiceStore implements IServiceStore{
                 pS.setString(5, service.getServiceIconURL());
                 //SQL文の個めの?にを代入する
                 pS.setString(6, service.getServiceDescription());
-                lps.add(pS);
-                PreparedStatement permSQL;
-                ServicePermission roopPerm;
-                for (int i = 0; i < service.getUsedPermission().size(); i++) {
-                    roopPerm = service.getUsedPermission().get(i);
-                    permSQL =  con.prepareStatement("INSERT INTO service_perm_"+roopPerm.getName()+" VALUES (?);");
-                    permSQL.setString(1,service.getServiceID());
-                    lps.add(permSQL);
-                }
 
-                return Optional.of(lps);
+                for (int i = 7; i < 11; i++) {
+                    if(service.getUsedPermission().contains(ServicePermission.values()[i-7])){
+                        pS.setString(i,"true");
+                    }else{
+                        pS.setString(i,"false");
+                    }
+                }
+                return Optional.of(Collections.singletonList(pS));
             } catch (SQLException sqlex) {
                 sqlex.printStackTrace();
                 return Optional.empty();
