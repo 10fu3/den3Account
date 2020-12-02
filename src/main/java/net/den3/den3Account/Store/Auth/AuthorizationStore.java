@@ -7,10 +7,7 @@ import net.den3.den3Account.Store.IStore;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AuthorizationStore implements IAuthorizationStore{
@@ -53,7 +50,8 @@ public class AuthorizationStore implements IAuthorizationStore{
     @Override
     public boolean hasTableServiceAccount(IService service) {
         AtomicBoolean b = new AtomicBoolean(true);
-        store.getLineBySQL((con)->{
+        List<String> columns = Collections.singletonList("uuid");
+        store.getLineBySQL(columns,(con)->{
             try{
                 PreparedStatement ps = con.prepareStatement("SELECT * FROM ?");
                 ps.setString(1,"service_"+service.getServiceID());
@@ -62,7 +60,7 @@ public class AuthorizationStore implements IAuthorizationStore{
                 b.set(false);
                 return Optional.empty();
             }
-        },"service_"+service.getServiceID());
+        });
         return b.get();
     }
 
@@ -78,7 +76,8 @@ public class AuthorizationStore implements IAuthorizationStore{
         if(!hasTableServiceAccount(service)){
             return false;
         }
-        Optional<List<Map<String, String>>> results = store.getLineBySQL(con -> {
+        List<String> columns = Collections.singletonList("uuid");
+        Optional<List<Map<String, String>>> results = store.getLineBySQL(columns,con -> {
             try {
                 PreparedStatement ps = con.prepareStatement("SElECT * FROM ? WHERE uuid = ?");
                 ps.setString(1, "service_" + service.getServiceID());
@@ -88,7 +87,7 @@ public class AuthorizationStore implements IAuthorizationStore{
                 ex.printStackTrace();
                 return Optional.empty();
             }
-        }, "service_" + service.getServiceID());
+        });
         //アカウントは一つしか見つからない
         return results.isPresent() && results.get().size() == 1;
     }
