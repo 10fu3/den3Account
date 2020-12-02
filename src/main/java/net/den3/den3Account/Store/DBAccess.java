@@ -78,8 +78,13 @@ public class DBAccess implements IDBAccess{
                     for(String name:columns){
                         keyValue.put(name,sqlResult.getString(name));
                     }
+                    if(keyValue.size() > 0){
+                        resultList.add(keyValue);
+                    }
                 }
-                resultList.add(keyValue);
+            }
+            if(resultList.size() == 0){
+                return Optional.empty();
             }
         }catch (SQLException ex){
             //SQL文の発行に失敗すると実行される
