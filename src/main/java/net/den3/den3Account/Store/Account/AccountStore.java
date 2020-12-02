@@ -1,9 +1,6 @@
 package net.den3.den3Account.Store.Account;
 
-import net.den3.den3Account.Entity.AccountEntity;
-import net.den3.den3Account.Entity.IAccount;
-import net.den3.den3Account.Entity.Permission;
-import net.den3.den3Account.Entity.TemporaryAccountEntity;
+import net.den3.den3Account.Entity.*;
 import net.den3.den3Account.Store.IDBAccess;
 import net.den3.den3Account.Store.IStore;
 
@@ -62,7 +59,7 @@ public class AccountStore implements IAccountStore{
      * @return 登録されたアカウントエンティティ
      */
     @Override
-    public Optional<IAccount> addAccountInSQL(TemporaryAccountEntity tempAccount) {
+    public Optional<IAccount> addAccountInSQL(ITempAccount tempAccount) {
         boolean result = store.controlSQL((con)->{
             try {
                 //INSET文の発行 uuid mail pass nick icon last_login_timeの順
@@ -87,8 +84,8 @@ public class AccountStore implements IAccountStore{
                 return Optional.empty();
             }
         });
-        //DBへの追加がうまくいくと
-        if(result){
+        //DBへの追加がうまくいき,仮登録アカウントストアからも削除が成功すると登録済みのアカウントエンティティを返す
+        if(result && ITemporaryAccountStore.getInstance().removeAccountInTemporaryDB(tempAccount.getKey())){
             return Optional.of(new AccountEntity(tempAccount));
         }else{
             //失敗したときはNullを返す

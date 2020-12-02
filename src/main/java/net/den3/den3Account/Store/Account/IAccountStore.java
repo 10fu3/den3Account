@@ -1,6 +1,7 @@
 package net.den3.den3Account.Store.Account;
 
 import net.den3.den3Account.Entity.IAccount;
+import net.den3.den3Account.Entity.ITempAccount;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
 
 import java.sql.Connection;
@@ -31,7 +32,7 @@ public interface IAccountStore {
      * @param tempAccount 仮アカウントエンティティ
      * @return 登録されたアカウントエンティティ
      */
-    Optional<IAccount> addAccountInSQL(IAccount tempAccount);
+    Optional<IAccount> addAccountInSQL(ITempAccount tempAccount);
     /**
      * アカウントをDBから削除する
      *
