@@ -12,10 +12,40 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ServiceStore implements IServiceStore{
-    private static final ServiceStore SINGLE = new ServiceStore();
     private static final IDBAccess store = IStore.getInstance().getDB();
+    private static final ServiceStore SINGLE = new ServiceStore();
     public static ServiceStore getInstance() {
         return SINGLE;
+    }
+
+    public ServiceStore(){
+        store.controlSQL((con)->{
+            try{
+                List<PreparedStatement> createTables = new ArrayList<>();
+                for(ServicePermission p : ServicePermission.values()){
+                    PreparedStatement s = con.prepareStatement
+                                            ("CREATE TABLE IF NOT EXISTS service_perm_"+p.getName()+
+                                                    "("
+                                             + "uuid VARCHAR(256) PRIMARY KEY)");
+                    createTables.add(s);
+                }
+
+                //テーブルがなかったら作る仕組み
+                createTables.add(con.prepareStatement("CREATE TABLE IF NOT EXISTS service ("
+                        +"uuid VARCHAR(256) PRIMARY KEY,"
+                        +"name VARCHAR(256),"
+                        +"admin_id VARCHAR(256),"
+                        +"url VARCHAR(256),"
+                        +"icon VARCHAR(256),"
+                        +"description VARCHAR(256)"
+                        +")"));
+
+                return Optional.of(createTables);
+            }catch (SQLException ex){
+                ex.printStackTrace();
+            }
+            return null;
+        });
     }
 
     /**
@@ -125,8 +155,9 @@ public class ServiceStore implements IServiceStore{
     public boolean addService(IService service) {
         return store.controlSQL((con)->{
             try {
+                List<PreparedStatement> lps = new ArrayList<>();
                 //INSET文の発行
-                PreparedStatement pS = con.prepareStatement("INSERT INTO service VALUES (?,?,?,?,?,?,?) ;");
+                PreparedStatement pS = con.prepareStatement("INSERT INTO service VALUES (?,?,?,?,?,?) ;");
                 //SQL文の個めの?にを代入する
                 pS.setString(1, service.getServiceID());
                 //SQL文の個めの?にを代入する
@@ -139,16 +170,17 @@ public class ServiceStore implements IServiceStore{
                 pS.setString(5, service.getServiceIconURL());
                 //SQL文の個めの?にを代入する
                 pS.setString(6, service.getServiceDescription());
+                lps.add(pS);
                 PreparedStatement permSQL;
                 ServicePermission roopPerm;
                 for (int i = 0; i < service.getUsedPermission().size(); i++) {
                     roopPerm = service.getUsedPermission().get(i);
-                    permSQL =  con.prepareStatement("INSERT INTO service_perm_? VALUES (?);");
-                    permSQL.setString(1,roopPerm.getName());
-                    permSQL.setString(2,service.getServiceID());
+                    permSQL =  con.prepareStatement("INSERT INTO service_perm_"+roopPerm.getName()+" VALUES (?);");
+                    permSQL.setString(1,service.getServiceID());
+                    lps.add(permSQL);
                 }
 
-                return Optional.of(Arrays.asList(pS));
+                return Optional.of(lps);
             } catch (SQLException sqlex) {
                 sqlex.printStackTrace();
                 return Optional.empty();
