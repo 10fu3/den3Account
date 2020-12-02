@@ -5,3 +5,4 @@ docker-compose.yml
 /target/generated-sources/
 /target/maven-archiver/
 /target/maven-status/
+/src/main/java/net/den3/den3Account/Test/
