@@ -5,6 +5,9 @@ public class Config {
     private String DBAccountName;
     private String DBAccountPassword;
     private Boolean DockerMODE;
+    private String EntryMailAddress;
+    private String EntryMailPassword;
+    private String selfURL;
 
     public static Config get(){
         return config;
@@ -14,6 +17,9 @@ public class Config {
         this.DockerMODE = (System.getenv("D3A_ISDOCKER") != null) && System.getenv("D3A_ISDOCKER").equalsIgnoreCase("DOCKER");
         this.DBAccountName = System.getenv("D3A_DBACCOUNT") != null ? System.getenv("D3A_DBACCOUNT") : "user";
         this.DBAccountPassword = System.getenv("D3A_DBPASSWORD") != null ? System.getenv("D3A_DBPASSWORD") : "password";
+        this.EntryMailAddress = System.getenv("D3A_MAIL_ADD") != null ? System.getenv("D3A_MAIL_ADD") : "";
+        this.EntryMailPassword = System.getenv("D3A_MAIL_PASS") != null ? System.getenv("D3A_MAIL_PASS") : "";
+        this.selfURL = System.getenv("D3A_SELF_URL") != null ? System.getenv("D3A_SELF_URL") : "";
     }
 
     public String getDBAccountName() {
@@ -30,5 +36,32 @@ public class Config {
 
     public String getRedisURL(){
         return this.DockerMODE ? "redis" : "localhost";
+    }
+
+    public String getEntryMailAddress() {
+        return EntryMailAddress;
+    }
+
+    public Config setEntryMailAddress(String entryMailAddress) {
+        EntryMailAddress = entryMailAddress;
+        return this;
+    }
+
+    public String getEntryMailPassword() {
+        return EntryMailPassword;
+    }
+
+    public Config setEntryMailPassword(String entryMailPassword) {
+        EntryMailPassword = entryMailPassword;
+        return this;
+    }
+
+    public String getSelfURL() {
+        return selfURL;
+    }
+
+    public Config setSelfURL(String selfURL) {
+        this.selfURL = selfURL;
+        return this;
     }
 }
