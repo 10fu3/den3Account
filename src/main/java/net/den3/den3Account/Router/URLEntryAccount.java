@@ -23,12 +23,18 @@ public class URLEntryAccount {
         if(containsNeedKey(ctx)){
             ctx.status(400).result("{ 'status' : \"Client Error\" }");
         }
-        //仮登録処理をぶん投げる
-        ctx.status(200).result(
-                EntryAccount
-                        .entryFlow(ctx.formParam("mail"),
+
+        String resultJson = EntryAccount
+                .entryFlow(ctx.formParam("mail"),
                         ctx.formParam("pass"),
                         ctx.formParam("nick"),
-                        ITempAccountStore.getInstance()));
+                        ITempAccountStore.getInstance());
+        if(resultJson.contains("ERROR")){
+            //失敗 403
+            ctx.status(403).result(resultJson);
+        }else{
+            //成功
+            ctx.status(200).result(resultJson);
+        }
     }
 }
