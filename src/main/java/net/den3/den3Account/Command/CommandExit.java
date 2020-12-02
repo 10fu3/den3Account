@@ -13,8 +13,10 @@ public class CommandExit implements ICommand{
     @Override
     public boolean run(String[] option) {
         System.out.println("Shutdown...");
-        URLTask.webApp.stop();
         Store.getInstance().closeStore();
+        if(URLTask.webApp != null){
+            URLTask.webApp.stop();
+        }
         return true;
     }
 }
