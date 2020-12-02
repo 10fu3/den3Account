@@ -4,17 +4,22 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
-public class TemporaryAccountEntity extends AccountEntity implements IAccount{
+public class TemporaryAccountEntity extends AccountEntity implements ITempAccount{
+
+    private String registeredDate = "";
+    private String key = "";
 
     /**
      * 仮アカウントエンティティにメールアドレスとハッシュ化されたパスワードを代入する
      * @param mail メールアドレス
      * @param pass パスワード
+     * @param validDate 仮登録の有効期限
+     * @param key エントリーキー
      * @return TemporaryAccountEntity 仮アカウントエンティティ
      */
-    public static TemporaryAccountEntity create(String mail,String pass){
+    public static ITempAccount create(String mail,String pass,String validDate,String key){
         String passHash = getHash(pass).orElse("HASH_ERROR");
-        return (TemporaryAccountEntity) new TemporaryAccountEntity().setPasswordHash(passHash).setMail(mail);
+        return ((ITempAccount) new TemporaryAccountEntity().setPasswordHash(passHash).setMail(mail)).setRegisteredDate(validDate).setKey(key);
     }
 
     private static Optional<String> getHash(String hash){
@@ -52,5 +57,36 @@ public class TemporaryAccountEntity extends AccountEntity implements IAccount{
                 .setMail(super.getMail())
                 .setPasswordHash(super.getPasswordHash())
                 .setUUID(super.getUUID());
+    }
+
+    /**
+     * 仮登録の有効期限を指定する
+     * @param date 仮登録の有効期限(秒)
+     * @return TemporaryAccountEntity 仮アカウントエンティティ
+     */
+    @Override
+    public ITempAccount setRegisteredDate(String date) {
+        this.registeredDate = date;
+        return this;
+    }
+
+    /**
+     * 仮登録の有効期限を取得する
+     * @return 仮登録の有効期限(秒)
+     */
+    @Override
+    public String getRegisteredDate() {
+        return this.registeredDate;
+    }
+
+    @Override
+    public ITempAccount setKey(String key) {
+        this.key = key;
+        return this;
+    }
+
+    @Override
+    public String getKey() {
+        return this.key;
     }
 }
