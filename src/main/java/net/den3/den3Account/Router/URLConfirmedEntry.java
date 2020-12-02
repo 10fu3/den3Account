@@ -13,21 +13,25 @@ public class URLConfirmedEntry {
         //有効化キーを持つアカウントの情報が仮登録アカウントストアに存在しない場合
         if(!ITempAccountStore.getInstance().containsAccount(key)){
             ctx.redirect("/account/register/invalid");
+            return;
         }
         //有効化キーを持つアカウントの情報が仮登録アカウントストアに存在しない場合その2
         Optional<ITempAccount> tempAccount = ITempAccountStore.getInstance().getAccount(key);
         if(!tempAccount.isPresent()){
             ctx.redirect("/account/register/invalid");
+            return;
         }
         Optional<IAccount> optionalAccount = IAccountStore.getInstance().addAccountInSQL(tempAccount.get());
         if(!optionalAccount.isPresent()){
             ctx.redirect("/account/register/invalid");
+            return;
         }
         //リダイレクトするべき?
         ctx.result("Welcome! "+optionalAccount.get().getNickName());
     }
 
     public static void invalid(io.javalin.http.Context ctx){
-        ctx.result("<h1>エラー</h1> 登録申請は無効化されたか、エラーが発生しています. 管理者までお問い合わせください");
+        ctx.res.setContentType("text/html; charset=utf-8");
+        ctx.result("<h1>エラー</h1><br>登録申請は無効化されたか、エラーが発生しています. 管理者までお問い合わせください");
     }
 }
