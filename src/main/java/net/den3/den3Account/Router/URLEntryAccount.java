@@ -2,6 +2,7 @@ package net.den3.den3Account.Router;
 
 import net.den3.den3Account.Logic.EntryAccount;
 import net.den3.den3Account.Store.Account.IAccountStore;
+import net.den3.den3Account.Store.Account.ITemporaryAccountStore;
 import net.den3.den3Account.Store.IStore;
 
 public class URLEntryAccount {
@@ -30,6 +31,6 @@ public class URLEntryAccount {
                         .entryFlow(ctx.req.getParameter("mail"),
                         ctx.req.getParameter("pass"),
                         ctx.req.getParameter("nick"),
-                        IAccountStore.getInstance()));
+                        ITemporaryAccountStore.getInstance()));
     }
 }
