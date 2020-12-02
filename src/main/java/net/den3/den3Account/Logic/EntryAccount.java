@@ -4,7 +4,7 @@ import net.den3.den3Account.Config;
 import net.den3.den3Account.Entity.Account.ITempAccount;
 import net.den3.den3Account.Entity.Mail.MailEntity;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
-import net.den3.den3Account.Store.Account.AccountStore;
+import net.den3.den3Account.Store.Account.IAccountStore;
 import net.den3.den3Account.Store.Account.ITempAccountStore;
 import net.den3.den3Account.StringChecker;
 
@@ -15,8 +15,6 @@ import java.util.concurrent.TimeUnit;
  * 登録申請処理クラス
  */
 public class EntryAccount {
-    private static final MailSendService mailService = new MailSendService(Config.get().getEntryMailAddress(),Config.get().getEntryMailPassword(),"電子計算機研究会 仮登録案内");
-
     //staticおじさん
 
     /**
@@ -28,6 +26,7 @@ public class EntryAccount {
      * @return クライアントに返されるJSON statusが成功/失敗を表し messageがエラーの原因を返す
      */
     public static String entryFlow(String mail, String pass, String nickname, ITempAccountStore store){
+        MailSendService mailService = new MailSendService(Config.get().getEntryMailAddress(),Config.get().getEntryMailPassword(),"電子計算機研究会 仮登録案内");
         //基準に満たない/ルール違反をしているメールアドレス/パスワードか調べる
         CheckAccountResult checkAccountResult = EntryAccount.checkAccount(mail, pass,nickname);
 
@@ -43,6 +42,7 @@ public class EntryAccount {
         String queueID = UUID.randomUUID().toString();
         //ここに仮登録処理を書く 発行時刻を1970年から秒単位で記述
         ITempAccount tempAccount = TemporaryAccountEntity.create(mail,pass,String.valueOf(TimeUnit.SECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS)),queueID);
+        tempAccount.setNickName(nickname);
         //仮登録テーブルに登録する
         if(!store.addAccountInTemporaryDB(tempAccount)){
             return "{ \"status\" : \"ERROR\" , \"message\" : \""+"Internal Error"+ "\" }";
@@ -51,7 +51,8 @@ public class EntryAccount {
                 new MailEntity()
                 .setTo(mail)
                 .setTitle("[電子計算機研究会] 仮登録申請の確認メール")
-                .setBody("仮登録ありがとうございます. 本登録をするには次のリンクをクリックしてください <br>"+"<a href=\""+Config.get().getSelfURL()+"/entry/"+queueID+"\" title=\"登録完了リンク\">登録完了リンク</a>"),
+                .setBody("仮登録ありがとうございます.<br>本登録をするには本メール到着後1日以内に次のURLにアクセスしてください <br>"+
+                        Config.get().getSelfURL()+"/account/register/goal/"+queueID),
                 ()->{
                     //成功したとき (特に何もしない)
                 },
@@ -78,7 +79,7 @@ public class EntryAccount {
         if(StringChecker.containsNotAllowCharacter(mail) || StringChecker.containsNotAllowCharacter(pass) || StringChecker.containsNotAllowCharacter(nickname)){
             return CheckAccountResult.ERROR_NOT_ALLOW_CHAR;
         }
-        if(AccountStore.getInstance().getAccountByMail(mail).isPresent()){
+        if(IAccountStore.getInstance().containsAccountInSQL(mail)){
             //return "{ \"status\" : \"ERROR\" , \"message\" : \"Already registered e-address\" }";
             return CheckAccountResult.ERROR_SAME;
         }
