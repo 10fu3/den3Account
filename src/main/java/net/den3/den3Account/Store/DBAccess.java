@@ -11,8 +11,6 @@ public class DBAccess implements IDBAccess{
 
     private static DBAccess self = new DBAccess();
 
-    private static Map<String,List<String>> columnCache = new HashMap<>();
-
     private HikariDataSource hikari;
 
     public DBAccess(){
@@ -54,11 +52,12 @@ public class DBAccess implements IDBAccess{
     /**
      * 発行したSQLに合致する行をリストで返す
      * SQLに登録したデータはすべて文字列であるという前提なので数字を含むテーブルの場合は使わないこと
+     * @param columns
      * @param statement Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
      * @return Optional<List<Map<列名,値>>>
      */
     @Override
-    public Optional<List<Map<String,String>>> getLineBySQL(Function<Connection, Optional<PreparedStatement>> statement,String tableName) {
+    public Optional<List<Map<String,String>>> getLineBySQL(List<String> columns, Function<Connection, Optional<PreparedStatement>> statement) {
 
         //結果格納用リスト
         List<Map<String,String>> resultList = new ArrayList<>();
@@ -74,19 +73,10 @@ public class DBAccess implements IDBAccess{
             }
             try (ResultSet sqlResult = sqlGenerateResult.get().executeQuery()){
                 Map<String,String> keyValue = new HashMap<>();
-                if(!DBAccess.columnCache.containsKey(tableName)){
-                    DBAccess.columnCache.put(tableName,new ArrayList<>());
-                    ResultSetMetaData sqlMeta = sqlResult.getMetaData();
-                    for (int i = 0; i < sqlMeta.getColumnCount(); i++) {
-                        DBAccess.columnCache.get(tableName).add(sqlMeta.getColumnName(i));
-                    }
-                }
-                String columnName;
                 //読み込まれていない結果が複数ある限りWhileの中が実行される
                 while (sqlResult.next()){
-                    for(int i = 0;i<DBAccess.columnCache.size();i++){
-                        columnName = DBAccess.columnCache.get(tableName).get(i);
-                        keyValue.put(columnName,sqlResult.getString(columnName));
+                    for(String name:columns){
+                        keyValue.put(name,sqlResult.getString(name));
                     }
                 }
                 resultList.add(keyValue);
@@ -94,7 +84,6 @@ public class DBAccess implements IDBAccess{
         }catch (SQLException ex){
             //SQL文の発行に失敗すると実行される
             ex.printStackTrace();
-            DBAccess.columnCache.remove(tableName);
             return Optional.empty();
         }
         //正常にSQLが発行されたことを保証し

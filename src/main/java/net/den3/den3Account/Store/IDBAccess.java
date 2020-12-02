@@ -18,7 +18,7 @@ public interface IDBAccess {
      * @param statement Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
      * @return Optional<List<Map<列名,値>>>
      */
-    Optional<List<Map<String,String>>> getLineBySQL(Function<Connection, Optional<PreparedStatement>> statement, String tableName);
+    Optional<List<Map<String,String>>> getLineBySQL(List<String> columns, Function<Connection, Optional<PreparedStatement>> statement);
     /**
      * 発行したSQLを使ってデータベースを更新する
      * @param mission Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
