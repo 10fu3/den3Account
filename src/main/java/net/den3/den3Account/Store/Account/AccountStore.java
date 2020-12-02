@@ -106,7 +106,7 @@ public class AccountStore implements IAccountStore{
             try {
                 statement = con.prepareStatement("DELETE FROM account_repository WHERE uuid = ?;");
                 statement.setString(1,deleteAccount.getUUID());
-                return Optional.of(Arrays.asList(statement));
+                return Optional.of(Collections.singletonList(statement));
             }catch (SQLException ignore){
                 return Optional.empty();
             }
