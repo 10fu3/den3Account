@@ -72,9 +72,10 @@ public class DBAccess implements IDBAccess{
                 return Optional.empty();
             }
             try (ResultSet sqlResult = sqlGenerateResult.get().executeQuery()){
-                Map<String,String> keyValue = new HashMap<>();
+                Map<String,String> keyValue;
                 //読み込まれていない結果が複数ある限りWhileの中が実行される
                 while (sqlResult.next()){
+                    keyValue = new HashMap<>();
                     for(String name:columns){
                         keyValue.put(name,sqlResult.getString(name));
                     }
