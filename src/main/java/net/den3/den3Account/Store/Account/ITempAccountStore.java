@@ -20,14 +20,28 @@ public interface ITempAccountStore {
      * @param key 有効化キー
      * @return true->存在する false->存在しない
      */
-    boolean containsAccount(String key);
+    boolean containsAccountByKey(String key);
+
+    /**
+     * データベースに登録されたアカウントの中に指定したメールアドレスを持つアカウントがあるか探す
+     *
+     * @param mail アカウントのメールアドレス
+     * @return true->存在する false->存在しない
+     */
+    boolean containsAccountByMail(String mail);
 
     /**
      * 有効化キーを持つアカウントを返す
      * @param key 有効化キー
      * @return 仮アカウントエンティティ
      */
-    Optional<ITempAccount> getAccount(String key);
+    Optional<ITempAccount> getAccountByKey(String key);
+    /**
+     * 特定のメールアドレスを持つアカウントを返す
+     * @param mail メールアドレス
+     * @return 仮アカウントエンティティ
+     */
+    Optional<ITempAccount> getAccountByMail(String mail);
     /**
      * アカウントを仮登録DBに登録する 1日後に無効化
      *
