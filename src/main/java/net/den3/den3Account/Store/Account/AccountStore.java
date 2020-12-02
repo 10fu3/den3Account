@@ -24,6 +24,28 @@ public class AccountStore implements IAccountStore{
     }
 
     /**
+     * 指定されたメールアドレスを持つアカウントがアカウントストアに登録されているかどうか
+     *
+     * @param mail 調べる対象のメールアドレス
+     * @return true->存在する false->存在しない
+     */
+    @Override
+    public boolean containsAccountInSQL(String mail) {
+        List<String> columns = Arrays.asList("id","mail","pass","nick","icon","last_login_time","admin");
+        Optional<List<Map<String, String>>> optionalList = store.getLineBySQL(columns,(con) -> {
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository WHERE mail = '?';");
+                pS.setString(1,mail);
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                return Optional.empty();
+            }
+        });
+        return optionalList.isPresent() && optionalList.get().size() == 1;
+    }
+
+    /**
      * アカウントの情報を更新する
      *
      * @param account 更新するエンティティ
@@ -185,7 +207,8 @@ public class AccountStore implements IAccountStore{
      */
     @Override
     public Optional<List<IAccount>> getAccountBySQL(Function<Connection, Optional<PreparedStatement>> query) {
-        Optional<List<Map<String, String>>> wrapResultList = store.getLineBySQL(query, "account_repository");
+        List<String> columns = Arrays.asList("uuid","mail","pass","nick","icon","last_login_time","permission");
+        Optional<List<Map<String, String>>> wrapResultList = store.getLineBySQL(columns,query);
         return wrapResultList.map(maps -> maps.stream().map(m -> new AccountEntity()
                 .setUUID(m.get("uuid"))
                 .setMail(m.get("mail"))

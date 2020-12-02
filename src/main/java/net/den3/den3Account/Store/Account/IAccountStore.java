@@ -19,6 +19,13 @@ public interface IAccountStore {
     }
 
     /**
+     * 指定されたメールアドレスを持つアカウントがアカウントストアに登録されているかどうか
+     * @param mail 調べる対象のメールアドレス
+     * @return true->存在する false->存在しない
+     */
+    boolean containsAccountInSQL(String mail);
+
+    /**
      * アカウントの情報を更新する
      *
      * @param account 更新するエンティティ
