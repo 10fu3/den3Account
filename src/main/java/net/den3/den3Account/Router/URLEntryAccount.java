@@ -10,7 +10,7 @@ public class URLEntryAccount {
      * @return 仮登録に必要なパラメーターがある→true ない→false
      */
     public static Boolean containsNeedKey(io.javalin.http.Context ctx){
-        return ctx.req.getParameter("mail") != null ||  ctx.req.getParameter("pass") != null || ctx.req.getParameter("nick") != null;
+        return ctx.formParam("mail") != null ||  ctx.formParam("pass") != null || ctx.formParam("nick") != null;
     }
 
     /**
@@ -26,9 +26,9 @@ public class URLEntryAccount {
         //仮登録処理をぶん投げる
         ctx.status(200).result(
                 EntryAccount
-                        .entryFlow(ctx.req.getParameter("mail"),
-                        ctx.req.getParameter("pass"),
-                        ctx.req.getParameter("nick"),
+                        .entryFlow(ctx.formParam("mail"),
+                        ctx.formParam("pass"),
+                        ctx.formParam("nick"),
                         ITempAccountStore.getInstance()));
     }
 }
