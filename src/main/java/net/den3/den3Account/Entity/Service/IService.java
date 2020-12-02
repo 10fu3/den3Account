@@ -1,4 +1,4 @@
-package net.den3.den3Account.External;
+package net.den3.den3Account.Entity.Service;
 
 import net.den3.den3Account.Entity.ServicePermission;
 
