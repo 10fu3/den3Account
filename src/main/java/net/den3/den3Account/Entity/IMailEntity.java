@@ -1,0 +1,16 @@
+package net.den3.den3Account.Entity;
+
+public interface IMailEntity {
+    static IMailEntity getInstance() {
+        return new MailEntity();
+    }
+
+    IMailEntity setTo(String toAddress);
+    String getTo();
+    IMailEntity setBody(String body);
+    String getBody();
+    IMailEntity setTitle(String title);
+    String getTitle();
+    IMailEntity setName(String name);
+    String getName();
+}
