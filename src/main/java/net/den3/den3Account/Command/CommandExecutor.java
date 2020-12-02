@@ -14,6 +14,7 @@ public class CommandExecutor {
 
         this.registerCommand(new CommandExit());
         this.registerCommand(new CommandAccountCURD());
+        this.registerCommand(new CommandConfig());
 
     }
 
