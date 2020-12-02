@@ -10,12 +10,12 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TemporaryAccountStore implements ITemporaryAccountStore{
+public class TempAccountStore implements ITempAccountStore {
 
-    private final static TemporaryAccountStore SINGLE = new TemporaryAccountStore();
+    private final static TempAccountStore SINGLE = new TempAccountStore();
     private final IDBAccess store = IStore.getInstance().getDB();
 
-    public static TemporaryAccountStore getInstance() {
+    public static TempAccountStore getInstance() {
         return SINGLE;
     }
 

@@ -8,6 +8,7 @@ public class Config {
     private String EntryMailAddress;
     private String EntryMailPassword;
     private String selfURL;
+    private String loginURL;
 
     public static Config get(){
         return config;
@@ -20,6 +21,7 @@ public class Config {
         this.EntryMailAddress = System.getenv("D3A_MAIL_ADD") != null ? System.getenv("D3A_MAIL_ADD") : "";
         this.EntryMailPassword = System.getenv("D3A_MAIL_PASS") != null ? System.getenv("D3A_MAIL_PASS") : "";
         this.selfURL = System.getenv("D3A_SELF_URL") != null ? System.getenv("D3A_SELF_URL") : "";
+        this.loginURL = System.getenv("D3A_LOGIN_URL") != null ? System.getenv("D3A_LOGIN_URL") : "";
     }
 
     public String getDBAccountName() {
@@ -62,6 +64,15 @@ public class Config {
 
     public Config setSelfURL(String selfURL) {
         this.selfURL = selfURL;
+        return this;
+    }
+
+    public String getLoginURL() {
+        return loginURL;
+    }
+
+    public Config setLoginURL(String loginURL) {
+        this.loginURL = loginURL;
         return this;
     }
 }

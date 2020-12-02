@@ -5,13 +5,13 @@ import net.den3.den3Account.Entity.Account.ITempAccount;
 import java.util.List;
 import java.util.Optional;
 
-public interface ITemporaryAccountStore {
+public interface ITempAccountStore {
     /**
      * シングルトンオブジェクトを取得する
      * @return アカウントストア
      */
-    static ITemporaryAccountStore getInstance() {
-        return TemporaryAccountStore.getInstance();
+    static ITempAccountStore getInstance() {
+        return TempAccountStore.getInstance();
     }
 
     /**

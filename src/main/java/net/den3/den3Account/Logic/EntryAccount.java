@@ -5,7 +5,7 @@ import net.den3.den3Account.Entity.Account.ITempAccount;
 import net.den3.den3Account.Entity.Mail.MailEntity;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
 import net.den3.den3Account.Store.Account.AccountStore;
-import net.den3.den3Account.Store.Account.ITemporaryAccountStore;
+import net.den3.den3Account.Store.Account.ITempAccountStore;
 import net.den3.den3Account.StringChecker;
 
 import java.util.UUID;
@@ -27,7 +27,7 @@ public class EntryAccount {
      * @param store アカウントストア
      * @return クライアントに返されるJSON statusが成功/失敗を表し messageがエラーの原因を返す
      */
-    public static String entryFlow(String mail,String pass,String nickname,ITemporaryAccountStore store){
+    public static String entryFlow(String mail, String pass, String nickname, ITempAccountStore store){
         //基準に満たない/ルール違反をしているメールアドレス/パスワードか調べる
         CheckAccountResult checkAccountResult = EntryAccount.checkAccount(mail, pass,nickname);
 

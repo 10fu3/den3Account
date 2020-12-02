@@ -1,5 +1,7 @@
 package net.den3.den3Account.Router;
 
+import net.den3.den3Account.Config;
+
 public class URLTask {
 
     public static io.javalin.Javalin webApp;
@@ -11,9 +13,12 @@ public class URLTask {
             io.javalin.apibuilder.ApiBuilder.path("/api/v1",()->{
                 io.javalin.apibuilder.ApiBuilder.path("/account",()->{
                     io.javalin.apibuilder.ApiBuilder.post("/entry", URLEntryAccount::EntryFlow);
-
-                });;
+                });
             });
+        });
+
+        webApp.get("/account/register/goal/:key",ctx->{
+
         });
 
 

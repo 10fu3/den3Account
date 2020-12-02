@@ -88,7 +88,7 @@ public class AccountStore implements IAccountStore{
             }
         });
         //DBへの追加がうまくいき,仮登録アカウントストアからも削除が成功すると登録済みのアカウントエンティティを返す
-        if(result && ITemporaryAccountStore.getInstance().removeAccountInTemporaryDB(tempAccount.getKey())){
+        if(result && ITempAccountStore.getInstance().removeAccountInTemporaryDB(tempAccount.getKey())){
             return Optional.of(new AccountEntity(tempAccount));
         }else{
             //失敗したときはNullを返す

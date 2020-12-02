@@ -28,6 +28,9 @@ public class CommandConfig implements ICommand{
                 case "mail_pass":
                     Config.get().setEntryMailPassword(option[1]);
                     return true;
+                case "login_url":
+                    Config.get().setLoginURL(option[1]);
+                    return true;
             }
         }
         return false;
