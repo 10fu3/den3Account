@@ -1,17 +1,22 @@
 package net.den3.den3Account.Logic;
 
-import net.den3.den3Account.Entity.IAccount;
+import net.den3.den3Account.Config;
+import net.den3.den3Account.Entity.ITempAccount;
+import net.den3.den3Account.Entity.MailEntity;
 import net.den3.den3Account.Entity.TemporaryAccountEntity;
 import net.den3.den3Account.Store.Account.AccountStore;
-import net.den3.den3Account.Store.Account.IAccountStore;
+import net.den3.den3Account.Store.Account.ITemporaryAccountStore;
 import net.den3.den3Account.StringChecker;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 登録申請処理クラス
  */
 public class EntryAccount {
+    private static final MailSendService mailService = new MailSendService(Config.get().getEntryMailAddress(),Config.get().getEntryMailPassword(),"電子計算機研究会 仮登録案内");
+
     //staticおじさん
 
     /**
@@ -22,7 +27,7 @@ public class EntryAccount {
      * @param store アカウントストア
      * @return クライアントに返されるJSON statusが成功/失敗を表し messageがエラーの原因を返す
      */
-    public static String entryFlow(String mail,String pass,String nickname,IAccountStore store){
+    public static String entryFlow(String mail,String pass,String nickname,ITemporaryAccountStore store){
         //基準に満たない/ルール違反をしているメールアドレス/パスワードか調べる
         CheckAccountResult checkAccountResult = EntryAccount.checkAccount(mail, pass,nickname);
 
@@ -33,30 +38,30 @@ public class EntryAccount {
         }
 
         //<-- ここまでで基準に満たないアカウント登録はすべて却下されている -->
-
-        //TODO ここに仮登録処理を書く
-        TemporaryAccountEntity tempAccount = TemporaryAccountEntity.create(mail, pass);
-        //ここで待機させておいて, ここで発行したキーの書かれたメールからアクセスされたリンクをもとに有効化判定をする
-        String tempKey = EntryAccount.addQueueDBRegister(tempAccount,IAccountStore.getInstance());
-        //TODO 登録されたメールアドレスにメールを送信する
-
-        return "{ \"status\" : \"SUCCESS\" }";
-    }
-
-    /**
-     * 仮アカウントを発行してキューに追加しておく
-     * @param tae 仮アカウントエンティティ
-     * @return 待機用UUID (これを登録されたメールアドレスに送信する)
-     */
-    public static String addQueueDBRegister(TemporaryAccountEntity tae, IAccountStore store){
-        //キューでの管理に使う一時的なIDを発行
-
+        //管理に使う一時的なキーを発行
         //UUIDを発行する
         String queueID = UUID.randomUUID().toString();
+        //ここに仮登録処理を書く 発行時刻を1970年から秒単位で記述
+        ITempAccount tempAccount = TemporaryAccountEntity.create(mail,pass,String.valueOf(TimeUnit.SECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS)),queueID);
+        //仮登録テーブルに登録する
+        if(!store.addAccountInTemporaryDB(tempAccount)){
+            return "{ \"status\" : \"ERROR\" , \"message\" : \""+"Internal Error"+ "\" }";
+        }
+        mailService.send(
+                new MailEntity()
+                .setTo(mail)
+                .setTitle("[電子計算機研究会] 仮登録申請の確認メール")
+                .setBody("仮登録ありがとうございます. 本登録をするには次のリンクをクリックしてください <br>"+"<a href=\""+Config.get().getSelfURL()+"/entry/"+queueID+"\" title=\"登録完了リンク\">登録完了リンク</a>"),
+                ()->{
+                    //成功したとき (特に何もしない)
+                },
+                ()->{
+                    //失敗したとき
+                    store.removeAccountInTemporaryDB(queueID);
+                }
+        );
 
-
-        //TODO 仮登録テーブルに登録する
-        return queueID;
+        return "{ \"status\" : \"SUCCESS\" }";
     }
 
     /**
