@@ -31,18 +31,20 @@ public class AccountStore implements IAccountStore{
      */
     @Override
     public boolean containsAccountInSQL(String mail) {
-        List<String> columns = Arrays.asList("id","mail","pass","nick","icon","last_login_time","admin");
+        List<String> columns = Arrays.asList("uuid","mail","pass","nick","icon","last_login_time","permission");
         Optional<List<Map<String, String>>> optionalList = store.getLineBySQL(columns,(con) -> {
             try {
                 //account_repositoryからmailの一致するものを探してくる
-                PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository WHERE mail = '?';");
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM account_repository WHERE mail = ?;");
                 pS.setString(1,mail);
                 return Optional.of(pS);
             } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
                 return Optional.empty();
             }
         });
-        return optionalList.isPresent() && optionalList.get().size() == 1;
+
+        return optionalList.isPresent() && optionalList.get().size() >= 1;
     }
 
     /**
@@ -56,7 +58,7 @@ public class AccountStore implements IAccountStore{
         return store.controlSQL((con)->{
             try {
                 //account_repositoryからmailの一致するものを探してくる
-                PreparedStatement pS = con.prepareStatement("UPDATE account_repository SET mail=?, pass=?, nick=?, icon=?, last_login_time=?,admin=? WHERE id=?;");
+                PreparedStatement pS = con.prepareStatement("UPDATE account_repository SET mail=?, pass=?, nick=?, icon=?, last_login_time=?,permission=? WHERE uuid=?;");
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(1, account.getMail());
                 //SQL文の1個めの?にmailを代入する
@@ -209,14 +211,17 @@ public class AccountStore implements IAccountStore{
     public Optional<List<IAccount>> getAccountBySQL(Function<Connection, Optional<PreparedStatement>> query) {
         List<String> columns = Arrays.asList("uuid","mail","pass","nick","icon","last_login_time","permission");
         Optional<List<Map<String, String>>> wrapResultList = store.getLineBySQL(columns,query);
-        return wrapResultList.map(maps -> maps.stream().map(m -> new AccountEntity()
+        return wrapResultList.map(maps -> maps.stream().map(m -> {
+            System.out.println("1111");
+            return new AccountEntity()
                 .setUUID(m.get("uuid"))
                 .setMail(m.get("mail"))
                 .setPasswordHash(m.get("pass"))
                 .setNickName(m.get("nick"))
                 .setIconURL(m.get("icon"))
                 .setLastLogin(m.get("last_login_time"))
-                .setPermission("ADMIN".equalsIgnoreCase(m.get("permission")) ? Permission.ADMIN : Permission.NORMAL))
+                .setPermission("ADMIN".equalsIgnoreCase(m.get("permission")) ? Permission.ADMIN : Permission.NORMAL);
+                })
                 .collect(Collectors.toList()));
     }
 }
