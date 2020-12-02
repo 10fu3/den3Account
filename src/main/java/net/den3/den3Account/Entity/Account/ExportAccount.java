@@ -1,4 +1,4 @@
-package net.den3.den3Account.Entity;
+package net.den3.den3Account.Entity.Account;
 
 /**
  * 外部サービスとやりとりするためのアカウントを表すクラス

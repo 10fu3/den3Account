@@ -1,5 +1,6 @@
-package net.den3.den3Account.Entity;
+package net.den3.den3Account.Entity.Account;
 
+import net.den3.den3Account.Entity.Permission;
 import net.den3.den3Account.Logic.ParseJSON;
 
 import java.time.LocalDateTime;

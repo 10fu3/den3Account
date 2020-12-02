@@ -1,6 +1,6 @@
-package net.den3.den3Account.Entity;
+package net.den3.den3Account.Entity.Account;
 
-import java.util.Date;
+import net.den3.den3Account.Entity.Permission;
 
 public interface IAccount {
     String getUUID();
