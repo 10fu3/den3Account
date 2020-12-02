@@ -8,10 +8,10 @@ import java.util.List;
 public class Service implements IService {
     private String ServiceID = "";
     private String AdminID = "";
-    private String AppName = "";
+    private String ServiceName = "";
     private String RedirectURL = "";
-    private String AppIconURL = "";
-    private String AppDescription = "";
+    private String ServiceIconURL = "";
+    private String ServiceDescription = "";
     private List<ServicePermission> UsedPermission = new ArrayList<>();
 
     /**
@@ -58,7 +58,7 @@ public class Service implements IService {
      */
     @Override
     public String getServiceName() {
-        return AppName;
+        return ServiceName;
     }
 
     /**
@@ -67,7 +67,7 @@ public class Service implements IService {
      * @return
      */
     public Service setServiceName(String appName) {
-        AppName = appName;
+        ServiceName = appName;
         return this;
     }
 
@@ -96,7 +96,7 @@ public class Service implements IService {
      */
     @Override
     public String getServiceIconURL() {
-        return AppIconURL;
+        return ServiceIconURL;
     }
 
     /**
@@ -105,7 +105,7 @@ public class Service implements IService {
      * @return 外部連携アプリクラスのインスタンス
      */
     public Service setServiceIconURL(String appIconURL) {
-        AppIconURL = appIconURL;
+        ServiceIconURL = appIconURL;
         return this;
     }
 
@@ -115,7 +115,7 @@ public class Service implements IService {
      */
     @Override
     public String getServiceDescription() {
-        return AppDescription;
+        return ServiceDescription;
     }
 
     /**
@@ -124,7 +124,7 @@ public class Service implements IService {
      * @return 外部連携アプリクラスのインスタンス
      */
     public Service setServiceDescription(String appDescription) {
-        AppDescription = appDescription;
+        ServiceDescription = appDescription;
         return this;
     }
 
