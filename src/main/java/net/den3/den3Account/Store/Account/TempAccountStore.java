@@ -45,7 +45,7 @@ public class TempAccountStore implements ITempAccountStore {
      * @return true->存在する false->存在しない
      */
     @Override
-    public boolean containsAccount(String key) {
+    public boolean containsAccountByKey(String key) {
         Optional<List<Map<String, String>>> optionalList = store.getLineBySQL(Collections.singletonList("active_key"),(con) -> {
             try {
                 //account_repositoryからmailの一致するものを探してくる
@@ -60,17 +60,71 @@ public class TempAccountStore implements ITempAccountStore {
     }
 
     /**
+     * データベースに登録されたアカウントの中に指定したメールアドレスを持つアカウントがあるか探す
+     *
+     * @param mail アカウントのメールアドレス
+     * @return true->存在する false->存在しない
+     */
+    @Override
+    public boolean containsAccountByMail(String mail) {
+        Optional<List<Map<String, String>>> optionalList = store.getLineBySQL(Collections.singletonList("mail"),(con) -> {
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM temp_account_repository WHERE mail= ?;");
+                pS.setString(1,mail);
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                return Optional.empty();
+            }
+        });
+        return optionalList.isPresent() && optionalList.get().size() == 1;
+    }
+
+    /**
+     * 有効化キーを持つアカウントを返す
+     *
+     * @param mail 有効化キー
+     * @return 仮アカウントエンティティ
+     */
+    @Override
+    public Optional<ITempAccount> getAccountByMail(String mail) {
+        List<String> columns = Arrays.asList("active_key","valid_date","mail","pass","nick");
+        Optional<List<Map<String, String>>> optionalList = store.getLineBySQL(columns,(con) -> {
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM temp_account_repository WHERE mail = ?;");
+                pS.setString(1,mail);
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        });
+        if(!optionalList.isPresent()){
+            return Optional.empty();
+        }
+        Map<String, String> map = optionalList.get().stream().findAny().get();
+        ITempAccount a = new TemporaryAccountEntity();
+        a.setKey(map.get("active_key"))
+                .setRegisteredDate(map.get("valid_date"))
+                .setMail(map.get("mail"))
+                .setPasswordHash(map.get("pass"))
+                .setNickName(map.get("nick"));
+        return Optional.of(a);
+    }
+
+    /**
      * 有効化キーを持つアカウントを返す
      *
      * @param key 有効化キー
      * @return 仮アカウントエンティティ
      */
     @Override
-    public Optional<ITempAccount> getAccount(String key) {
+    public Optional<ITempAccount> getAccountByKey(String key) {
         List<String> columns = Arrays.asList("active_key","valid_date","mail","pass","nick");
         Optional<List<Map<String, String>>> optionalList = store.getLineBySQL(columns,(con) -> {
             try {
-                //account_repositoryからmailの一致するものを探してくる
+                //account_repositoryからkeyの一致するものを探してくる
                 PreparedStatement pS = con.prepareStatement("SELECT * FROM temp_account_repository WHERE active_key = ?;");
                 pS.setString(1,key);
                 return Optional.of(pS);
@@ -84,6 +138,7 @@ public class TempAccountStore implements ITempAccountStore {
         }
         Map<String, String> map = optionalList.get().stream().findAny().get();
         ITempAccount a = new TemporaryAccountEntity();
+
         a.setKey(map.get("active_key"))
          .setRegisteredDate(map.get("valid_date"))
          .setMail(map.get("mail"))
