@@ -62,9 +62,11 @@ public class EntryAccount {
                         Config.get().getSelfURL()+"/account/register/goal/"+queueID),
                 ()->{
                     //成功したとき (特に何もしない)
+                    System.out.println("メール送信済み");
                 },
                 ()->{
                     //失敗したとき
+                    System.out.println("メール送信失敗");
                     store.removeAccountInTemporaryDB(queueID);
                 }
         );
