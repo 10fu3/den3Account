@@ -11,16 +11,17 @@ public class URLConfirmedEntry {
     public static void EntryFlow(io.javalin.http.Context ctx){
         String key = ctx.pathParam("key");
         //有効化キーを持つアカウントの情報が仮登録アカウントストアに存在しない場合
-        if(!ITempAccountStore.getInstance().containsAccount(key)){
+        if(!ITempAccountStore.getInstance().containsAccountByKey(key)){
             ctx.redirect("/account/register/invalid");
             return;
         }
         //有効化キーを持つアカウントの情報が仮登録アカウントストアに存在しない場合その2
-        Optional<ITempAccount> tempAccount = ITempAccountStore.getInstance().getAccount(key);
+        Optional<ITempAccount> tempAccount = ITempAccountStore.getInstance().getAccountByKey(key);
         if(!tempAccount.isPresent()){
             ctx.redirect("/account/register/invalid");
             return;
         }
+
         Optional<IAccount> optionalAccount = IAccountStore.getInstance().addAccountInSQL(tempAccount.get());
         if(!optionalAccount.isPresent()){
             ctx.redirect("/account/register/invalid");
