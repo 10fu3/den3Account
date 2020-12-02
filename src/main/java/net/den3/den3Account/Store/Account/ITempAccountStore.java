@@ -15,6 +15,20 @@ public interface ITempAccountStore {
     }
 
     /**
+     * データベースに登録されたアカウントの中に指定した有効化キーを持つアカウントがあるか探す
+     *
+     * @param key 有効化キー
+     * @return true->存在する false->存在しない
+     */
+    boolean containsAccount(String key);
+
+    /**
+     * 有効化キーを持つアカウントを返す
+     * @param key 有効化キー
+     * @return 仮アカウントエンティティ
+     */
+    Optional<ITempAccount> getAccount(String key);
+    /**
      * アカウントを仮登録DBに登録する 1日後に無効化
      *
      * @param tempAccount 仮アカウントエンティティ

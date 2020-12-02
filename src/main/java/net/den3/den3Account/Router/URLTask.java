@@ -1,7 +1,5 @@
 package net.den3.den3Account.Router;
 
-import net.den3.den3Account.Config;
-
 public class URLTask {
 
     public static io.javalin.Javalin webApp;
@@ -17,9 +15,8 @@ public class URLTask {
             });
         });
 
-        webApp.get("/account/register/goal/:key",ctx->{
-
-        });
+        webApp.get("/account/register/goal/:key",URLConfirmedEntry::EntryFlow);
+        webApp.get("/account/register/invalid",URLConfirmedEntry::invalid);
 
 
     }

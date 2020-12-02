@@ -20,6 +20,59 @@ public class TempAccountStore implements ITempAccountStore {
     }
 
     /**
+     * データベースに登録されたアカウントの中に指定した有効化キーを持つアカウントがあるか探す
+     *
+     * @param key 有効化キー
+     * @return true->存在する false->存在しない
+     */
+    @Override
+    public boolean containsAccount(String key) {
+        Optional<List<Map<String, String>>> optionalList = store.getLineBySQL((con) -> {
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM temp_account_repository WHERE key = ?");
+                pS.setString(1,key);
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        },"temp_account_repository");
+        return optionalList.isPresent() && optionalList.get().size() == 1;
+    }
+
+    /**
+     * 有効化キーを持つアカウントを返す
+     *
+     * @param key 有効化キー
+     * @return 仮アカウントエンティティ
+     */
+    @Override
+    public Optional<ITempAccount> getAccount(String key) {
+        Optional<List<Map<String, String>>> optionalList = store.getLineBySQL((con) -> {
+            try {
+                //account_repositoryからmailの一致するものを探してくる
+                PreparedStatement pS = con.prepareStatement("SELECT * FROM temp_account_repository WHERE key = ?");
+                return Optional.of(pS);
+            } catch (SQLException sqlex) {
+                sqlex.printStackTrace();
+                return Optional.empty();
+            }
+        },"temp_account_repository");
+        if(!optionalList.isPresent()){
+            return Optional.empty();
+        }
+        Map<String, String> map = optionalList.get().stream().findAny().get();
+        ITempAccount a = new TemporaryAccountEntity();
+        a.setKey(map.get("key"))
+         .setRegisteredDate(map.get("valid_date"))
+         .setMail(map.get("mail"))
+         .setPasswordHash(map.get("pass"))
+         .setNickName(map.get("nick"));
+        return Optional.of(a);
+    }
+
+    /**
      * アカウントを仮登録DBに登録する 1日後に無効化
      *
      * @param tempAccount 仮アカウントエンティティ
@@ -69,10 +122,9 @@ public class TempAccountStore implements ITempAccountStore {
         return optionalList.map(list-> list.stream().map(map->{
             ITempAccount a = new TemporaryAccountEntity();
             a.setKey(map.get("key"))
-             .setRegisteredDate("valid_date")
-             .setMail("mail")
-             .setPasswordHash("pass")
-             .setNickName("nick");
+             .setRegisteredDate(map.get("valid_date"))
+             .setPasswordHash(map.get("pass"))
+             .setNickName(map.get("nick"));
             return a; }
             ).collect(Collectors.toList()));
     }
