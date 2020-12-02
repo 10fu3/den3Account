@@ -212,10 +212,10 @@ public class AccountStore implements IAccountStore{
         return wrapResultList.map(maps -> maps.stream().map(m -> new AccountEntity()
                 .setUUID(m.get("uuid"))
                 .setMail(m.get("mail"))
-                .setPasswordHash("pass")
-                .setNickName("nick")
-                .setIconURL("icon")
-                .setLastLogin("last_login_time")
+                .setPasswordHash(m.get("pass"))
+                .setNickName(m.get("nick"))
+                .setIconURL(m.get("icon"))
+                .setLastLogin(m.get("last_login_time"))
                 .setPermission("ADMIN".equalsIgnoreCase(m.get("permission")) ? Permission.ADMIN : Permission.NORMAL))
                 .collect(Collectors.toList()));
     }
