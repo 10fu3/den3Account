@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Service implements IService {
-    private String AppID = "";
+    private String ServiceID = "";
     private String AdminID = "";
     private String AppName = "";
     private String RedirectURL = "";
@@ -20,7 +20,7 @@ public class Service implements IService {
      */
     @Override
     public String getServiceID() {
-        return AppID;
+        return ServiceID;
     }
 
     /**
@@ -29,7 +29,7 @@ public class Service implements IService {
      * @return 外部連携アプリクラスのインスタンス
      */
     public Service setServiceID(String appID) {
-        AppID = appID;
+        ServiceID = appID;
         return this;
     }
 
