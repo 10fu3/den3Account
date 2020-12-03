@@ -10,12 +10,12 @@ public class URLTask {
         webApp.routes(()->{
             io.javalin.apibuilder.ApiBuilder.path("/api/v1",()->{
                 io.javalin.apibuilder.ApiBuilder.path("/account",()->{
-                    io.javalin.apibuilder.ApiBuilder.post("/entry", URLEntryAccount::EntryFlow);
+                    io.javalin.apibuilder.ApiBuilder.post("/entry", URLEntryAccount::mainFlow);
                 });
             });
         });
 
-        webApp.get("/account/register/goal/:key",URLConfirmedEntry::EntryFlow);
+        webApp.get("/account/register/goal/:key",URLConfirmedEntry::mainFlow);
         webApp.get("/account/register/invalid",URLConfirmedEntry::invalid);
 
 

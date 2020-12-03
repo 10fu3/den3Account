@@ -26,7 +26,7 @@ public class EntryAccount {
      * @param store アカウントストア
      * @return クライアントに返されるJSON statusが成功/失敗を表し messageがエラーの原因を返す
      */
-    public static String entryFlow(String mail, String pass, String nickname, ITempAccountStore store){
+    public static String mainFlow(String mail, String pass, String nickname, ITempAccountStore store){
         MailSendService mailService = new MailSendService(Config.get().getEntryMailAddress(),Config.get().getEntryMailPassword(),"電子計算機研究会 仮登録案内");
         //基準に満たない/ルール違反をしているメールアドレス/パスワードか調べる
         CheckAccountResult checkAccountResult = EntryAccount.checkAccount(mail, pass,nickname);

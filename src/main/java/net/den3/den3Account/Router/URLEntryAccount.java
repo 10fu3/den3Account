@@ -17,7 +17,7 @@ public class URLEntryAccount {
      * HTTPリクエストを受け取って仮登録をする
      * @param ctx io.javalin.http.Context
      */
-    public static void EntryFlow(io.javalin.http.Context ctx){
+    public static void mainFlow(io.javalin.http.Context ctx){
         ctx.res.setContentType("application/json; charset=UTF-8");
         //そもそもリクエストにmail/passパラメータが含まれてない可能性を排除する
         if(containsNeedKey(ctx)){
@@ -25,7 +25,7 @@ public class URLEntryAccount {
         }
 
         String resultJson = EntryAccount
-                .entryFlow(ctx.formParam("mail"),
+                .mainFlow(ctx.formParam("mail"),
                         ctx.formParam("pass"),
                         ctx.formParam("nick"),
                         ITempAccountStore.getInstance());
