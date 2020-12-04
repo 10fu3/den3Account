@@ -1,4 +1,4 @@
-package net.den3.den3Account.Entity.Account.Logic;
+package net.den3.den3Account.Logic;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;

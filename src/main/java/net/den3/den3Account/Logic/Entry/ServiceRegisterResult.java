@@ -1,4 +1,4 @@
-package net.den3.den3Account.Entity.Account.Logic.Entry;
+package net.den3.den3Account.Logic.Entry;
 
 public enum ServiceRegisterResult {
     SUCCESS,
