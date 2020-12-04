@@ -37,7 +37,7 @@ public class ExportAccount extends AccountEntity {
                 .append("{")
                 .append(buildWord("uuid",super.getUUID()))
                 .append(" , ")
-                .append(buildWord("name",super.getNickName()))
+                .append(buildWord("nick",super.getNickName()))
                 .append(" , ")
                 .append(buildWord("icon",super.getIconURL()))
                 .append("}");
