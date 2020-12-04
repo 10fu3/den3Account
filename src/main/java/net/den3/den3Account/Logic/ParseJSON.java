@@ -1,6 +1,7 @@
 package net.den3.den3Account.Logic;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.den3.den3Account.Entity.Account.IAccount;
 
@@ -33,11 +34,11 @@ public class ParseJSON{
                 .append("\"");
     }
 
-    public static Optional<Map<String,Object>> convertToMap(String json){
+    public static Optional<Map<String,String>> convertToMap(String json){
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> map;
+        Map<String, String> map;
         try {
-            map = mapper.readValue(json,Map.class);
+            map = mapper.readValue(json, new TypeReference<Map<String, String>>(){});
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return Optional.empty();

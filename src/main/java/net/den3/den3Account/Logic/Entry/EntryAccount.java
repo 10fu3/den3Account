@@ -24,13 +24,13 @@ public class EntryAccount {
      * @param reqJSON 仮登録申請時に送られてくるJSON
      * @return クライアントに返されるJSON statusが成功/失敗を表し messageがエラーの原因を返す
      */
-    public static String mainFlow(Map<String,Object> reqJSON){
+    public static String mainFlow(Map<String,String> reqJSON){
         //仮アカウントストア
         ITempAccountStore store = ITempAccountStore.getInstance();
         //JSONからメール/パスワード/ニックネームを拾う
-        String mail = String.valueOf(reqJSON.get("mail"));
-        String pass = String.valueOf(reqJSON.get("pass"));
-        String nickname = String.valueOf(reqJSON.get("nick"));
+        String mail =reqJSON.get("mail");
+        String pass = reqJSON.get("pass");
+        String nickname = reqJSON.get("nick");
 
         //メール送信オブジェクト
         MailSendService mailService = new MailSendService(Config.get().getEntryMailAddress(),Config.get().getEntryMailPassword(),"電子計算機研究会 仮登録案内");
