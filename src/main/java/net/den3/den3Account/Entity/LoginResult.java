@@ -15,7 +15,7 @@ public enum LoginResult {
         this.mes = mes;
     }
 
-    public String getMes() {
+    public String getMessage() {
         return mes;
     }
 }
