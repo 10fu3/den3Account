@@ -1,16 +1,19 @@
 package net.den3.den3Account.Router;
 
-import net.den3.den3Account.Logic.EntryAccount;
-import net.den3.den3Account.Store.Account.ITempAccountStore;
+import net.den3.den3Account.Entity.Account.Logic.Entry.EntryAccount;
+import net.den3.den3Account.Entity.Account.Logic.ParseJSON;
+
+import java.util.Map;
+import java.util.Optional;
 
 public class URLEntryAccount {
     /**
      * HTTPリクエストに仮登録に必要なパラメーターの有無を返す
-     * @param ctx io.javalin.http.Context
+     * @param json JSONオブジェクト
      * @return 仮登録に必要なパラメーターがある→true ない→false
      */
-    public static Boolean containsNeedKey(io.javalin.http.Context ctx){
-        return ctx.formParam("mail") != null ||  ctx.formParam("pass") != null || ctx.formParam("nick") != null;
+    public static Boolean containsNeedKey(Map<String,Object> json){
+        return json.containsKey("mail") ||  json.containsKey("pass") || json.containsKey("nick");
     }
 
     /**
@@ -19,16 +22,14 @@ public class URLEntryAccount {
      */
     public static void mainFlow(io.javalin.http.Context ctx){
         ctx.res.setContentType("application/json; charset=UTF-8");
-        //そもそもリクエストにmail/passパラメータが含まれてない可能性を排除する
-        if(containsNeedKey(ctx)){
+        Optional<Map<String,Object>> optionalReqJSON = ParseJSON.convertToMap(ctx.body());
+        //JSONじゃないない何かを送りつけられた場合/そもそもリクエストにmail/passパラメータが含まれてない可能性を排除する
+        if(!optionalReqJSON.isPresent() || !containsNeedKey(optionalReqJSON.get())){
             ctx.status(400).result("{ 'status' : \"Client Error\" }");
+            return;
         }
 
-        String resultJson = EntryAccount
-                .mainFlow(ctx.formParam("mail"),
-                        ctx.formParam("pass"),
-                        ctx.formParam("nick"),
-                        ITempAccountStore.getInstance());
+        String resultJson = EntryAccount.mainFlow(optionalReqJSON.get());
         if(resultJson.contains("ERROR")){
             //失敗 403
             ctx.status(403).result(resultJson);
