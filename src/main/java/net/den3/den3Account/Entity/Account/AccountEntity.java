@@ -140,7 +140,7 @@ public class AccountEntity implements IAccount{
                 .append(" , ")
                 .append(ParseJSON.buildWord("nick",this.getNickName()))
                 .append(" , ")
-                .append(ParseJSON.buildWord("last_login_time",this.getLastLoginTime()))
+                .append(ParseJSON.buildWord("last_login_time",String.valueOf(this.getLastLoginTime())))
                 .append(" }")
                 .toString();
     }
