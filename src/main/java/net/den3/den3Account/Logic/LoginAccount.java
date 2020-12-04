@@ -9,8 +9,16 @@ import java.util.Map;
 import java.util.Optional;
 
 public class LoginAccount {
-    public LoginResult containsStore(Map<String,String> json){
-        String mail = json.get("mail");
+    /**
+     * アカウントの存在確認とパスワード比較をする
+     * @param json 送られてきたJSON メールアドレス/パスワードが含まれている前提
+     * @return LoginResult
+     */
+    public static LoginResult mainFlow(Map<String,String> json){
+        return authenticateAccount(json.get("pass"),containsStore(json.get("mail")));
+    }
+
+    private static LoginResult containsStore(String mail){
         Optional<IAccount> account = IAccountStore.getInstance().getAccountByMail(mail);
         LoginResult result;
         if(account.isPresent()){
