@@ -32,14 +32,13 @@ public class LoginAccount {
 
     /**
      * パスワードが一致するか確認する
-     * @param json 送られてきたJSON メールとパスワードが含まれている前提
+     * @param pass 送られてきたパスワード
      * @param before containsStoreで検査した結果
      * @return LoginResult
      */
-    public LoginResult authenticateAccount(Map<String,String> json, LoginResult before){
+    private static LoginResult authenticateAccount(String pass, LoginResult before){
         LoginResult result = before;
-        String pass = json.get("pass");
-        if(result != LoginResult.SUCCESS || pass == null){
+        if(result != LoginResult.SUCCESS){
             return before;
         }
         IAccount resultAccount = result.account;
