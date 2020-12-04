@@ -1,11 +1,14 @@
 package net.den3.den3Account.Entity.Account;
 
 import net.den3.den3Account.Entity.Permission;
-import net.den3.den3Account.Logic.ParseJSON;
+import net.den3.den3Account.Entity.Account.Logic.ParseJSON;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * データベースに存在するアカウントを表すクラス
@@ -15,7 +18,7 @@ import java.util.UUID;
 public class AccountEntity implements IAccount{
 
     private String uuid = "";
-    private String lastLogin = "2020/01/01 13:05:15";
+    private Long lastLogin = 0L;
     private String mail = "";
     private String passwordHash = "";
     private String iconURL = "";
@@ -24,7 +27,7 @@ public class AccountEntity implements IAccount{
 
     public AccountEntity(){
         this.uuid = UUID.randomUUID().toString();
-        this.lastLogin = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        this.lastLogin = Instant.now().getEpochSecond();
         this.iconURL = "https://i.imgur.com/R6tktJ6.jpg";//ただの人
         this.nickName = "First time";
     }
@@ -37,6 +40,7 @@ public class AccountEntity implements IAccount{
         this.iconURL = account.getIconURL();
         this.nickName = account.getNickName();
         this.permission = account.getPermission();
+        setupGetMetods();
     }
 
     /**
@@ -80,7 +84,7 @@ public class AccountEntity implements IAccount{
      * @return 最終ログイン時刻
      */
     @Override
-    public String getLastLoginTime() {
+    public Long getLastLoginTime() {
         return this.lastLogin;
     }
 
@@ -141,7 +145,7 @@ public class AccountEntity implements IAccount{
      * @return アカウントエンティティ
      */
     public AccountEntity setLastLogin(String lastLogin) {
-        this.lastLogin = lastLogin;
+        this.lastLogin = Long.decode(lastLogin);
         return this;
     }
 
