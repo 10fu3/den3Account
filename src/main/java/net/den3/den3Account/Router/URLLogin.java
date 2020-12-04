@@ -1,6 +1,6 @@
 package net.den3.den3Account.Router;
 
-import net.den3.den3Account.Entity.Account.Logic.ParseJSON;
+import net.den3.den3Account.Logic.ParseJSON;
 
 import java.util.Map;
 import java.util.Optional;
