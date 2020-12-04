@@ -28,7 +28,7 @@ public class ExportAccount extends AccountEntity {
           .setUUID(ae.getUUID())
           .setPasswordHash(ae.getPasswordHash())
           .setNickName(ae.getNickName())
-          .setLastLogin(ae.getLastLoginTime());
+          .setLastLogin(String.valueOf(ae.getLastLoginTime()));
         return ea;
     }
 
