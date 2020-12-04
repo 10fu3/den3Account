@@ -4,6 +4,7 @@ public class URLTask {
 
     public static io.javalin.Javalin webApp;
 
+
     public static void setupRouting(){
         webApp = io.javalin.Javalin.create().start(8080);
 
@@ -11,6 +12,7 @@ public class URLTask {
             io.javalin.apibuilder.ApiBuilder.path("/api/v1",()->{
                 io.javalin.apibuilder.ApiBuilder.path("/account",()->{
                     io.javalin.apibuilder.ApiBuilder.post("/entry", URLEntryAccount::mainFlow);
+                    io.javalin.apibuilder.ApiBuilder.post("/login",URLLogin::mainFlow);
                 });
             });
         });
