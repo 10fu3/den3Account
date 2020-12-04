@@ -6,13 +6,13 @@ import net.den3.den3Account.Logic.ParseJSON;
 import java.util.Map;
 import java.util.Optional;
 
-public class URLEntryAccount {
+class URLEntryAccount {
     /**
      * HTTPリクエストに仮登録に必要なパラメーターの有無を返す
      * @param json JSONオブジェクト
      * @return 仮登録に必要なパラメーターがある→true ない→false
      */
-    public static Boolean containsNeedKey(Map<String,Object> json){
+    private static Boolean containsNeedKey(Map<String,String> json){
         return json.containsKey("mail") ||  json.containsKey("pass") || json.containsKey("nick");
     }
 
@@ -20,9 +20,9 @@ public class URLEntryAccount {
      * HTTPリクエストを受け取って仮登録をする
      * @param ctx io.javalin.http.Context
      */
-    public static void mainFlow(io.javalin.http.Context ctx){
+    static void mainFlow(io.javalin.http.Context ctx){
         ctx.res.setContentType("application/json; charset=UTF-8");
-        Optional<Map<String,Object>> optionalReqJSON = ParseJSON.convertToMap(ctx.body());
+        Optional<Map<String,String>> optionalReqJSON = ParseJSON.convertToMap(ctx.body());
         //JSONじゃないない何かを送りつけられた場合/そもそもリクエストにmail/passパラメータが含まれてない可能性を排除する
         if(!optionalReqJSON.isPresent() || !containsNeedKey(optionalReqJSON.get())){
             ctx.status(400).result("{ 'status' : \"Client Error\" }");

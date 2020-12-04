@@ -7,12 +7,12 @@ import net.den3.den3Account.Store.Account.ITempAccountStore;
 
 import java.util.Optional;
 
-public class URLConfirmedEntry {
+class URLConfirmedEntry {
     /**
      * アカウント有効化リンクを踏むとアクセスされるメソッド
      * @param ctx io.javalin.http.Context
      */
-    public static void mainFlow(io.javalin.http.Context ctx){
+    static void mainFlow(io.javalin.http.Context ctx){
         String key = ctx.pathParam("key");
         //有効化キーを持つアカウントの情報が仮登録アカウントストアに存在しない場合
         if(!ITempAccountStore.getInstance().containsAccountByKey(key)){
@@ -37,7 +37,7 @@ public class URLConfirmedEntry {
         ctx.result("Welcome! "+optionalAccount.get().getNickName());
     }
 
-    public static void invalid(io.javalin.http.Context ctx){
+    static void invalid(io.javalin.http.Context ctx){
         ctx.res.setContentType("text/html; charset=utf-8");
         ctx.result("<h1>エラー</h1><br>登録申請は無効化されたか、エラーが発生しています. 管理者までお問い合わせください");
     }
