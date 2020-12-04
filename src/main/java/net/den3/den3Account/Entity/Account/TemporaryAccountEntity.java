@@ -1,7 +1,4 @@
-package net.den3.den3Account.Entity;
-
-import net.den3.den3Account.Entity.Account.AccountEntity;
-import net.den3.den3Account.Entity.Account.ITempAccount;
+package net.den3.den3Account.Entity.Account;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,7 +6,7 @@ import java.util.Optional;
 
 public class TemporaryAccountEntity extends AccountEntity implements ITempAccount {
 
-    private String registeredDate = "";
+    private Long registeredDate = 0L;
     private String key = "";
 
     /**
@@ -53,10 +50,10 @@ public class TemporaryAccountEntity extends AccountEntity implements ITempAccoun
      * サブクラスを継承しないスーパークラスのインスタンス変数に変換する
      * @return AccountEntity
      */
-    public AccountEntity convert(){
+    public IAccount convert(){
         return new AccountEntity()
                 .setIconURL(super.getIconURL())
-                .setLastLogin(super.getLastLoginTime())
+                .setLastLogin(String.valueOf(super.getLastLoginTime()))
                 .setMail(super.getMail())
                 .setPasswordHash(super.getPasswordHash())
                 .setUUID(super.getUUID());
@@ -64,21 +61,21 @@ public class TemporaryAccountEntity extends AccountEntity implements ITempAccoun
 
     /**
      * 仮登録の有効期限を指定する
-     * @param date 仮登録の有効期限(秒)
+     * @param date 仮登録の有効期限(UNIX時間)
      * @return TemporaryAccountEntity 仮アカウントエンティティ
      */
     @Override
     public ITempAccount setRegisteredDate(String date) {
-        this.registeredDate = date;
+        this.registeredDate = Long.decode(date);
         return this;
     }
 
     /**
      * 仮登録の有効期限を取得する
-     * @return 仮登録の有効期限(秒)
+     * @return 仮登録の有効期限(UNIX時間)
      */
     @Override
-    public String getRegisteredDate() {
+    public Long getRegisteredDate() {
         return this.registeredDate;
     }
 
