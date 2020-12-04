@@ -1,13 +1,14 @@
-package net.den3.den3Account.Logic;
+package net.den3.den3Account.Entity.Account.Logic.Entry;
 
 import net.den3.den3Account.Config;
 import net.den3.den3Account.Entity.Account.ITempAccount;
 import net.den3.den3Account.Entity.Mail.MailEntity;
-import net.den3.den3Account.Entity.TemporaryAccountEntity;
+import net.den3.den3Account.Entity.Account.TemporaryAccountEntity;
 import net.den3.den3Account.Store.Account.IAccountStore;
 import net.den3.den3Account.Store.Account.ITempAccountStore;
 import net.den3.den3Account.StringChecker;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -20,13 +21,18 @@ public class EntryAccount {
 
     /**
      * 仮登録申請されたアカウントの情報をチェックを依頼し,可能なら仮登録処理まで行う
-     * @param mail 仮登録申請されたメールアドレス
-     * @param pass 仮登録申請されたパスワード
-     * @param nickname 仮登録申請されたニックネーム
-     * @param store アカウントストア
+     * @param reqJSON 仮登録申請時に送られてくるJSON
      * @return クライアントに返されるJSON statusが成功/失敗を表し messageがエラーの原因を返す
      */
-    public static String mainFlow(String mail, String pass, String nickname, ITempAccountStore store){
+    public static String mainFlow(Map<String,Object> reqJSON){
+        //仮アカウントストア
+        ITempAccountStore store = ITempAccountStore.getInstance();
+        //JSONからメール/パスワード/ニックネームを拾う
+        String mail = String.valueOf(reqJSON.get("mail"));
+        String pass = String.valueOf(reqJSON.get("pass"));
+        String nickname = String.valueOf(reqJSON.get("nick"));
+
+        //メール送信オブジェクト
         MailSendService mailService = new MailSendService(Config.get().getEntryMailAddress(),Config.get().getEntryMailPassword(),"電子計算機研究会 仮登録案内");
         //基準に満たない/ルール違反をしているメールアドレス/パスワードか調べる
         CheckAccountResult checkAccountResult = EntryAccount.checkAccount(mail, pass,nickname);
@@ -54,6 +60,7 @@ public class EntryAccount {
             return "{ \"status\" : \"ERROR\" , \"message\" : \""+"Internal Error"+ "\" }";
         }
 
+        //非同期でメールは送られる
         mailService.send(
                 new MailEntity()
                 .setTo(mail)
