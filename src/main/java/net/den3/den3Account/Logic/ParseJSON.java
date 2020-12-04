@@ -1,8 +1,13 @@
 package net.den3.den3Account.Logic;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.den3.den3Account.Entity.Account.IAccount;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ParseJSON{
@@ -26,5 +31,31 @@ public class ParseJSON{
                 .append("\"")
                 .append(value)
                 .append("\"");
+    }
+
+    public static Optional<Map<String,Object>> convertToMap(String json){
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map = mapper.readValue(json,Map.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+        if(map.size() == 0){
+            return Optional.empty();
+        }else{
+            return Optional.of(map);
+        }
+    }
+
+    public static Optional<String> convertToJSON(Map<String,Object> map){
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return Optional.of(mapper.writeValueAsString(map));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 }
