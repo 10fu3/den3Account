@@ -1,8 +1,6 @@
 package net.den3.den3Account.Entity.Account;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
+import net.den3.den3Account.Security.PasswordHashGenerator;
 
 public class TemporaryAccountEntity extends AccountEntity implements ITempAccount {
 
@@ -18,32 +16,9 @@ public class TemporaryAccountEntity extends AccountEntity implements ITempAccoun
      * @return TemporaryAccountEntity 仮アカウントエンティティ
      */
     public static ITempAccount create(String mail,String pass,String validDate,String key){
-        String passHash = getHash(pass).orElse("HASH_ERROR");
-        return ((ITempAccount) new TemporaryAccountEntity().setPasswordHash(passHash).setMail(mail)).setRegisteredDate(validDate).setKey(key);
-    }
-
-    private static Optional<String> getHash(String hash){
-        try{
-            // メッセージダイジェストのインスタンスを生成
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-
-            byte[] result = md5.digest(hash.getBytes());
-
-            // 16進数に変換して桁を整える
-            int[] i = new int[result.length];
-            StringBuffer sb = new StringBuffer();
-            for (int j=0; j < result.length; j++){
-                i[j] = (int)result[j] & 0xff;
-                if (i[j]<=15){
-                    sb.append("0");
-                }
-                sb.append(Integer.toHexString(i[j]));
-            }
-            return Optional.of(sb.toString());
-
-        } catch (NoSuchAlgorithmException x){
-            return Optional.empty();
-        }
+        AccountEntity temp = new TemporaryAccountEntity().setMail(mail);
+        temp.setPasswordHash(PasswordHashGenerator.getSafetyPassword(pass,temp.getUUID()));
+        return  ((ITempAccount)temp).setRegisteredDate(validDate).setKey(key);
     }
 
     /**
