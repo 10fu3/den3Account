@@ -68,7 +68,7 @@ public class AccountStore implements IAccountStore{
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(4, account.getIconURL());
                 //SQL文の1個めの?にmailを代入する
-                pS.setString(5, account.getLastLoginTime());
+                pS.setString(5, String.valueOf(account.getLastLoginTime()));
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(6, (account.getPermission() == Permission.ADMIN)?"ADMIN":"NORMAL");
                 return Optional.of(Arrays.asList(pS));
@@ -102,7 +102,7 @@ public class AccountStore implements IAccountStore{
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(5, tempAccount.getIconURL());
                 //SQL文の1個めの?にmailを代入する
-                pS.setString(6, tempAccount.getLastLoginTime());
+                pS.setString(6, String.valueOf(tempAccount.getLastLoginTime()));
 
                 pS.setString(7,(tempAccount.getPermission()== Permission.ADMIN)?"ADMIN":"NORMAL");
                 return Optional.of(Arrays.asList(pS));
