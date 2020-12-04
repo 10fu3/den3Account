@@ -35,7 +35,7 @@ public class ParseJSON{
 
     public static Optional<Map<String,Object>> convertToMap(String json){
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map;
         try {
             map = mapper.readValue(json,Map.class);
         } catch (JsonProcessingException e) {
