@@ -24,12 +24,39 @@ public class AccountEntity implements IAccount{
     private String iconURL = "";
     private String nickName = "";
     private Permission permission = Permission.NORMAL;
+    private final Map<String, Supplier<Map<String,String>>> getMethods = new HashMap<>();
+
+
+    private void setupGetMetods(){
+        getMethods.put("uuid",()->{
+            Map<String,String> map = new HashMap<>();
+            map.put("uuid",this.getUUID());
+            return map;
+        });
+        getMethods.put("last_login",()->{
+            Map<String,String> map = new HashMap<>();
+            map.put("last_login",String.valueOf(this.getLastLoginTime()));
+            return map;
+        });
+        getMethods.put("mail",()->{
+            Map<String,String> map = new HashMap<>();
+            map.put("mail",this.getMail());
+            return map;
+        });
+        getMethods.put("profile",()->{
+            Map<String,String> map = new HashMap<>();
+            map.put("profile",this.getIconURL());
+            map.put("nick",this.getNickName());
+            return map;
+        });
+    }
 
     public AccountEntity(){
         this.uuid = UUID.randomUUID().toString();
         this.lastLogin = Instant.now().getEpochSecond();
         this.iconURL = "https://i.imgur.com/R6tktJ6.jpg";//ただの人
         this.nickName = "First time";
+        setupGetMetods();
     }
 
     public AccountEntity(IAccount account){
@@ -127,6 +154,11 @@ public class AccountEntity implements IAccount{
     @Override
     public Permission getPermission() {
         return this.permission;
+    }
+
+    @Override
+    public Optional<Map<String,String>> get(String field) {
+        return Optional.ofNullable(this.getMethods.get(field).get());
     }
 
     /**
