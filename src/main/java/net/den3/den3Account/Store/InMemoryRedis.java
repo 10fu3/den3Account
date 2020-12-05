@@ -109,4 +109,25 @@ public class InMemoryRedis implements IInMemoryDB{
         });
         return flag.get();
     }
+
+    /**
+     * 指定した値を持つキーを返す
+     * @param key
+     * @return キー
+     */
+    @Override
+    public Optional<String> searchKey(String key) {
+        if(key == null || key.length() == 0){
+            return Optional.empty();
+        }
+        final String[] temp = new String[]{null};
+        doIt((r)->{
+            for (String value : r.keys("*")) {
+                if(key.equalsIgnoreCase(value)){
+                    temp[0] = value;
+                }
+            }
+        });
+        return Optional.ofNullable(temp[0]);
+    }
 }
