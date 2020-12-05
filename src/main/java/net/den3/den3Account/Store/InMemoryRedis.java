@@ -63,30 +63,36 @@ public class InMemoryRedis implements IInMemoryDB{
     }
 
     /**
-     * 30分で消滅するKey value
-     * @param key キー
-     * @param value 保存した値
+     * 時間指定で消滅するKey Value
+     *
+     * @param key     キー
+     * @param value   値
+     * @param seconds 登録してから消滅するまでの時間(秒)
      */
     @Override
-    public void putShortSession(String key, String value) {
+    public void putTimeValue(String key, String value, int seconds) {
         doIt((r)->{
             r.set(key,value);
-            r.expire(key,1800);
+            r.expire(key,seconds);
         });
     }
 
-
     /**
-     * 1ヶ月で消滅するKey Value
-     * @param key
-     * @param value
+     * キーの生存時間を新しく設定する
+     *
+     * @param key     キー
+     * @param seconds 設定してから消滅するまでの時間(秒)
      */
     @Override
-    public void putLongSession(String key, String value) {
+    public boolean updateTime(String key, int seconds) {
+        AtomicBoolean result = new AtomicBoolean(false);
         doIt((r)->{
-            r.set(key,value);
-            r.expire(key,2592000);
+            if(containsKey(key)){
+                r.expire(key,seconds);
+                result.set(true);
+            }
         });
+        return result.get();
     }
 
     /**
