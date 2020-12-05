@@ -6,6 +6,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -41,7 +42,7 @@ public class InMemoryRedis implements IInMemoryDB{
      * @return 保存した値
      */
     @Override
-    public Optional<String> getMemory(String key) {
+    public Optional<String> getValue(String key) {
         final Optional<String>[] a = new Optional[1];
         doIt((r)->{
             a[0] = Optional.ofNullable(r.get(key));
@@ -55,7 +56,7 @@ public class InMemoryRedis implements IInMemoryDB{
      * @param value 保存した値
      */
     @Override
-    public void putMemory(String key, String value) {
+    public void putValue(String key, String value) {
         doIt((r)->{
             r.set(key,value);
         });
