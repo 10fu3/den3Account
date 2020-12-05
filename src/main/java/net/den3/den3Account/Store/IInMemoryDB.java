@@ -18,18 +18,12 @@ public interface IInMemoryDB {
     void putValue(String key,String value);
 
     /**
-     * 30分で消滅するKey value
+     * 時間指定で消滅するKey Value
      * @param key キー
-     * @param value 保存した値
+     * @param value 値
+     * @param seconds 登録してから消滅するまでの時間(秒)
      */
-    void putShortSession(String key,String value);
-
-    /**
-     * 1ヶ月で消滅するKey Value
-     * @param key
-     * @param value
-     */
-    void putLongSession(String key,String value);
+    void putTimeValue(String key,String value,int seconds);
 
     /**
      * キーの存在確認
@@ -37,5 +31,19 @@ public interface IInMemoryDB {
      * @return true → 存在する /  false → 存在しない
      */
     boolean containsKey(String key);
+
+    /**
+     * キーの生存時間を新しく設定する
+     * @param key キー
+     * @param seconds 設定してから消滅するまでの時間(秒)
+     */
+    boolean updateTime(String key,int seconds);
+
+    /**
+     * 指定した値を持つキーを返す
+     * @param key
+     * @return キー
+     */
+    Optional<String> searchKey(String key);
 
 }
