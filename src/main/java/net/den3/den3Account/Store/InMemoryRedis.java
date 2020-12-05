@@ -78,24 +78,6 @@ public class InMemoryRedis implements IInMemoryDB{
     }
 
     /**
-     * キーの生存時間を新しく設定する
-     *
-     * @param key     キー
-     * @param seconds 設定してから消滅するまでの時間(秒)
-     */
-    @Override
-    public boolean updateTime(String key, int seconds) {
-        AtomicBoolean result = new AtomicBoolean(false);
-        doIt((r)->{
-            if(containsKey(key)){
-                r.expire(key,seconds);
-                result.set(true);
-            }
-        });
-        return result.get();
-    }
-
-    /**
      * キーの存在確認
      *
      * @param key

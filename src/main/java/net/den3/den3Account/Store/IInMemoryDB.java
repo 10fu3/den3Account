@@ -33,13 +33,6 @@ public interface IInMemoryDB {
     boolean containsKey(String key);
 
     /**
-     * キーの生存時間を新しく設定する
-     * @param key キー
-     * @param seconds 設定してから消滅するまでの時間(秒)
-     */
-    boolean updateTime(String key,int seconds);
-
-    /**
      * 指定した値を持つキーを返す
      * @param key
      * @return キー
