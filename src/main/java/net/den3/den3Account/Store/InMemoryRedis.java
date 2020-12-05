@@ -5,7 +5,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -112,18 +112,18 @@ public class InMemoryRedis implements IInMemoryDB{
 
     /**
      * 指定した値を持つキーを返す
-     * @param key
+     * @param value
      * @return キー
      */
     @Override
-    public Optional<String> searchKey(String key) {
-        if(key == null || key.length() == 0){
+    public Optional<String> searchKey(String value) {
+        if(value == null || value.length() == 0){
             return Optional.empty();
         }
         final String[] temp = new String[]{null};
         doIt((r)->{
-            for (String value : r.keys("*")) {
-                if(key.equalsIgnoreCase(value)){
+            for (String val : r.keys("*")) {
+                if(val.equalsIgnoreCase(value)){
                     temp[0] = value;
                 }
             }
