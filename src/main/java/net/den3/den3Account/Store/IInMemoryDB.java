@@ -1,5 +1,7 @@
 package net.den3.den3Account.Store;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IInMemoryDB {
@@ -45,5 +47,12 @@ public interface IInMemoryDB {
      * @return true->成功 false->失敗
      */
     boolean delete(String key);
+
+    /**
+     * 登録されたすべてのキーと値をリストにして返す
+     *
+     * @return List<Map < key:String, 値:String>>
+     */
+    List<Map<String, String>> getPairs();
 
 }
