@@ -39,4 +39,11 @@ public interface IInMemoryDB {
      */
     Optional<String> searchKey(String key);
 
+    /**
+     * 指定したキーを削除する
+     * @param key
+     * @return true->成功 false->失敗
+     */
+    boolean delete(String key);
+
 }
