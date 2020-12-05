@@ -92,6 +92,24 @@ public class InMemoryRedis implements IInMemoryDB{
         return flag.get();
     }
 
+
+    /**
+     * 指定したキーを削除する
+     *
+     * @param key
+     * @return true->成功 false->失敗
+     */
+    @Override
+    public boolean delete(String key) {
+        if(!containsKey(key)){
+            return false;
+        }
+        doIt((r)->{
+            r.del(key);
+        });
+        return true;
+    }
+
     /**
      * 指定した値を持つキーを返す
      * @param key
