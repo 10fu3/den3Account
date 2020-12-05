@@ -36,10 +36,10 @@ public interface IInMemoryDB {
 
     /**
      * 指定した値を持つキーを返す
-     * @param key
+     * @param value
      * @return キー
      */
-    Optional<String> searchKey(String key);
+    Optional<String> searchKey(String value);
 
     /**
      * 指定したキーを削除する
