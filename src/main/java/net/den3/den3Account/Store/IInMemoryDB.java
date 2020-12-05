@@ -8,14 +8,14 @@ public interface IInMemoryDB {
      * @param key キー
      * @return 保存した値
      */
-    Optional<String> getMemory(String key);
+    Optional<String> getValue(String key);
 
     /**
      * インメモリデータベース(key:value形式)に値を保存する
      * @param key キー
      * @param value 保存した値
      */
-    void putMemory(String key,String value);
+    void putValue(String key,String value);
 
     /**
      * 30分で消滅するKey value
