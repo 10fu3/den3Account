@@ -21,19 +21,17 @@ public class AuthorizationStore implements IAuthorizationStore{
     /**
      * ストアにサービス認可済みアカウントのテーブルを作る
      *
-     * @param service
      * @return true->成功 false->失敗
      */
     @Override
-    public boolean createTableServiceAccount(IService service) {
-        if(hasTableServiceAccount(service)){
+    public boolean createTableServiceAccount() {
+        if(hasTableServiceAccount()){
             //すでにテーブルが存在している
             return false;
         }
         return store.controlSQL(con->{
             try{
-                PreparedStatement ps = con.prepareStatement("create table ? (uuid VARCHAR(255));");
-                ps.setString(1,"service_"+service.getServiceID());
+                PreparedStatement ps = con.prepareStatement("create table authorization_store ( uuid VARCHAR(255) not null primary key, service_id VARCHAR(255) );");
                 return Optional.of(Collections.singletonList(ps));
             }catch (SQLException ex){
                 return Optional.empty();
@@ -44,17 +42,15 @@ public class AuthorizationStore implements IAuthorizationStore{
     /**
      * ストアがサービス認可済みアカウントのテーブルを持っているか
      *
-     * @param service
      * @return true->持っている false->持っていない
      */
     @Override
-    public boolean hasTableServiceAccount(IService service) {
+    public boolean hasTableServiceAccount() {
         AtomicBoolean b = new AtomicBoolean(true);
         List<String> columns = Collections.singletonList("uuid");
         store.getLineBySQL(columns,(con)->{
             try{
-                PreparedStatement ps = con.prepareStatement("SELECT * FROM ?");
-                ps.setString(1,"service_"+service.getServiceID());
+                PreparedStatement ps = con.prepareStatement("SELECT * FROM authorization_store");
                 return Optional.of(ps);
             }catch (SQLException ex){
                 b.set(false);
@@ -73,15 +69,15 @@ public class AuthorizationStore implements IAuthorizationStore{
      */
     @Override
     public boolean isUserAuthorization(IAccount account, IService service) {
-        if(!hasTableServiceAccount(service)){
+        if(!hasTableServiceAccount()){
             return false;
         }
-        List<String> columns = Collections.singletonList("uuid");
+        List<String> columns = Arrays.asList("uuid","service_name");
         Optional<List<Map<String, String>>> results = store.getLineBySQL(columns,con -> {
             try {
-                PreparedStatement ps = con.prepareStatement("SElECT * FROM ? WHERE uuid = ?");
-                ps.setString(1, "service_" + service.getServiceID());
-                ps.setString(2, account.getUUID());
+                PreparedStatement ps = con.prepareStatement("SElECT * FROM authorization_store WHERE uuid = ? and service_id = ?");
+                ps.setString(1, account.getUUID());
+                ps.setString(2, service.getServiceName());
                 return Optional.of(ps);
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -103,9 +99,9 @@ public class AuthorizationStore implements IAuthorizationStore{
     public boolean addAuthorizationUser(IAccount account, IService service) {
         return store.controlSQL(con->{
             try{
-                PreparedStatement ps = con.prepareStatement("INSERT INTO ? VALUES (?) ;");
-                ps.setString(1,"service_" + service.getServiceID());
-                ps.setString(2,account.getUUID());
+                PreparedStatement ps = con.prepareStatement("INSERT INTO authorization_store VALUES (?,?) ;");
+                ps.setString(1,account.getUUID());
+                ps.setString(2,service.getServiceID());
                 return Optional.of(Collections.singletonList(ps));
             }catch (SQLException ex){
                 ex.printStackTrace();
@@ -125,7 +121,7 @@ public class AuthorizationStore implements IAuthorizationStore{
     public boolean deleteAuthorizationUser(IAccount account, IService service) {
         return store.controlSQL(con->{
             try{
-                PreparedStatement ps = con.prepareStatement("DELETE FROM ? WHERE uuid = ?");
+                PreparedStatement ps = con.prepareStatement("DELETE FROM authorization_store WHERE uuid = ?");
                 ps.setString(1,"service_" + service.getServiceID());
                 ps.setString(2,account.getUUID());
                 return Optional.of(Collections.singletonList(ps));
