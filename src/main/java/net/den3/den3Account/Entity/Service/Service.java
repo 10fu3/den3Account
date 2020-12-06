@@ -159,7 +159,7 @@ public class Service implements IService {
     }
 
     /**
-     *
+     * 外部連携アプリの使用する権限を追加するメソッド
      * @param usedPermission 認証されたアカウントに要求する権限
      * @return 外部連携サービスクラスのインスタンス
      */
