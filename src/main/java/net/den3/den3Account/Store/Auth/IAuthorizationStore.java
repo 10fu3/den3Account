@@ -10,17 +10,15 @@ public interface IAuthorizationStore {
 
     /**
      * ストアにサービス認可済みアカウントのテーブルを作る
-     * @param service
      * @return true->成功 false->失敗
      */
-    boolean createTableServiceAccount(IService service);
+    boolean createTableServiceAccount();
 
     /**
      * ストアがサービス認可済みアカウントのテーブルを持っているか
-     * @param service
      * @return true->持っている false->持っていない
      */
-    boolean hasTableServiceAccount(IService service);
+    boolean hasTableServiceAccount();
 
     /**
      * アカウントがサービスに個人情報の使用を認可しているかどうか
