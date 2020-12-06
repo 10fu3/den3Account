@@ -121,9 +121,29 @@ public class AuthorizationStore implements IAuthorizationStore{
     public boolean deleteAuthorizationUser(IAccount account, IService service) {
         return store.controlSQL(con->{
             try{
+                PreparedStatement ps = con.prepareStatement("DELETE FROM authorization_store WHERE uuid = ? and service_id = ?");
+                ps.setString(1,account.getUUID());
+                ps.setString(2,service.getServiceID());
+                return Optional.of(Collections.singletonList(ps));
+            }catch (SQLException ex){
+                ex.printStackTrace();
+                return Optional.empty();
+            }
+        });
+    }
+
+    /**
+     * アカウントをアプリの個人情報使用認可ストアから削除する
+     *
+     * @param account 削除するアカウント
+     * @return true->成功 false->失敗
+     */
+    @Override
+    public boolean deleteAuthorizationUser(IAccount account) {
+        return store.controlSQL(con->{
+            try{
                 PreparedStatement ps = con.prepareStatement("DELETE FROM authorization_store WHERE uuid = ?");
-                ps.setString(1,"service_" + service.getServiceID());
-                ps.setString(2,account.getUUID());
+                ps.setString(1,account.getUUID());
                 return Optional.of(Collections.singletonList(ps));
             }catch (SQLException ex){
                 ex.printStackTrace();
