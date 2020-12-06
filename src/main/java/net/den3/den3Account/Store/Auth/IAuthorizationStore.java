@@ -46,7 +46,7 @@ public interface IAuthorizationStore {
 
     /**
      * アカウントをアプリの個人情報使用認可ストアから削除する
-     * @param account 追加するアカウント
+     * @param account 削除するアカウント
      * @param service 削除先のサービス
      * @return true->成功 false->失敗
      */
