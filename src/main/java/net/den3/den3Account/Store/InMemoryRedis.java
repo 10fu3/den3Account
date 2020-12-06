@@ -12,14 +12,14 @@ import java.util.function.Consumer;
 public class InMemoryRedis implements IInMemoryDB{
     private JedisPool pool;
 
-    public InMemoryRedis(){
+    InMemoryRedis(){
         pool = new JedisPool(new JedisPoolConfig(), Config.get().getRedisURL(),6379);
     }
 
     /**
      * インメモリデータベースとの接続を解放する
      */
-    public void closeDB(){
+    void closeDB(){
         pool.close();
     }
 
@@ -43,9 +43,7 @@ public class InMemoryRedis implements IInMemoryDB{
     @Override
     public Optional<String> getValue(String key) {
         final Optional<String>[] a = new Optional[1];
-        doIt((r)->{
-            a[0] = Optional.ofNullable(r.get(key));
-        });
+        doIt((r)-> a[0] = Optional.ofNullable(r.get(key)));
         return a[0];
     }
 
@@ -56,9 +54,7 @@ public class InMemoryRedis implements IInMemoryDB{
      */
     @Override
     public void putValue(String key, String value) {
-        doIt((r)->{
-            r.set(key,value);
-        });
+        doIt((r)-> r.set(key,value));
     }
 
     /**
@@ -79,15 +75,13 @@ public class InMemoryRedis implements IInMemoryDB{
     /**
      * キーの存在確認
      *
-     * @param key
+     * @param key キー
      * @return true → 存在する /  false → 存在しない
      */
     @Override
     public boolean containsKey(String key) {
         AtomicReference<Boolean> flag = new AtomicReference<>();
-        doIt((r)->{
-            flag.set(r.exists(key));
-        });
+        doIt((r)-> flag.set(r.exists(key)));
         return flag.get();
     }
 
@@ -103,15 +97,13 @@ public class InMemoryRedis implements IInMemoryDB{
         if(!containsKey(key)){
             return false;
         }
-        doIt((r)->{
-            r.del(key);
-        });
+        doIt((r)-> r.del(key));
         return true;
     }
 
     /**
      * 指定した値を持つキーを返す
-     * @param value
+     * @param value 値
      * @return キー
      */
     @Override
@@ -138,14 +130,14 @@ public class InMemoryRedis implements IInMemoryDB{
     @Override
     public List<Map<String, String>> getPairs(String prefix) {
         final List<Map<String, String>> result = new ArrayList<>();
-        doIt((r)->{
-            r.keys("*").forEach(k->{
+        doIt((r)-> r.keys("*").forEach(k->{
+            if(k.contains(prefix)){
                 Map<String,String> map = new HashMap<>();
                 map.put("key",k.replaceFirst(prefix,""));
                 map.put("value",r.get(k));
                 result.add(map);
-            });
-        });
+            }
+        }));
         return result;
     }
 }
