@@ -89,7 +89,7 @@ public class InMemoryRedis implements IInMemoryDB{
     /**
      * 指定したキーを削除する
      *
-     * @param key
+     * @param key キー
      * @return true->成功 false->失敗
      */
     @Override
