@@ -8,6 +8,23 @@ public interface IService {
     static Service create(){
         return new Service();
     }
+
+    /**
+     * シークレットIDを返す
+     * @return シークレットID
+     */
+    String getSecretID();
+
+    /**
+     * シークレットIDを更新
+     * @return 更新後のシークレットID
+     */
+    String updateSecretID();
+
+    /**
+     * 外部連携サービスのIDを返すメソッド
+     * @return 外部連携サービスのID
+     */
     String getServiceID();
 
     /**
