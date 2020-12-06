@@ -35,6 +35,15 @@ public interface IAuthorizationStore {
      * @return true->成功 false->失敗
      */
     boolean addAuthorizationUser(IAccount account,IService service);
+
+    /**
+     * アカウントをアプリの個人情報使用認可ストアから削除する
+     *
+     * @param account 削除するアカウント
+     * @return true->成功 false->失敗
+     */
+    boolean deleteAuthorizationUser(IAccount account);
+
     /**
      * アカウントをアプリの個人情報使用認可ストアから削除する
      * @param account 追加するアカウント
