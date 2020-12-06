@@ -132,5 +132,22 @@ public class AuthorizationStore implements IAuthorizationStore{
         });
     }
 
-
+    /**
+     * サービスに紐づけられたアカウントをすべて削除する
+     * @param service 対象のサービス
+     * @return true->成功 false->失敗
+     */
+    @Override
+    public boolean deleteAuthorizationUser(IService service) {
+        return store.controlSQL(con->{
+            try{
+                PreparedStatement ps = con.prepareStatement("DELETE FROM authorization_store WHERE service_id = ?");
+                ps.setString(1,service.getServiceID());
+                return Optional.of(Collections.singletonList(ps));
+            }catch (SQLException ex){
+                ex.printStackTrace();
+                return Optional.empty();
+            }
+        });
+    }
 }
