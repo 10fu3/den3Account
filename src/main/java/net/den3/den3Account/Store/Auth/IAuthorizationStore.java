@@ -42,4 +42,11 @@ public interface IAuthorizationStore {
      * @return true->成功 false->失敗
      */
     boolean deleteAuthorizationUser(IAccount account,IService service);
+
+    /**
+     * サービスに紐づけられたアカウントをすべて削除する
+     * @param service 対象のサービス
+     * @return true->成功 false->失敗
+     */
+    boolean deleteAuthorizationUser(IService service);
 }
