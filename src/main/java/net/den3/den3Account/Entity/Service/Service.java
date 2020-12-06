@@ -4,15 +4,36 @@ import net.den3.den3Account.Entity.ServicePermission;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Service implements IService {
     private String ServiceID = "";
+    private String ServiceSecret = UUID.randomUUID().toString();
     private String AdminID = "";
     private String ServiceName = "";
     private String RedirectURL = "";
     private String ServiceIconURL = "";
     private String ServiceDescription = "";
     private List<ServicePermission> UsedPermission = new ArrayList<>();
+
+    /**
+     * シークレットIDを返す
+     * @return シークレットID
+     */
+    @Override
+    public String getSecretID() {
+        return this.ServiceSecret;
+    }
+
+    /**
+     * シークレットIDを更新
+     * @return 更新後のシークレットID
+     */
+    @Override
+    public String updateSecretID() {
+        this.ServiceSecret = UUID.randomUUID().toString();
+        return this.ServiceSecret;
+    }
 
     /**
      * 外部連携アプリのIDを返すメソッド
