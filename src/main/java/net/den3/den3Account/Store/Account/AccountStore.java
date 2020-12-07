@@ -4,6 +4,7 @@ import net.den3.den3Account.Entity.*;
 import net.den3.den3Account.Entity.Account.AccountEntity;
 import net.den3.den3Account.Entity.Account.IAccount;
 import net.den3.den3Account.Entity.Account.ITempAccount;
+import net.den3.den3Account.Store.Auth.IAuthorizationStore;
 import net.den3.den3Account.Store.IDBAccess;
 import net.den3.den3Account.Store.IStore;
 
@@ -129,11 +130,17 @@ public class AccountStore implements IAccountStore{
     @Override
     public boolean deleteAccountInSQL(IAccount deleteAccount) {
         return store.controlSQL((con)->{
+            List<PreparedStatement> psL = new ArrayList<>();
             PreparedStatement statement;
             try {
                 statement = con.prepareStatement("DELETE FROM account_repository WHERE uuid = ?;");
                 statement.setString(1,deleteAccount.getUUID());
-                return Optional.of(Collections.singletonList(statement));
+                psL.add(statement);
+
+                //外部連携サービスの紐づけも外す
+                IAuthorizationStore.getInstance().deleteAuthorizationUser(deleteAccount);
+
+                return Optional.of(psL);
             }catch (SQLException ignore){
                 return Optional.empty();
             }
