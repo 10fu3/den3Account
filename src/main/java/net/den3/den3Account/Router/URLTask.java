@@ -1,5 +1,7 @@
 package net.den3.den3Account.Router;
 
+import net.den3.den3Account.Router.OAuth2.URLAuthorize;
+
 public class URLTask {
 
     public static io.javalin.Javalin webApp;
@@ -14,6 +16,13 @@ public class URLTask {
                     io.javalin.apibuilder.ApiBuilder.post("/entry", URLEntryAccount::mainFlow);
                     io.javalin.apibuilder.ApiBuilder.post("/login",URLLogin::mainFlow);
                 });
+            });
+        });
+
+        webApp.routes(()->{
+            io.javalin.apibuilder.ApiBuilder.path("/oauth2/v1",()->{
+                io.javalin.apibuilder.ApiBuilder.get("/authorize", URLAuthorize::mainFlow);
+
             });
         });
 
