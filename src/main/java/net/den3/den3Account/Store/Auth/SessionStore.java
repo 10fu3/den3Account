@@ -8,10 +8,14 @@ import java.util.Map;
 import java.util.Optional;
 
 public class SessionStore implements ISessionStore{
-    private final ISessionStore SINGLE = new SessionStore();
+    private static final ISessionStore SINGLE = new SessionStore();
     private final IInMemoryDB store = IStore.getInstance().getMemory();
     private static final String PREFIX = "SESSION: ";
 
+
+    public static ISessionStore getInstance(){
+        return SINGLE;
+    }
 
     @Override
     public Optional<String> getSession(String sessionID) {
