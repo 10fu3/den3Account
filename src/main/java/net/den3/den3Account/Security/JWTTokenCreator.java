@@ -24,6 +24,35 @@ public class JWTTokenCreator {
     private static final Long DAY = (60L * 60L * 24L);
 
 
+    /**
+     * 認証時(ログイン時)に利用者のブラウザのCookieに保存されるJWTを組み立てる
+     * @param builder クレーム追加前のJWT
+     * @param account 認証したアカウントのエンティティ
+     * @return 組み立てた終わったJWT
+     */
+    public static JWTCreator.Builder addAuthenticateJWT(JWTCreator.Builder builder,IAccount account){
+        Instant now = Instant.now();
+        //トークンの発行者 この場合はこのden3AccountのURLを使う
+        builder.withClaim("iss",Config.get().getServerID());
+        //どのアカウントかを示す文字列 AccountEntity.UUIDがこれに該当する
+        builder.withClaim("sub",account.getUUID());
+        //どのサービスに向けて発行したJWTなのかを示す文字列 今回は自分自身に向けてなのでConfig.getServerIDが該当する
+        builder.withClaim("aud",Config.get().getServerID());
+        //JWTがいつまで有効なのか UNIXTime,秒で
+        builder.withClaim("exp",now.plusSeconds(DAY).getEpochSecond());
+        //JWTを有効にする時間 この場合は発行している最中から有効 UNIXTime,秒で
+        builder.withClaim("nbf",now.getEpochSecond());
+        //JWTが発行された時間 この場合は発行している最中 UNIXTime,秒で
+        builder.withClaim("iat",now.getEpochSecond());
+        //JWTがオリジナルであることを証明する文字列 被らないものを使う必要がある
+        builder.withClaim("jti", UUID.randomUUID().toString());
+        return builder;
+    }
+
+    public static JWTCreator.Builder addSessionJWT(JWTCreator.Builder builder,String sessionKey){
+        builder.withClaim("session", sessionKey);
+        return builder;
+    }
 
     /**
      * 認可に用いるJWTを組み立てる
