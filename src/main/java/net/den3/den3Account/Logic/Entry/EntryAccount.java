@@ -4,9 +4,11 @@ import net.den3.den3Account.Config;
 import net.den3.den3Account.Entity.Account.ITempAccount;
 import net.den3.den3Account.Entity.Mail.MailEntity;
 import net.den3.den3Account.Entity.Account.TemporaryAccountEntity;
+import net.den3.den3Account.Util.ParseJSON;
 import net.den3.den3Account.Store.Account.IAccountStore;
 import net.den3.den3Account.Store.Account.ITempAccountStore;
 import net.den3.den3Account.StringChecker;
+import net.den3.den3Account.Util.MapBuilder;
 
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +42,11 @@ public class EntryAccount {
         //チェックにひっかかるアカウント情報ならばここで弾く
         if(checkAccountResult != CheckAccountResult.SUCCESS){
             //ここに到達するときは登録処理に失敗している
-            return "{ \"status\" : \"ERROR\" , \"message\" : \"" +checkAccountResult.getString() + "\" }";
+            return ParseJSON
+                    .convertToJSON(MapBuilder.New()
+                    .put("status","ERROR")
+                    .put("message",checkAccountResult.getString())
+                    .build()).orElse("");
         }
 
         //すでに仮登録されていたら上書きする
@@ -57,7 +63,11 @@ public class EntryAccount {
         tempAccount.setNickName(nickname);
         //仮登録テーブルに登録する
         if(!store.addAccountInTemporaryDB(tempAccount)){
-            return "{ \"status\" : \"ERROR\" , \"message\" : \""+"Internal Error"+ "\" }";
+            return ParseJSON
+                   .convertToJSON(MapBuilder.New()
+                   .put("status","ERROR")
+                   .put("message","Internal Error")
+                   .build()).orElse("");
         }
 
         //非同期でメールは送られる
