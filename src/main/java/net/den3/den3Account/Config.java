@@ -12,7 +12,13 @@ public class Config {
     private final static Config config = new Config();
 
     private Map<String,String> store = new HashMap<>();
-    private final Map<String, MethodPair<String,String>> methods = new HashMap<>();
+
+    /**
+     * 起動するたびに異なるサーバーに振られるID
+     */
+    private String ServerID = "";
+
+    //private final Map<String, MethodPair<String,String>> methods = new HashMap<>();
 
     public static Config get(){
         return config;
@@ -37,6 +43,7 @@ public class Config {
         store.put("url" , System.getenv("D3A_SELF_URL") != null ? System.getenv("D3A_SELF_URL") : "");
         store.put("loginURL" , System.getenv("D3A_LOGIN_URL") != null ? System.getenv("D3A_LOGIN_URL") : "");
         store.put("jwt_secret" , System.getenv("D3A_JWT_SECRET") != null ? System.getenv("D3A_JWT_SECRET") : UUID.randomUUID().toString());
+        ServerID = UUID.randomUUID().toString();
     }
 
     public Optional<String> getValue(String field){
@@ -115,5 +122,9 @@ public class Config {
     public Config setJwtSecret(String pass){
         store.put("jwt_secret", pass);
         return this;
+    }
+
+    public String getServerID(){
+        return ServerID;
     }
 }
