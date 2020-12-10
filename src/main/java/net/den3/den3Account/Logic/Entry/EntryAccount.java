@@ -34,8 +34,11 @@ public class EntryAccount {
         String pass = reqJSON.get("pass");
         String nickname = reqJSON.get("nick");
 
+        //送信元の名前
+        String fromName = "電子計算機研究会 仮登録案内";
+
         //メール送信オブジェクト
-        MailSendService mailService = new MailSendService(Config.get().getEntryMailAddress(),Config.get().getEntryMailPassword(),"電子計算機研究会 仮登録案内");
+        MailSendService mailService = new MailSendService(Config.get().getEntryMailAddress(),Config.get().getEntryMailPassword(),fromName);
         //基準に満たない/ルール違反をしているメールアドレス/パスワードか調べる
         CheckAccountResult checkAccountResult = EntryAccount.checkAccount(mail, pass,nickname);
 
