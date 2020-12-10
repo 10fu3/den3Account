@@ -109,16 +109,12 @@ public class JWTTokenCreator {
     }
 
     /**
-     * 組み立てたJWTをConfigの秘密鍵を使ってHMAC256で暗号化
+     * 組み立てたJWTをConfigの秘密鍵を使ってHMAC256で署名する
      * @param builder 組み立てたJWT
-     * @return JWTProvider
+     * @return 署名済みJWT
      */
-    public static JWTProvider signHMAC256(JWTCreator.Builder builder){
-        Generator<IAccount> generator = (user, alg) -> builder.sign(alg);
-
+    public static String signHMAC256(JWTCreator.Builder builder){
         Algorithm algorithm = Algorithm.HMAC256(Config.get().getJwtSecret());
-        JWTVerifier verifier = JWT.require(algorithm).build();
-
-        return new JWTProvider(algorithm, generator, verifier);
+        return builder.sign(algorithm);
     }
 }
