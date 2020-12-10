@@ -102,21 +102,21 @@ public class EntryAccount {
      */
     public static CheckAccountResult checkAccount (String mail, String pass,String nickname){
         if(!StringChecker.isMailAddress(mail)){
-            //return "{ \"status\" : \"ERROR\" , \"message\" : \"Invalid e-address\" }";
+            //Invalid e-address
             return CheckAccountResult.ERROR_MAIL;
         }
         if(StringChecker.containsNotAllowCharacter(mail) || StringChecker.containsNotAllowCharacter(pass) || StringChecker.containsNotAllowCharacter(nickname)){
             return CheckAccountResult.ERROR_NOT_ALLOW_CHAR;
         }
         if(IAccountStore.getInstance().containsAccountInSQL(mail)){
-            //return "{ \"status\" : \"ERROR\" , \"message\" : \"Already registered e-address\" }";
+            //Already registered e-address
             return CheckAccountResult.ERROR_SAME;
         }
         if(pass.length() < 7){
-            //return "{ \"status\" : \"ERROR\" , \"message\" : \"Need 8 characters or more\" }";
+            //Need 8 characters or more
             return CheckAccountResult.ERROR_PASSWORD_LENGTH;
         }
-        //return "{ \"status\" : \"SUCCESS\"}";
+        //SUCCESS
         return CheckAccountResult.SUCCESS;
     }
 
