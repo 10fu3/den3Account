@@ -117,4 +117,22 @@ public class JWTTokenCreator {
         Algorithm algorithm = Algorithm.HMAC256(Config.get().getJwtSecret());
         return builder.sign(algorithm);
     }
+
+    /**
+     * 受け取ったJWTの署名を検証をする
+     * @param token JWT
+     * @return 署名の検証に成功した-> Optional<JWTのペイロードを返す> 署名の検証失敗-> Optional.empty
+     */
+    public static Optional<String> verifyToken(String token){
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(Config.get().getJwtSecret());
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(Config.get().getServerID())
+                    .build(); //Reusable verifier instance
+            DecodedJWT jwt = verifier.verify(token);
+            return Optional.ofNullable(jwt.getPayload());
+        } catch (JWTVerificationException exception){
+            return Optional.empty();
+        }
+    }
 }
