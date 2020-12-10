@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import net.den3.den3Account.Config;
 import net.den3.den3Account.Entity.Account.IAccount;
 import net.den3.den3Account.Entity.Service.IService;
@@ -55,16 +57,16 @@ public class JWTTokenCreator {
     }
 
     /**
-     * 認可に用いるJWTを組み立てる
-     * @param builder 組み立てたJWT
+     * 認可(ログイン機能がほかのサービスに権限を出しているか確認する)に用いるJWTを組み立てる
+     * @param builder クレーム追加前のJWT
      * @param service 発行先のサービスのエンティティ
      * @param account 認証したアカウントのエンティティ
-     * @return 組み立てたJWT
+     * @return 組み立てた終わったJWT
      */
-    public static JWTCreator.Builder addRegisteredClaims(JWTCreator.Builder builder, IService service, IAccount account){
+    public static JWTCreator.Builder addAuthorizationClaims(JWTCreator.Builder builder, IService service, IAccount account){
         Instant now = Instant.now();
         //トークンの発行者 この場合はこのden3AccountのURLを使う
-        builder.withClaim("iss",Config.get().getSelfURL());
+        builder.withClaim("iss",Config.get().getServerID());
         //どのアカウントかを示す文字列 AccountEntity.UUIDがこれに該当する
         builder.withClaim("sub",account.getUUID());
         //どのサービスに向けて発行したJWTなのかを示す文字列 Service.UUIDがこれに該当する
