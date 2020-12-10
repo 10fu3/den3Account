@@ -1,7 +1,8 @@
 package net.den3.den3Account.Router;
 
 import net.den3.den3Account.Logic.Entry.EntryAccount;
-import net.den3.den3Account.Logic.ParseJSON;
+import net.den3.den3Account.Util.MapBuilder;
+import net.den3.den3Account.Util.ParseJSON;
 
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +26,10 @@ class URLEntryAccount {
         Optional<Map<String,String>> optionalReqJSON = ParseJSON.convertToMap(ctx.body());
         //JSONじゃないない何かを送りつけられた場合/そもそもリクエストにmail/passパラメータが含まれてない可能性を排除する
         if(!optionalReqJSON.isPresent() || !containsNeedKey(optionalReqJSON.get())){
-            ctx.status(400).result("{ 'status' : \"Client Error\" }");
+            ctx.status(400).result(
+                    ParseJSON.convertToJSON(MapBuilder.New()
+                    .put("status","Client Error")
+                    .build()).orElse(""));
             return;
         }
 
