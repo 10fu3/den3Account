@@ -1,7 +1,8 @@
 package net.den3.den3Account.Entity.Account;
 
 import net.den3.den3Account.Entity.Permission;
-import net.den3.den3Account.Logic.ParseJSON;
+import net.den3.den3Account.Util.MapBuilder;
+import net.den3.den3Account.Util.ParseJSON;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -130,19 +131,16 @@ public class AccountEntity implements IAccount{
      */
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("{ ")
-                .append(ParseJSON.buildWord("uuid",this.getUUID()))
-                .append(" , ")
-                .append(ParseJSON.buildWord("pass",this.getPasswordHash()))
-                .append(" , ")
-                .append(ParseJSON.buildWord("icon",this.getIconURL()))
-                .append(" , ")
-                .append(ParseJSON.buildWord("nick",this.getNickName()))
-                .append(" , ")
-                .append(ParseJSON.buildWord("last_login_time",String.valueOf(this.getLastLoginTime())))
-                .append(" }")
-                .toString();
+        return ParseJSON
+                .convertToJSON(
+                MapBuilder
+                .New()
+                .put("uuid",this.getUUID())
+                .put("pass",this.getPasswordHash())
+                .put("icon",this.getIconURL())
+                .put("nick",this.getNickName())
+                .put("last_login_time",String.valueOf(this.getLastLoginTime()))
+                .build()).orElse("");
     }
 
     @Override
