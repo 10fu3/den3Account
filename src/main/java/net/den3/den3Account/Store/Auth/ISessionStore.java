@@ -5,6 +5,11 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface ISessionStore {
+
+    static ISessionStore getInstance(){
+        return SessionStore.getInstance();
+    }
+
     /**
      * セッションIDから登録されたアカウントのUUIDを取得する
      * @param sessionID セッションID
