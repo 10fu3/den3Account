@@ -1,6 +1,9 @@
 package net.den3.den3Account.Router;
 
+import net.den3.den3Account.Config;
 import net.den3.den3Account.Logic.Entry.EntryAccount;
+import net.den3.den3Account.Store.Account.IAccountStore;
+import net.den3.den3Account.Store.Account.ITempAccountStore;
 import net.den3.den3Account.Util.MapBuilder;
 import net.den3.den3Account.Util.ParseJSON;
 
@@ -32,8 +35,8 @@ class URLEntryAccount {
                     .build()).orElse(""));
             return;
         }
+        String resultJson = EntryAccount.mainFlow(optionalReqJSON.get(),ITempAccountStore.getInstance(),IAccountStore.getInstance(),Config.get());
 
-        String resultJson = EntryAccount.mainFlow(optionalReqJSON.get());
         if(resultJson.contains("ERROR")){
             //失敗 403
             ctx.status(403).result(resultJson);
