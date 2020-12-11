@@ -14,7 +14,7 @@ public class LoginAccount {
      * @param json 送られてきたJSON メールアドレス/パスワードが含まれている前提
      * @return LoginResult
      */
-    public static LoginResult mainFlow(Map<String,String> json){
+    public static LoginResult containsAccount(Map<String,String> json){
         return authenticateAccount(json.get("pass"),containsStore(json.get("mail")));
     }
 
