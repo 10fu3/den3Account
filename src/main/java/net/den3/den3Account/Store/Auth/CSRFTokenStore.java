@@ -6,13 +6,14 @@ import net.den3.den3Account.Store.IStore;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class CSRFTokenStore implements ICSRFTokenStore {
 
     private final static ICSRFTokenStore SINGLE = new CSRFTokenStore();
     private final IInMemoryDB store = IStore.getInstance().getMemory();
 
-    public static ICSRFTokenStore getInstance() {
+    static ICSRFTokenStore getInstance() {
         return SINGLE;
     }
 
@@ -62,6 +63,22 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
+     * CSRFトークンを削除する
+     * @param token
+     * @return true->成功 false->失敗
+     */
+    @Override
+    public boolean deleteToken(String token) {
+        Optional<String> key = store.searchKey(token);
+        if (!key.isPresent()){
+            return false;
+        }else{
+            deleteTokenByAccount(key.get());
+            return true;
+        }
+    }
+
+    /**
      * 登録されたアカウントのUUIDとCSRFトークンを返す
      *
      * @return List<Map < アカウントのUUID:String, CSRFトークン:String>>
@@ -69,5 +86,20 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     @Override
     public List<Map<String, String>> getTokens() {
         return store.getPairs(PREFIX);
+    }
+
+    /**
+     * アカウントに紐づけられたCSRFトークンを更新する
+     * @param uuid アカウントに紐付けされたUUID
+     * @return 更新後のCSRFトークン
+     */
+    @Override
+    public Optional<String> updateToken(String uuid) {
+        if(!containsToken(uuid)){
+            return Optional.ofNullable(uuid);
+        }
+        String generatedUUID = UUID.randomUUID().toString();
+        store.putValue(uuid,generatedUUID);
+        return Optional.of(generatedUUID);
     }
 }

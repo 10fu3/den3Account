@@ -5,37 +5,55 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface ICSRFTokenStore {
+    static ICSRFTokenStore get(){
+        return CSRFTokenStore.getInstance();
+    }
+
     /**
-     * アカウントのUUIDから登録されたリフレッシュトークンを取得する
+     * アカウントのUUIDから登録されたCSRFトークンを取得する
      * @param accountUUID アカウントに紐付けされたUUID
-     * @return Optional String->リフレッシュトークン empty->存在しない
+     * @return Optional String->CSRFトークン empty->存在しない
      */
     Optional<String> getToken(String accountUUID);
 
     /**
-     *
-     * @param accountUUID アカウントに紐付けされたUUID
+     * CSRFトークンの存在を確認する
+     * @param token CSRFトークン
      * @return true->存在する false->存在しない
      */
-    boolean containsToken(String accountUUID);
+    boolean containsToken(String token);
 
     /**
-     * リフレッシュトークンを登録する
+     * CSRFトークンを登録する
      * @param uuid アカウントに紐付けされたUUID
-     * @param token リフレッシュトークン
+     * @param token CSRFトークン
      */
     void putToken(String uuid,String token);
 
     /**
-     * リフレッシュトークンを削除する
+     * CSRFトークンを削除する
      * @param uuid アカウントに紐付けされたUUID
      * @return true->成功 false->失敗
      */
     boolean deleteTokenByAccount(String uuid);
 
     /**
-     * 登録されたアカウントのUUIDとリフレッシュトークンを返す
-     * @return List<Map<アカウントのUUID:String,リフレッシュトークン:String>>
+     * CSRFトークンを削除する
+     * @param token
+     * @return true->成功 false->失敗
+     */
+    boolean deleteToken(String token);
+
+    /**
+     * 登録されたアカウントのUUIDとCSRFトークンを返す
+     * @return List<Map<アカウントのUUID:String,CSRFトークン:String>>
      */
     List<Map<String,String>> getTokens();
+
+    /**
+     * アカウントに紐づけられたCSRFトークンを更新する
+     * @param uuid アカウントに紐付けされたUUID
+     * @return 更新後のCSRFトークン
+     */
+    Optional<String> updateToken(String uuid);
 }
