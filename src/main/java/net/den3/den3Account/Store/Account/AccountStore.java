@@ -87,7 +87,7 @@ public class AccountStore implements IAccountStore{
      * @return 登録されたアカウントエンティティ
      */
     @Override
-    public Optional<IAccount> addAccountInSQL(ITempAccount tempAccount) {
+    public Optional<IAccount> addAccountInSQL(ITempAccount tempAccount,ITempAccountStore tempStore) {
         boolean result = store.controlSQL((con)->{
             try {
                 //INSET文の発行 uuid mail pass nick icon last_login_timeの順
@@ -113,7 +113,7 @@ public class AccountStore implements IAccountStore{
             }
         });
         //DBへの追加がうまくいき,仮登録アカウントストアからも削除が成功すると登録済みのアカウントエンティティを返す
-        if(result && ITempAccountStore.getInstance().removeAccountInTemporaryDB(tempAccount.getKey())){
+        if(result && tempStore.removeAccountInTemporaryDB(tempAccount.getKey())){
             return Optional.of(new AccountEntity(tempAccount));
         }else{
             //失敗したときはNullを返す
