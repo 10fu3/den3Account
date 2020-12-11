@@ -19,7 +19,7 @@ public class LoginAccount {
     }
 
     private static LoginResult containsStore(String mail){
-        Optional<IAccount> account = IAccountStore.getInstance().getAccountByMail(mail);
+        Optional<IAccount> account = IAccountStore.get().getAccountByMail(mail);
         LoginResult result;
         if(account.isPresent()){
             result = LoginResult.SUCCESS;
