@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RefreshTokenStore implements IRefreshTokenStore{
+public class CSRFTokenStore implements ICSRFTokenStore {
 
-    private final static IRefreshTokenStore SINGLE = new RefreshTokenStore();
+    private final static ICSRFTokenStore SINGLE = new CSRFTokenStore();
     private final IInMemoryDB store = IStore.getInstance().getMemory();
 
-    public static IRefreshTokenStore getInstance() {
+    public static ICSRFTokenStore getInstance() {
         return SINGLE;
     }
 
-    private static final String PREFIX = "RefreshToken: ";
+    private static final String PREFIX = "CSRF: ";
 
     /**
      * アカウントのUUIDから登録されたリフレッシュトークンを取得する

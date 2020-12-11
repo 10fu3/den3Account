@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface IRefreshTokenStore {
+public interface ICSRFTokenStore {
     /**
      * アカウントのUUIDから登録されたリフレッシュトークンを取得する
      * @param accountUUID アカウントに紐付けされたUUID
