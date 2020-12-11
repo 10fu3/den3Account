@@ -24,11 +24,12 @@ public class EntryAccount {
     /**
      * 仮登録申請されたアカウントの情報をチェックを依頼し,可能なら仮登録処理まで行う
      * @param reqJSON 仮登録申請時に送られてくるJSON
+     * @param store 仮アカウントストア
+     * @param accountStore アカウントストア
+     * @param config サーバー設定情報
      * @return クライアントに返されるJSON statusが成功/失敗を表し messageがエラーの原因を返す
      */
-    public static String mainFlow(Map<String,String> reqJSON){
-        //仮アカウントストア
-        ITempAccountStore store = ITempAccountStore.getInstance();
+    public static String mainFlow(Map<String,String> reqJSON,ITempAccountStore store,IAccountStore accountStore,Config config){
         //JSONからメール/パスワード/ニックネームを拾う
         String mail =reqJSON.get("mail");
         String pass = reqJSON.get("pass");
@@ -38,9 +39,9 @@ public class EntryAccount {
         String fromName = "電子計算機研究会 仮登録案内";
 
         //メール送信オブジェクト
-        MailSendService mailService = new MailSendService(Config.get().getEntryMailAddress(),Config.get().getEntryMailPassword(),fromName);
+        MailSendService mailService = new MailSendService(config.getEntryMailAddress(),config.getEntryMailPassword(),fromName);
         //基準に満たない/ルール違反をしているメールアドレス/パスワードか調べる
-        CheckAccountResult checkAccountResult = EntryAccount.checkAccount(mail, pass,nickname);
+        CheckAccountResult checkAccountResult = EntryAccount.checkAccount(accountStore,mail, pass,nickname);
 
         //チェックにひっかかるアカウント情報ならばここで弾く
         if(checkAccountResult != CheckAccountResult.SUCCESS){
@@ -79,7 +80,7 @@ public class EntryAccount {
                 .setTo(mail)
                 .setTitle("[電子計算機研究会] 仮登録申請の確認メール")
                 .setBody("仮登録ありがとうございます.<br>本登録をするには本メール到着後1日以内に次のURLにアクセスしてください <br>"+
-                        Config.get().getSelfURL()+"/account/register/goal/"+queueID),
+                        config.getSelfURL()+"/account/register/goal/"+queueID),
                 ()->{
                     //成功したとき (特に何もしない)
                     System.out.println("メール送信済み");
@@ -100,7 +101,7 @@ public class EntryAccount {
      * @param pass 登録申請用パスワード
      * @return CheckAccountResult列挙体
      */
-    public static CheckAccountResult checkAccount (String mail, String pass,String nickname){
+    public static CheckAccountResult checkAccount (IAccountStore store, String mail, String pass,String nickname){
         if(!StringChecker.isMailAddress(mail)){
             //Invalid e-address
             return CheckAccountResult.ERROR_MAIL;
@@ -108,7 +109,7 @@ public class EntryAccount {
         if(StringChecker.containsNotAllowCharacter(mail) || StringChecker.containsNotAllowCharacter(pass) || StringChecker.containsNotAllowCharacter(nickname)){
             return CheckAccountResult.ERROR_NOT_ALLOW_CHAR;
         }
-        if(IAccountStore.getInstance().containsAccountInSQL(mail)){
+        if(store.containsAccountInSQL(mail)){
             //Already registered e-address
             return CheckAccountResult.ERROR_SAME;
         }
