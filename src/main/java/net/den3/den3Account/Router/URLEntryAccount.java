@@ -4,8 +4,9 @@ import net.den3.den3Account.Config;
 import net.den3.den3Account.Logic.Entry.EntryAccount;
 import net.den3.den3Account.Store.Account.IAccountStore;
 import net.den3.den3Account.Store.Account.ITempAccountStore;
-import net.den3.den3Account.Util.MapBuilder;
+import net.den3.den3Account.Util.ContentsType;
 import net.den3.den3Account.Util.ParseJSON;
+import net.den3.den3Account.Util.StatusCode;
 
 import java.util.Map;
 import java.util.Optional;
@@ -25,24 +26,22 @@ class URLEntryAccount {
      * @param ctx io.javalin.http.Context
      */
     static void mainFlow(io.javalin.http.Context ctx){
-        ctx.res.setContentType("application/json; charset=UTF-8");
+        ctx.res.setContentType(ContentsType.JSON.get());
         Optional<Map<String,String>> optionalReqJSON = ParseJSON.convertToMap(ctx.body());
         //JSONじゃないない何かを送りつけられた場合/そもそもリクエストにmail/passパラメータが含まれてない可能性を排除する
         if(!optionalReqJSON.isPresent() || !containsNeedKey(optionalReqJSON.get())){
-            ctx.status(400).result(
-                    ParseJSON.convertToJSON(MapBuilder.New()
-                    .put("status","Client Error")
-                    .build()).orElse(""));
+            ctx.status(StatusCode.BadRequest.code());
             return;
         }
+        //登録処理の結果を返す 失敗した場合はステータスコードを
         String resultJson = EntryAccount.mainFlow(optionalReqJSON.get(),ITempAccountStore.getInstance(),IAccountStore.getInstance(),Config.get());
 
         if(resultJson.contains("ERROR")){
-            //失敗 403
-            ctx.status(403).result(resultJson);
+            //失敗
+            ctx.status(StatusCode.Unauthorized.code()).result(resultJson);
         }else{
             //成功
-            ctx.status(200).result(resultJson);
+            ctx.status(StatusCode.OK.code());
         }
     }
 }
