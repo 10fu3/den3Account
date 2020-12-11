@@ -19,10 +19,10 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     private static final String PREFIX = "CSRF: ";
 
     /**
-     * アカウントのUUIDから登録されたリフレッシュトークンを取得する
+     * アカウントのUUIDから登録されたCSRFトークンを取得する
      *
      * @param accountUUID アカウントに紐付けされたUUID
-     * @return Optional String->リフレッシュトークン empty->存在しない
+     * @return Optional String->CSRFトークン empty->存在しない
      */
     @Override
     public Optional<String> getToken(String accountUUID) {
@@ -30,6 +30,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
+     * CSRFトークンの登録を確認する
      * @param accountUUID アカウントに紐付けされたUUID
      * @return true->存在する false->存在しない
      */
@@ -39,10 +40,10 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
-     * リフレッシュトークンを登録する
+     * CSRFトークンを登録する
      *
      * @param uuid  アカウントに紐付けされたUUID
-     * @param token リフレッシュトークン
+     * @param token CSRFトークン
      */
     @Override
     public void putToken(String uuid, String token) {
@@ -50,7 +51,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
-     * リフレッシュトークンを削除する
+     * CSRFトークンを削除する
      *
      * @param uuid アカウントに紐付けされたUUID
      * @return true->成功 false->失敗
@@ -61,9 +62,9 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
-     * 登録されたアカウントのUUIDとリフレッシュトークンを返す
+     * 登録されたアカウントのUUIDとCSRFトークンを返す
      *
-     * @return List<Map < アカウントのUUID:String, リフレッシュトークン:String>>
+     * @return List<Map < アカウントのUUID:String, CSRFトークン:String>>
      */
     @Override
     public List<Map<String, String>> getTokens() {
