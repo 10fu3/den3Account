@@ -27,12 +27,13 @@ class URLConfirmedEntry {
         }
 
         //ここで登録処理が走り,返り値として登録されたアカウントエンティティが返される
-        Optional<IAccount> optionalAccount = IAccountStore.getInstance().addAccountInSQL(tempAccount.get());
+        Optional<IAccount> optionalAccount = IAccountStore.getInstance().addAccountInSQL(tempAccount.get(),ITempAccountStore.getInstance());
         //正常に登録処理がされてないと空を返してくるので調べる
         if(!optionalAccount.isPresent()){
             ctx.redirect("/account/register/invalid");
             return;
         }
+        //TODO 未実装
         //リダイレクトするべき?
         ctx.result("Welcome! "+optionalAccount.get().getNickName());
     }
