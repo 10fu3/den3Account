@@ -30,16 +30,17 @@ public class JWTTokenCreator {
      * 認証時(ログイン時)に利用者のブラウザのCookieに保存されるJWTを組み立てる
      * @param builder クレーム追加前のJWT
      * @param account 認証したアカウントのエンティティ
+     * @param selfID 認証基盤サービスそのもののID
      * @return 組み立てた終わったJWT
      */
-    public static JWTCreator.Builder addAuthenticateJWT(JWTCreator.Builder builder,IAccount account){
+    public static JWTCreator.Builder addAuthenticateJWT(JWTCreator.Builder builder,IAccount account,String selfID){
         Instant now = Instant.now();
         //トークンの発行者 この場合はこのden3AccountのURLを使う
-        builder.withClaim("iss",Config.get().getServerID());
+        builder.withClaim("iss",selfID);
         //どのアカウントかを示す文字列 AccountEntity.UUIDがこれに該当する
         builder.withClaim("sub",account.getUUID());
         //どのサービスに向けて発行したJWTなのかを示す文字列 今回は自分自身に向けてなのでConfig.getServerIDが該当する
-        builder.withClaim("aud",Config.get().getServerID());
+        builder.withClaim("aud",selfID);
         //JWTがいつまで有効なのか UNIXTime,秒で
         builder.withClaim("exp",now.plusSeconds(DAY).getEpochSecond());
         //JWTを有効にする時間 この場合は発行している最中から有効 UNIXTime,秒で
@@ -61,16 +62,17 @@ public class JWTTokenCreator {
      * @param builder クレーム追加前のJWT
      * @param service 発行先のサービスのエンティティ
      * @param account 認証したアカウントのエンティティ
+     * @param selfID 認証基盤サービスそのもののID
      * @return 組み立てた終わったJWT
      */
-    public static JWTCreator.Builder addAuthorizationClaims(JWTCreator.Builder builder, IService service, IAccount account){
+    public static JWTCreator.Builder addAuthorizationClaims(JWTCreator.Builder builder, IService service, IAccount account,String selfID){
         Instant now = Instant.now();
         //トークンの発行者 この場合はこのden3AccountのURLを使う
-        builder.withClaim("iss",Config.get().getServerID());
+        builder.withClaim("iss",selfID);
         //どのアカウントかを示す文字列 AccountEntity.UUIDがこれに該当する
         builder.withClaim("sub",account.getUUID());
         //どのサービスに向けて発行したJWTなのかを示す文字列 Service.UUIDがこれに該当する
-        builder.withClaim("aud",service.getServiceID());
+        builder.withClaim("aud",selfID);
         //JWTがいつまで有効なのか UNIXTime,秒で
         builder.withClaim("exp",now.plusSeconds(DAY).getEpochSecond());
         //JWTを有効にする時間 この場合は発行している最中から有効 UNIXTime,秒で
@@ -83,7 +85,7 @@ public class JWTTokenCreator {
     }
 
     /**
-     * JWTにプライベートクレーム(リソースサーバー特有の情報)を追加する
+     * 認可JWTに含める権限情報を追加する
      * @param builder 組み立てたJWT
      * @param service 発行先のサービスのエンティティ
      * @param account 認証したアカウントのエンティティ
@@ -102,32 +104,32 @@ public class JWTTokenCreator {
                 }
             }
         }
-
-
-
         return builder;
     }
 
     /**
      * 組み立てたJWTをConfigの秘密鍵を使ってHMAC256で署名する
      * @param builder 組み立てたJWT
+     * @param secret 秘密鍵
      * @return 署名済みJWT
      */
-    public static String signHMAC256(JWTCreator.Builder builder){
-        Algorithm algorithm = Algorithm.HMAC256(Config.get().getJwtSecret());
+    public static String signHMAC256(JWTCreator.Builder builder,String secret){
+        Algorithm algorithm = Algorithm.HMAC256(secret);
         return builder.sign(algorithm);
     }
 
     /**
      * 受け取ったJWTの署名を検証をする
      * @param token JWT
+     * @param selfID 認証基盤サービスそのもののID
+     * @param secret 秘密鍵
      * @return 署名の検証に成功した-> Optional<JWTのペイロードを返す> 署名の検証失敗-> Optional.empty
      */
-    public static Optional<String> verifyToken(String token){
+    public static Optional<String> verifyToken(String token,String selfID,String secret){
         try {
-            Algorithm algorithm = Algorithm.HMAC256(Config.get().getJwtSecret());
+            Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer(Config.get().getServerID())
+                    .withIssuer(selfID)
                     .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             return Optional.ofNullable(jwt.getPayload());
