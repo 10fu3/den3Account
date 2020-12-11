@@ -91,7 +91,7 @@ public class JWTTokenCreator {
      * @param account 認証したアカウントのエンティティ
      * @return 組み立てたJWT
      */
-    public static JWTCreator.Builder addPrivateClaims(JWTCreator.Builder builder, IService service, IAccount account){
+    public static JWTCreator.Builder addServicePermissions(JWTCreator.Builder builder, IService service, IAccount account){
         List<ServicePermission> list = service.getUsedPermission();
         Optional<Map<String, String>> mapValue;
         for (int i = 0; i < list.size(); i++) {
