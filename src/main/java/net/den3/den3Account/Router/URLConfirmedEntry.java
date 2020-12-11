@@ -4,6 +4,7 @@ import net.den3.den3Account.Entity.Account.IAccount;
 import net.den3.den3Account.Entity.Account.ITempAccount;
 import net.den3.den3Account.Store.Account.IAccountStore;
 import net.den3.den3Account.Store.Account.ITempAccountStore;
+import net.den3.den3Account.Util.ContentsType;
 
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ class URLConfirmedEntry {
         }
 
         //ここで登録処理が走り,返り値として登録されたアカウントエンティティが返される
-        Optional<IAccount> optionalAccount = IAccountStore.getInstance().addAccountInSQL(tempAccount.get(),ITempAccountStore.getInstance());
+        Optional<IAccount> optionalAccount = IAccountStore.get().addAccountInSQL(tempAccount.get(),ITempAccountStore.getInstance());
         //正常に登録処理がされてないと空を返してくるので調べる
         if(!optionalAccount.isPresent()){
             ctx.redirect("/account/register/invalid");
@@ -39,7 +40,7 @@ class URLConfirmedEntry {
     }
 
     static void invalid(io.javalin.http.Context ctx){
-        ctx.res.setContentType("text/html; charset=utf-8");
+        ctx.res.setContentType(ContentsType.HTML.get());
         ctx.result("<h1>エラー</h1><br>登録申請は無効化されたか、エラーが発生しています. 管理者までお問い合わせください");
     }
 }
