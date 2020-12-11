@@ -34,7 +34,7 @@ class URLEntryAccount {
             return;
         }
         //登録処理の結果を返す 失敗した場合はステータスコードを
-        String resultJson = EntryAccount.mainFlow(optionalReqJSON.get(),ITempAccountStore.getInstance(),IAccountStore.getInstance(),Config.get());
+        String resultJson = EntryAccount.mainFlow(optionalReqJSON.get(),ITempAccountStore.getInstance(),IAccountStore.get(),Config.get());
 
         if(resultJson.contains("ERROR")){
             //失敗
