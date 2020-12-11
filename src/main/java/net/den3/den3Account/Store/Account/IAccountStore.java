@@ -14,7 +14,7 @@ public interface IAccountStore {
      * シングルトンオブジェクトを取得する
      * @return アカウントストア
      */
-    static IAccountStore getInstance() {
+    static IAccountStore get() {
         return AccountStore.getInstance();
     }
 
