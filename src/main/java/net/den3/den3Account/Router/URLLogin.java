@@ -6,8 +6,10 @@ import net.den3.den3Account.Config;
 import net.den3.den3Account.Entity.LoginResult;
 import net.den3.den3Account.Security.CookieSecurityUtil;
 import net.den3.den3Account.Logic.LoginAccount;
+import net.den3.den3Account.Util.MapBuilder;
 import net.den3.den3Account.Util.ParseJSON;
 import net.den3.den3Account.Security.JWTTokenCreator;
+import net.den3.den3Account.Util.StatusCode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,20 +34,23 @@ class URLLogin {
         mes.put("STATUS","ERROR");
         if(!wrapJson.isPresent() || !containsNeedKey(wrapJson.get())){
             mes.put("MESSAGE","JSON format error");
+            Optional<String> messageJSON = ParseJSON.convertToJSON(mes);
+            ctx.status(StatusCode.BadRequest.code()).json(messageJSON.get());
         }else{
             LoginResult result = LoginAccount.containsAccount(wrapJson.get());
             if(result != LoginResult.SUCCESS){
                 mes.put("MESSAGE",result.getMessage());
             }else{
-
+                //JWTを組み立てる
+                JWTCreator.Builder jwtBuilder = addAuthenticateJWT(JWT.create(),result.account, Config.get().getServerID());
+                //組み立てたJWTを秘密鍵で署名
+                String jwt = JWTTokenCreator.signHMAC256(jwtBuilder,Config.get().getJwtSecret());
+                //HTTPOnlyのCookieを設定する(JSからCookieを盗まれるのを防ぐ)
+                ctx.cookie(CookieSecurityUtil.createCookieHTTPOnly("user",jwt));
+                //csrf対策用に用いるキーを生成
+                String csrfKey = UUID.randomUUID().toString();
+                ctx.json(MapBuilder.New().put("csrf", csrfKey).build());
             }
-        }
-        Optional<String> messageJSON = ParseJSON.convertToJSON(mes);
-        if(messageJSON.isPresent()){
-            ctx.status(401).json(messageJSON.get());
-        }else {
-            //もし500を返すのであれば,上が呼び出しているメソッドの実装を間違えている
-            ctx.status(500);
         }
     }
 }
