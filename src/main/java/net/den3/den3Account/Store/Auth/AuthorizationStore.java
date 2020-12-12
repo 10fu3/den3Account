@@ -60,15 +60,15 @@ public class AuthorizationStore implements IAuthorizationStore{
         return b.get();
     }
 
+
     /**
-     * アカウントがアプリに個人情報の使用を認可しているかどうか
-     *
-     * @param account 調べる対象のアカウント
-     * @param service 調べるアカウント
-     * @return true->認可済み false->未認可
+     * アカウントをアプリの個人情報使用認可ストアに追加する
+     * @param account 調べる対象のアカウントのUUID
+     * @param service 調べるサービスのUUID
+     * @return
      */
     @Override
-    public boolean isUserAuthorization(IAccount account, IService service) {
+    public boolean isUserAuthorization(String account, String service) {
         if(!hasTableServiceAccount()){
             return false;
         }
@@ -76,8 +76,8 @@ public class AuthorizationStore implements IAuthorizationStore{
         Optional<List<Map<String, String>>> results = store.getLineBySQL(columns,con -> {
             try {
                 PreparedStatement ps = con.prepareStatement("SElECT * FROM authorization_store WHERE uuid = ? and service_id = ?");
-                ps.setString(1, account.getUUID());
-                ps.setString(2, service.getServiceName());
+                ps.setString(1, account);
+                ps.setString(2, service);
                 return Optional.of(ps);
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -96,12 +96,12 @@ public class AuthorizationStore implements IAuthorizationStore{
      * @return true->成功 false->失敗
      */
     @Override
-    public boolean addAuthorizationUser(IAccount account, IService service) {
+    public boolean addAuthorizationUser(String account, String service) {
         return store.controlSQL(con->{
             try{
                 PreparedStatement ps = con.prepareStatement("INSERT INTO authorization_store VALUES (?,?) ;");
-                ps.setString(1,account.getUUID());
-                ps.setString(2,service.getServiceID());
+                ps.setString(1,account);
+                ps.setString(2,service);
                 return Optional.of(Collections.singletonList(ps));
             }catch (SQLException ex){
                 ex.printStackTrace();
@@ -113,17 +113,17 @@ public class AuthorizationStore implements IAuthorizationStore{
     /**
      * アカウントをアプリの個人情報使用認可ストアから削除する
      *
-     * @param account 削除するアカウント
-     * @param service 削除先のサービス
+     * @param account 削除するアカウントのUUID
+     * @param service 削除先のサービスのUUID
      * @return true->成功 false->失敗
      */
     @Override
-    public boolean deleteAuthorizationUser(IAccount account, IService service) {
+    public boolean deleteAuthorizationUser(String account, String service) {
         return store.controlSQL(con->{
             try{
                 PreparedStatement ps = con.prepareStatement("DELETE FROM authorization_store WHERE uuid = ? and service_id = ?");
-                ps.setString(1,account.getUUID());
-                ps.setString(2,service.getServiceID());
+                ps.setString(1,account);
+                ps.setString(2,service);
                 return Optional.of(Collections.singletonList(ps));
             }catch (SQLException ex){
                 ex.printStackTrace();
@@ -135,15 +135,15 @@ public class AuthorizationStore implements IAuthorizationStore{
     /**
      * アカウントをアプリの個人情報使用認可ストアから削除する
      *
-     * @param account 削除するアカウント
+     * @param account 削除するアカウントのUUID
      * @return true->成功 false->失敗
      */
     @Override
-    public boolean deleteAuthorizationUser(IAccount account) {
+    public boolean deleteAuthorizationUser(String account) {
         return store.controlSQL(con->{
             try{
                 PreparedStatement ps = con.prepareStatement("DELETE FROM authorization_store WHERE uuid = ?");
-                ps.setString(1,account.getUUID());
+                ps.setString(1,account);
                 return Optional.of(Collections.singletonList(ps));
             }catch (SQLException ex){
                 ex.printStackTrace();
