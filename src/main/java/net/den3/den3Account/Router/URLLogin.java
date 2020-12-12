@@ -3,9 +3,12 @@ package net.den3.den3Account.Router;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import net.den3.den3Account.Config;
+import net.den3.den3Account.Entity.CSRFResult;
 import net.den3.den3Account.Entity.LoginResult;
+import net.den3.den3Account.Logic.CSRF;
 import net.den3.den3Account.Security.CookieSecurityUtil;
 import net.den3.den3Account.Logic.LoginAccount;
+import net.den3.den3Account.Store.Auth.ICSRFTokenStore;
 import net.den3.den3Account.Util.MapBuilder;
 import net.den3.den3Account.Util.ParseJSON;
 import net.den3.den3Account.Security.JWTTokenCreator;
@@ -17,7 +20,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static net.den3.den3Account.Security.JWTTokenCreator.addAuthenticateJWT;
-import static net.den3.den3Account.Security.JWTTokenCreator.addSessionJWT;
 
 class URLLogin {
     private static Boolean containsNeedKey(Map<String, String> json){
@@ -30,6 +32,11 @@ class URLLogin {
      */
     static void mainFlow(io.javalin.http.Context ctx){
         Optional<Map<String, String>> wrapJson = ParseJSON.convertToMap(ctx.body());
+        CSRFResult csrfResult;
+        if((csrfResult = CSRF.mainFlow(ctx)) == CSRFResult.SUCCESS && csrfResult.getJWT().isPresent()){
+            String newCSRF = ICSRFTokenStore.get().updateToken(csrfResult.getJWT().get().getSubject()).orElse("");
+            ctx.status(200).json(MapBuilder.New().put("csrf",newCSRF).build());
+        }
         Map<String,Object> mes = new HashMap<>();
         mes.put("STATUS","ERROR");
         if(!wrapJson.isPresent() || !containsNeedKey(wrapJson.get())){
