@@ -16,19 +16,19 @@ class URLConfirmedEntry {
     static void mainFlow(io.javalin.http.Context ctx){
         String key = ctx.pathParam("key");
         //有効化キーを持つアカウントの情報が仮登録アカウントストアに存在しない場合
-        if(!ITempAccountStore.getInstance().containsAccountByKey(key)){
+        if(!ITempAccountStore.get().containsAccountByKey(key)){
             ctx.redirect("/account/register/invalid");
             return;
         }
         //有効化キーを持つアカウントの情報が仮登録アカウントストアに存在しない場合その2
-        Optional<ITempAccount> tempAccount = ITempAccountStore.getInstance().getAccountByKey(key);
+        Optional<ITempAccount> tempAccount = ITempAccountStore.get().getAccountByKey(key);
         if(!tempAccount.isPresent()){
             ctx.redirect("/account/register/invalid");
             return;
         }
 
         //ここで登録処理が走り,返り値として登録されたアカウントエンティティが返される
-        Optional<IAccount> optionalAccount = IAccountStore.get().addAccountInSQL(tempAccount.get(),ITempAccountStore.getInstance());
+        Optional<IAccount> optionalAccount = IAccountStore.get().addAccountInSQL(tempAccount.get(),ITempAccountStore.get());
         //正常に登録処理がされてないと空を返してくるので調べる
         if(!optionalAccount.isPresent()){
             ctx.redirect("/account/register/invalid");
