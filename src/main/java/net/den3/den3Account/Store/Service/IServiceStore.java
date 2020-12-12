@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IServiceStore {
-    static IServiceStore getInstance() {
+    static IServiceStore get() {
         return ServiceStore.getInstance();
     }
 

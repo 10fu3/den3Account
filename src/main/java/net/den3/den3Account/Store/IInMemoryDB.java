@@ -54,6 +54,6 @@ public interface IInMemoryDB {
      * @param prefix 追加時に付加された接頭詞
      * @return List<Map < key:String, 値:String>>
      */
-    List<Map<String, String>> getPairs(String prefix);
+    Map<String, String> getPairs(String prefix);
 
 }

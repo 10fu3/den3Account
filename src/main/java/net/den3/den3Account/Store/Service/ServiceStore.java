@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class ServiceStore implements IServiceStore{
     private static final IDBAccess store = IStore.getInstance().getDB();
     private static final ServiceStore SINGLE = new ServiceStore();
-    public static ServiceStore getInstance() {
+    static ServiceStore getInstance() {
         return SINGLE;
     }
 

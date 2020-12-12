@@ -2,7 +2,8 @@ package net.den3.den3Account.Command;
 
 import net.den3.den3Account.Entity.Account.IAccount;
 import net.den3.den3Account.Entity.Account.TemporaryAccountEntity;
-import net.den3.den3Account.Logic.ParseJSON;
+import net.den3.den3Account.Store.Account.ITempAccountStore;
+import net.den3.den3Account.Util.ParseJSON;
 import net.den3.den3Account.Store.Account.AccountStore;
 import net.den3.den3Account.Store.Account.IAccountStore;
 
@@ -45,7 +46,7 @@ public class CommandAccountCURD implements ICommand{
             System.out.println("ニックネームを入力してください");
             temp = CommandExecutor.SINGLE.scan.nextLine();
             e.setNickName(temp);
-            if(IAccountStore.getInstance().addAccountInSQL(e).isPresent()){
+            if(IAccountStore.get().addAccountInSQL(e,ITempAccountStore.get()).isPresent()){
                 System.out.println("アカウントの作成に成功しました");
             }else{
                 System.out.println("アカウントの作成に失敗しました");
@@ -54,7 +55,7 @@ public class CommandAccountCURD implements ICommand{
         }else if(option.length == 2 && option[0].equalsIgnoreCase("del")){
             Optional<IAccount> account = AccountStore.getInstance().getAccountByUUID(option[1]);
             if(account.isPresent()){
-                AccountStore.getInstance().deleteAccountInSQL(account.get());
+                AccountStore.getInstance().deleteAccountInSQL(account.get().getUUID());
                 System.out.println("指定されたユーザーを削除しました ID: "+option[1]);
             }else{
                 System.out.println("指定されたユーザーが存在しません ID: "+option[1]);

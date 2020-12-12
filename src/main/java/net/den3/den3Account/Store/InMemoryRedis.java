@@ -123,19 +123,16 @@ public class InMemoryRedis implements IInMemoryDB{
     }
 
     /**
-     * 登録されたすべてのキーと値をリストにして返す
+     * 登録されたすべてのキーと値を返す
      * @param prefix 追加時に付加された接頭詞
-     * @return List<Map < key:String, 値:String>>
+     * @return Map<key:String,value:String>
      */
     @Override
-    public List<Map<String, String>> getPairs(String prefix) {
-        final List<Map<String, String>> result = new ArrayList<>();
+    public Map<String, String> getPairs(String prefix) {
+        final Map<String, String> result = new HashMap<>();
         doIt((r)-> r.keys("*").forEach(k->{
             if(k.contains(prefix)){
-                Map<String,String> map = new HashMap<>();
-                map.put("key",k.replaceFirst(prefix,""));
-                map.put("value",r.get(k));
-                result.add(map);
+                result.put(k.replaceFirst(prefix,""),r.get(k));
             }
         }));
         return result;

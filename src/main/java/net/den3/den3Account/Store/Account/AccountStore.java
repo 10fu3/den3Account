@@ -138,7 +138,7 @@ public class AccountStore implements IAccountStore{
                 psL.add(statement);
 
                 //外部連携サービスの紐づけも外す
-                IAuthorizationStore.getInstance().deleteAuthorizationUser(deleteAccount);
+                IAuthorizationStore.get().deleteAuthorizationUser(deleteAccount);
 
                 return Optional.of(psL);
             }catch (SQLException ignore){

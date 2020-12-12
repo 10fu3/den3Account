@@ -10,7 +10,7 @@ public interface ITempAccountStore {
      * シングルトンオブジェクトを取得する
      * @return アカウントストア
      */
-    static ITempAccountStore getInstance() {
+    static ITempAccountStore get() {
         return TempAccountStore.getInstance();
     }
 
