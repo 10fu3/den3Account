@@ -1,6 +1,5 @@
 package net.den3.den3Account.Store.Auth;
 
-import net.den3.den3Account.Entity.Account.IAccount;
 import net.den3.den3Account.Entity.Service.IService;
 
 public interface IAuthorizationStore {
