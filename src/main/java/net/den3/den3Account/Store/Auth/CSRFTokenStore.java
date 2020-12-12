@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CSRFTokenStore implements ICSRFTokenStore {
 
@@ -26,18 +27,30 @@ public class CSRFTokenStore implements ICSRFTokenStore {
      * @return Optional String->CSRFトークン empty->存在しない
      */
     @Override
-    public Optional<String> getToken(String accountUUID) {
-        return store.getValue(PREFIX+accountUUID);
+    public List<String> getTokens(String accountUUID) {
+        Map<String, String> stores = store.getPairs(PREFIX);
+        return stores.keySet().stream().filter(k->accountUUID.equalsIgnoreCase(stores.get(k))).map(stores::get).collect(Collectors.toList());
+    }
+
+    /**
+     * 登録されたトークンから紐づけられたアカウントUUIDを取得する
+     *
+     * @param token トークン
+     * @return Optional[紐づけられたアカウントUUID]
+     */
+    @Override
+    public Optional<String> getAccountUUID(String token) {
+        return store.getValue(token);
     }
 
     /**
      * CSRFトークンの登録を確認する
-     * @param accountUUID アカウントに紐付けされたUUID
+     * @param token アカウントに紐付けされたUUID
      * @return true->存在する false->存在しない
      */
     @Override
-    public boolean containsToken(String accountUUID) {
-        return store.containsKey(PREFIX+accountUUID);
+    public boolean containsToken(String token) {
+        return store.containsKey(PREFIX+token);
     }
 
     /**
@@ -48,7 +61,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
      */
     @Override
     public void putToken(String uuid, String token) {
-        store.putValue(PREFIX+uuid,token);
+        store.putValue(PREFIX+token,uuid);
     }
 
     /**
@@ -84,22 +97,24 @@ public class CSRFTokenStore implements ICSRFTokenStore {
      * @return List<Map < アカウントのUUID:String, CSRFトークン:String>>
      */
     @Override
-    public List<Map<String, String>> getTokens() {
+    public Map<String, String> getAllTokens() {
         return store.getPairs(PREFIX);
     }
 
     /**
      * アカウントに紐づけられたCSRFトークンを更新する
-     * @param uuid アカウントに紐付けされたUUID
+     * @param token アカウントに紐付けされたUUID
      * @return 更新後のCSRFトークン
      */
     @Override
-    public Optional<String> updateToken(String uuid) {
-        if(!containsToken(uuid)){
-            return Optional.ofNullable(uuid);
+    public Optional<String> updateToken(String token) {
+        if(!containsToken(token)){
+            return Optional.empty();
         }
+        Optional<String> uuid = getAccountUUID(token);
+        deleteToken(token);
         String generatedUUID = UUID.randomUUID().toString();
-        store.putValue(uuid,generatedUUID);
+        putToken(generatedUUID,uuid.orElse(""));
         return Optional.of(generatedUUID);
     }
 }

@@ -12,9 +12,16 @@ public interface ICSRFTokenStore {
     /**
      * アカウントのUUIDから登録されたCSRFトークンを取得する
      * @param accountUUID アカウントに紐付けされたUUID
-     * @return Optional String->CSRFトークン empty->存在しない
+     * @return List[CSRFトークン]
      */
-    Optional<String> getToken(String accountUUID);
+    List<String> getTokens(String accountUUID);
+
+    /**
+     * 登録されたトークンから紐づけられたアカウントUUIDを取得する
+     * @param token トークン
+     * @return Optional[紐づけられたアカウントUUID]
+     */
+    Optional<String> getAccountUUID(String token);
 
     /**
      * CSRFトークンの存在を確認する
@@ -48,12 +55,12 @@ public interface ICSRFTokenStore {
      * 登録されたアカウントのUUIDとCSRFトークンを返す
      * @return List<Map<アカウントのUUID:String,CSRFトークン:String>>
      */
-    List<Map<String,String>> getTokens();
+    Map<String,String> getAllTokens();
 
     /**
      * アカウントに紐づけられたCSRFトークンを更新する
-     * @param uuid アカウントに紐付けされたUUID
+     * @param token アカウントに紐付けされたUUID
      * @return 更新後のCSRFトークン
      */
-    Optional<String> updateToken(String uuid);
+    Optional<String> updateToken(String token);
 }
