@@ -124,17 +124,17 @@ public class AccountStore implements IAccountStore{
     /**
      * アカウントをDBから削除する
      *
-     * @param deleteAccount 削除対象のアカウントエンティティ
+     * @param deleteAccount 削除対象のアカウントエンティティのUUID
      * @return true → 削除成功 false → 失敗
      */
     @Override
-    public boolean deleteAccountInSQL(IAccount deleteAccount) {
+    public boolean deleteAccountInSQL(String deleteAccount) {
         return store.controlSQL((con)->{
             List<PreparedStatement> psL = new ArrayList<>();
             PreparedStatement statement;
             try {
                 statement = con.prepareStatement("DELETE FROM account_repository WHERE uuid = ?;");
-                statement.setString(1,deleteAccount.getUUID());
+                statement.setString(1,deleteAccount);
                 psL.add(statement);
 
                 //外部連携サービスの紐づけも外す
