@@ -4,6 +4,7 @@ import net.den3.den3Account.Entity.*;
 import net.den3.den3Account.Entity.Account.AccountEntity;
 import net.den3.den3Account.Entity.Account.IAccount;
 import net.den3.den3Account.Entity.Account.ITempAccount;
+import net.den3.den3Account.Store.Auth.IAuthorizationStore;
 import net.den3.den3Account.Store.IDBAccess;
 import net.den3.den3Account.Store.IStore;
 
@@ -68,7 +69,7 @@ public class AccountStore implements IAccountStore{
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(4, account.getIconURL());
                 //SQL文の1個めの?にmailを代入する
-                pS.setString(5, account.getLastLoginTime());
+                pS.setString(5, String.valueOf(account.getLastLoginTime()));
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(6, (account.getPermission() == Permission.ADMIN)?"ADMIN":"NORMAL");
                 return Optional.of(Arrays.asList(pS));
@@ -86,7 +87,7 @@ public class AccountStore implements IAccountStore{
      * @return 登録されたアカウントエンティティ
      */
     @Override
-    public Optional<IAccount> addAccountInSQL(ITempAccount tempAccount) {
+    public Optional<IAccount> addAccountInSQL(ITempAccount tempAccount,ITempAccountStore tempStore) {
         boolean result = store.controlSQL((con)->{
             try {
                 //INSET文の発行 uuid mail pass nick icon last_login_timeの順
@@ -102,7 +103,7 @@ public class AccountStore implements IAccountStore{
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(5, tempAccount.getIconURL());
                 //SQL文の1個めの?にmailを代入する
-                pS.setString(6, tempAccount.getLastLoginTime());
+                pS.setString(6, String.valueOf(tempAccount.getLastLoginTime()));
 
                 pS.setString(7,(tempAccount.getPermission()== Permission.ADMIN)?"ADMIN":"NORMAL");
                 return Optional.of(Arrays.asList(pS));
@@ -112,7 +113,7 @@ public class AccountStore implements IAccountStore{
             }
         });
         //DBへの追加がうまくいき,仮登録アカウントストアからも削除が成功すると登録済みのアカウントエンティティを返す
-        if(result && ITempAccountStore.getInstance().removeAccountInTemporaryDB(tempAccount.getKey())){
+        if(result && tempStore.removeAccountInTemporaryDB(tempAccount.getKey())){
             return Optional.of(new AccountEntity(tempAccount));
         }else{
             //失敗したときはNullを返す
@@ -123,17 +124,23 @@ public class AccountStore implements IAccountStore{
     /**
      * アカウントをDBから削除する
      *
-     * @param deleteAccount 削除対象のアカウントエンティティ
+     * @param deleteAccount 削除対象のアカウントエンティティのUUID
      * @return true → 削除成功 false → 失敗
      */
     @Override
-    public boolean deleteAccountInSQL(IAccount deleteAccount) {
+    public boolean deleteAccountInSQL(String deleteAccount) {
         return store.controlSQL((con)->{
+            List<PreparedStatement> psL = new ArrayList<>();
             PreparedStatement statement;
             try {
                 statement = con.prepareStatement("DELETE FROM account_repository WHERE uuid = ?;");
-                statement.setString(1,deleteAccount.getUUID());
-                return Optional.of(Collections.singletonList(statement));
+                statement.setString(1,deleteAccount);
+                psL.add(statement);
+
+                //外部連携サービスの紐づけも外す
+                IAuthorizationStore.getInstance().deleteAuthorizationUser(deleteAccount);
+
+                return Optional.of(psL);
             }catch (SQLException ignore){
                 return Optional.empty();
             }

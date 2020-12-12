@@ -1,11 +1,15 @@
 package net.den3.den3Account.Entity.Account;
 
 import net.den3.den3Account.Entity.Permission;
-import net.den3.den3Account.Logic.ParseJSON;
+import net.den3.den3Account.Util.MapBuilder;
+import net.den3.den3Account.Util.ParseJSON;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * データベースに存在するアカウントを表すクラス
@@ -15,18 +19,45 @@ import java.util.UUID;
 public class AccountEntity implements IAccount{
 
     private String uuid = "";
-    private String lastLogin = "2020/01/01 13:05:15";
+    private Long lastLogin = 0L;
     private String mail = "";
     private String passwordHash = "";
     private String iconURL = "";
     private String nickName = "";
     private Permission permission = Permission.NORMAL;
+    private final Map<String, Supplier<Map<String,String>>> getMethods = new HashMap<>();
+
+
+    private void setupGetMetods(){
+        getMethods.put("uuid",()->{
+            Map<String,String> map = new HashMap<>();
+            map.put("uuid",this.getUUID());
+            return map;
+        });
+        getMethods.put("last_login",()->{
+            Map<String,String> map = new HashMap<>();
+            map.put("last_login",String.valueOf(this.getLastLoginTime()));
+            return map;
+        });
+        getMethods.put("mail",()->{
+            Map<String,String> map = new HashMap<>();
+            map.put("mail",this.getMail());
+            return map;
+        });
+        getMethods.put("profile",()->{
+            Map<String,String> map = new HashMap<>();
+            map.put("profile",this.getIconURL());
+            map.put("nick",this.getNickName());
+            return map;
+        });
+    }
 
     public AccountEntity(){
         this.uuid = UUID.randomUUID().toString();
-        this.lastLogin = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        this.lastLogin = Instant.now().getEpochSecond();
         this.iconURL = "https://i.imgur.com/R6tktJ6.jpg";//ただの人
         this.nickName = "First time";
+        setupGetMetods();
     }
 
     public AccountEntity(IAccount account){
@@ -37,6 +68,7 @@ public class AccountEntity implements IAccount{
         this.iconURL = account.getIconURL();
         this.nickName = account.getNickName();
         this.permission = account.getPermission();
+        setupGetMetods();
     }
 
     /**
@@ -80,7 +112,7 @@ public class AccountEntity implements IAccount{
      * @return 最終ログイン時刻
      */
     @Override
-    public String getLastLoginTime() {
+    public Long getLastLoginTime() {
         return this.lastLogin;
     }
 
@@ -99,19 +131,16 @@ public class AccountEntity implements IAccount{
      */
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("{ ")
-                .append(ParseJSON.buildWord("uuid",this.getUUID()))
-                .append(" , ")
-                .append(ParseJSON.buildWord("pass",this.getPasswordHash()))
-                .append(" , ")
-                .append(ParseJSON.buildWord("icon",this.getIconURL()))
-                .append(" , ")
-                .append(ParseJSON.buildWord("nick",this.getNickName()))
-                .append(" , ")
-                .append(ParseJSON.buildWord("last_login_time",this.getLastLoginTime()))
-                .append(" }")
-                .toString();
+        return ParseJSON
+                .convertToJSON(
+                MapBuilder
+                .New()
+                .put("uuid",this.getUUID())
+                .put("pass",this.getPasswordHash())
+                .put("icon",this.getIconURL())
+                .put("nick",this.getNickName())
+                .put("last_login_time",String.valueOf(this.getLastLoginTime()))
+                .build()).orElse("");
     }
 
     @Override
@@ -123,6 +152,11 @@ public class AccountEntity implements IAccount{
     @Override
     public Permission getPermission() {
         return this.permission;
+    }
+
+    @Override
+    public Optional<Map<String,String>> get(String field) {
+        return Optional.ofNullable(this.getMethods.get(field).get());
     }
 
     /**
@@ -141,7 +175,7 @@ public class AccountEntity implements IAccount{
      * @return アカウントエンティティ
      */
     public AccountEntity setLastLogin(String lastLogin) {
-        this.lastLogin = lastLogin;
+        this.lastLogin = Long.decode(lastLogin);
         return this;
     }
 

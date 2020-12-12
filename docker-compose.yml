@@ -14,6 +14,11 @@ services:
       D3A_DBACCOUNT: "user"
       D3A_DBPASSWORD: "password"
       D3A_ISDOCKER: "DOCKER"
+      D3A_MAIL_ADDRESS: "secret@secret.com"
+      D3A_MAIL_PASS: "secret"
+      D3A_SELF_URL: "https://self.url"
+      D3A_LOGIN_URL: "https://self.frontend"
+      D3A_JWT_SECRET: "very_secret"
     command: java -jar target/den3Account-1.0-all.jar
   db:
     image: mariadb:latest

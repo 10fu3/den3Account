@@ -14,7 +14,7 @@ public interface IAccountStore {
      * シングルトンオブジェクトを取得する
      * @return アカウントストア
      */
-    static IAccountStore getInstance() {
+    static IAccountStore get() {
         return AccountStore.getInstance();
     }
 
@@ -38,14 +38,14 @@ public interface IAccountStore {
      * @param tempAccount 仮アカウントエンティティ
      * @return 登録されたアカウントエンティティ
      */
-    Optional<IAccount> addAccountInSQL(ITempAccount tempAccount);
+    Optional<IAccount> addAccountInSQL(ITempAccount tempAccount,ITempAccountStore tempAccountStore);
     /**
      * アカウントをDBから削除する
      *
-     * @param deleteAccount 削除対象のアカウントエンティティ
+     * @param deleteAccount 削除対象のアカウントエンティティのUUID
      * @return true → 削除成功 false → 失敗
      */
-    boolean deleteAccountInSQL(IAccount deleteAccount);
+    boolean deleteAccountInSQL(String deleteAccount);
     /**
      * データベースに登録されたアカウントをすべて取得する
      * @return アカウントエンティティのリスト

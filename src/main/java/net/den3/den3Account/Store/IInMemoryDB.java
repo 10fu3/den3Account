@@ -1,5 +1,7 @@
 package net.den3.den3Account.Store;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IInMemoryDB {
@@ -8,28 +10,22 @@ public interface IInMemoryDB {
      * @param key キー
      * @return 保存した値
      */
-    Optional<String> getMemory(String key);
+    Optional<String> getValue(String key);
 
     /**
      * インメモリデータベース(key:value形式)に値を保存する
      * @param key キー
      * @param value 保存した値
      */
-    void putMemory(String key,String value);
+    void putValue(String key,String value);
 
     /**
-     * 30分で消滅するKey value
+     * 時間指定で消滅するKey Value
      * @param key キー
-     * @param value 保存した値
+     * @param value 値
+     * @param seconds 登録してから消滅するまでの時間(秒)
      */
-    void putShortSession(String key,String value);
-
-    /**
-     * 1ヶ月で消滅するKey Value
-     * @param key
-     * @param value
-     */
-    void putLongSession(String key,String value);
+    void putTimeValue(String key,String value,int seconds);
 
     /**
      * キーの存在確認
@@ -37,5 +33,27 @@ public interface IInMemoryDB {
      * @return true → 存在する /  false → 存在しない
      */
     boolean containsKey(String key);
+
+    /**
+     * 指定した値を持つキーを返す
+     * @param value
+     * @return キー
+     */
+    Optional<String> searchKey(String value);
+
+    /**
+     * 指定したキーを削除する
+     * @param key
+     * @return true->成功 false->失敗
+     */
+    boolean delete(String key);
+
+    /**
+     * 登録されたすべてのキーと値をリストにして返す
+     *
+     * @param prefix 追加時に付加された接頭詞
+     * @return List<Map < key:String, 値:String>>
+     */
+    List<Map<String, String>> getPairs(String prefix);
 
 }

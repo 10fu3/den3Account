@@ -1,7 +1,7 @@
 package net.den3.den3Account.Command;
 
 import net.den3.den3Account.Entity.Account.IAccount;
-import net.den3.den3Account.Entity.TemporaryAccountEntity;
+import net.den3.den3Account.Entity.Account.TemporaryAccountEntity;
 import net.den3.den3Account.Logic.ParseJSON;
 import net.den3.den3Account.Store.Account.AccountStore;
 import net.den3.den3Account.Store.Account.IAccountStore;

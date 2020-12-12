@@ -1,11 +1,11 @@
-package net.den3.den3Account.Logic;
+package net.den3.den3Account.Logic.Entry;
 
 import net.den3.den3Account.Entity.Service.IService;
 import net.den3.den3Account.Store.Service.IServiceStore;
 
 public class EntryService {
     //TODO 未実装
-    public static String entryFlow(){
+    public static String mainFlow(){
         return "";
     }
 

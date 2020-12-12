@@ -1,7 +1,7 @@
 package net.den3.den3Account.Store.Account;
 
 import net.den3.den3Account.Entity.Account.ITempAccount;
-import net.den3.den3Account.Entity.TemporaryAccountEntity;
+import net.den3.den3Account.Entity.Account.TemporaryAccountEntity;
 import net.den3.den3Account.Store.IDBAccess;
 import net.den3.den3Account.Store.IStore;
 
@@ -162,7 +162,7 @@ public class TempAccountStore implements ITempAccountStore {
                 //
                 pS.setString(1, tempAccount.getKey());
                 //
-                pS.setString(2, tempAccount.getRegisteredDate());
+                pS.setString(2, String.valueOf(tempAccount.getRegisteredDate()));
                 //
                 pS.setString(3, tempAccount.getMail());
                 //SQL文の1個めの?にmailを代入する

@@ -4,9 +4,11 @@ import net.den3.den3Account.Entity.ServicePermission;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Service implements IService {
     private String ServiceID = "";
+    private String ServiceSecret = UUID.randomUUID().toString();
     private String AdminID = "";
     private String ServiceName = "";
     private String RedirectURL = "";
@@ -15,8 +17,27 @@ public class Service implements IService {
     private List<ServicePermission> UsedPermission = new ArrayList<>();
 
     /**
-     * 外部連携アプリのIDを返すメソッド
-     * @return 外部連携アプリのID
+     * シークレットIDを返す
+     * @return シークレットID
+     */
+    @Override
+    public String getSecretID() {
+        return this.ServiceSecret;
+    }
+
+    /**
+     * シークレットIDを更新
+     * @return 更新後のシークレットID
+     */
+    @Override
+    public String updateSecretID() {
+        this.ServiceSecret = UUID.randomUUID().toString();
+        return this.ServiceSecret;
+    }
+
+    /**
+     * 外部連携サービスのIDを返すメソッド
+     * @return 外部連携サービスのID
      */
     @Override
     public String getServiceID() {
@@ -24,17 +45,17 @@ public class Service implements IService {
     }
 
     /**
-     * 外部連携アプリのIDをクラスに割り当てる
-     * @param appID
-     * @return 外部連携アプリクラスのインスタンス
+     * 外部連携サービスのIDをクラスに割り当てる
+     * @param serviceID 外部連携サービスのID
+     * @return 外部連携サービスクラスのインスタンス
      */
-    public Service setServiceID(String appID) {
-        ServiceID = appID;
+    public Service setServiceID(String serviceID) {
+        ServiceID = serviceID;
         return this;
     }
 
     /**
-     * 外部連携アプリの管理者IDを返すメソッド AccountEntityで使うIDと同一
+     * 外部連携サービスの管理者IDを返すメソッド AccountEntityで使うIDと同一
      * @return 管理者ID
      */
     @Override
@@ -43,9 +64,9 @@ public class Service implements IService {
     }
 
     /**
-     * 外部連携アプリの管理者IDをクラスに設定するメソッド
-     * @param adminID
-     * @return
+     * 外部連携サービスの管理者IDをクラスに設定するメソッド
+     * @param adminID 外部連携サービスの管理者ID
+     * @return 外部連携サービスクラスのインスタンス
      */
     public Service setAdminID(String adminID) {
         AdminID = adminID;
@@ -53,8 +74,8 @@ public class Service implements IService {
     }
 
     /**
-     * 外部連携アプリの名前を返すメソッド
-     * @return 外部連携アプリの名前
+     * 外部連携サービスの名前を返すメソッド
+     * @return 外部連携サービスの名前
      */
     @Override
     public String getServiceName() {
@@ -62,12 +83,12 @@ public class Service implements IService {
     }
 
     /**
-     * 外部連携アプリの名前をクラスに設定するメソッド
-     * @param appName
-     * @return
+     * 外部連携サービスの名前をクラスに設定するメソッド
+     * @param serviceName 外部連携サービスの名前
+     * @return 外部連携サービスクラスのインスタンス
      */
-    public Service setServiceName(String appName) {
-        ServiceName = appName;
+    public Service setServiceName(String serviceName) {
+        ServiceName = serviceName;
         return this;
     }
 
@@ -82,8 +103,8 @@ public class Service implements IService {
 
     /**
      * 認証後にリダイレクトするURLを設定するメソッド
-     * @param redirectURL
-     * @return
+     * @param redirectURL 認証後にリダイレクトするURL
+     * @return 外部連携サービスクラスのインスタンス
      */
     public Service setRedirectURL(String redirectURL) {
         RedirectURL = redirectURL;
@@ -91,8 +112,8 @@ public class Service implements IService {
     }
 
     /**
-     * 外部連携アプリのアイコン(画像)のURLを返すメソッド
-     * @return 外部連携アプリのアイコン(画像)のURL
+     * 外部連携サービスのアイコン(画像)のURLを返すメソッド
+     * @return 外部連携サービスのアイコン(画像)のURL
      */
     @Override
     public String getServiceIconURL() {
@@ -100,18 +121,18 @@ public class Service implements IService {
     }
 
     /**
-     * 外部連携アプリのアイコン(画像)のURLを設定する
-     * @param appIconURL
-     * @return 外部連携アプリクラスのインスタンス
+     * 外部連携サービスのアイコン(画像)のURLを設定する
+     * @param serviceIconURL 外部連携サービスのアイコン(画像)のURL
+     * @return 外部連携サービスクラスのインスタンス
      */
-    public Service setServiceIconURL(String appIconURL) {
-        ServiceIconURL = appIconURL;
+    public Service setServiceIconURL(String serviceIconURL) {
+        ServiceIconURL = serviceIconURL;
         return this;
     }
 
     /**
-     * 外部連携アプリの説明文を返すメソッド
-     * @return 外部連携アプリの説明文
+     * 外部連携サービスの説明文を返すメソッド
+     * @return 外部連携サービスの説明文
      */
     @Override
     public String getServiceDescription() {
@@ -119,17 +140,17 @@ public class Service implements IService {
     }
 
     /**
-     * 外部連携アプリの説明文をクラスに設定するメソッド
-     * @param appDescription
-     * @return 外部連携アプリクラスのインスタンス
+     * 外部連携サービスの説明文をクラスに設定するメソッド
+     * @param serviceDescription 外部連携サービスの説明文
+     * @return 外部連携サービスクラスのインスタンス
      */
-    public Service setServiceDescription(String appDescription) {
-        ServiceDescription = appDescription;
+    public Service setServiceDescription(String serviceDescription) {
+        ServiceDescription = serviceDescription;
         return this;
     }
 
     /**
-     * 外部連携アプリの使用する権限をリストで返すメソッド
+     * 外部連携サービスの使用する権限をリストで返すメソッド
      * @return 使用する権限のリスト
      */
     @Override
@@ -138,9 +159,9 @@ public class Service implements IService {
     }
 
     /**
-     *
+     * 外部連携アプリの使用する権限を追加するメソッド
      * @param usedPermission 認証されたアカウントに要求する権限
-     * @return 外部連携アプリクラスのインスタンス
+     * @return 外部連携サービスクラスのインスタンス
      */
     public Service setUsedPermission(ServicePermission usedPermission) {
         UsedPermission.add(usedPermission);
