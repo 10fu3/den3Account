@@ -17,6 +17,7 @@ public class URLTask {
                 path("/account",()->{
                     post("/entry", URLEntryAccount::mainFlow);
                     post("/login",URLLogin::mainFlow);
+                    post("/logout",URLLogout::mainFlow);
                 });
             });
         });
