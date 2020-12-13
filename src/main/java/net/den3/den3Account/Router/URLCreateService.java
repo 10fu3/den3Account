@@ -32,10 +32,12 @@ public class URLCreateService {
         s.setServiceID(UUID.randomUUID().toString());
         s = readJSON(s, j.get());
         //登録
-        IServiceStore.get().addService(s);
-
-        ctx.status(StatusCode.OK.code());
-
+        if(IServiceStore.get().addService(s)){
+            ctx.status(StatusCode.OK.code());
+        }else{
+            //失敗
+            ctx.status(StatusCode.InternalServerError.code());
+        }
     }
 
     private static Service readJSON(Service service, Map<String,Object> json){
