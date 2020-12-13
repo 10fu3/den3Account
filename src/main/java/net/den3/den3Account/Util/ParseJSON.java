@@ -3,9 +3,9 @@ package net.den3.den3Account.Util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import net.den3.den3Account.Entity.Account.IAccount;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,5 +63,14 @@ public class ParseJSON{
             e.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    public static Optional<List<String>> convertToStringList(String json){
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return Optional.of(mapper.readValue(json, TypeFactory.defaultInstance().constructCollectionType(List.class, String.class)));
+        } catch (JsonProcessingException e) {
+            return Optional.empty();
+        }
     }
 }
