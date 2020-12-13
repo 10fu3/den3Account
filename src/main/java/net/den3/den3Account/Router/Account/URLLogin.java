@@ -1,4 +1,4 @@
-package net.den3.den3Account.Router;
+package net.den3.den3Account.Router.Account;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import static net.den3.den3Account.Security.JWTTokenCreator.addAuthenticateJWT;
 
-class URLLogin {
+public class URLLogin {
     private static Boolean containsNeedKey(Map<String, String> json){
         return json.containsKey("mail") ||  json.containsKey("pass");
     }
@@ -30,7 +30,7 @@ class URLLogin {
      * ログイン時のメイン処理 ログインセッションをJWTでクッキーに入れて返す
      * @param ctx HTTPリクエスト/レスポンス
      */
-    static void mainFlow(io.javalin.http.Context ctx){
+    public static void mainFlow(io.javalin.http.Context ctx){
         Optional<Map<String, String>> wrapJson = ParseJSON.convertToStringMap(ctx.body());
         CSRFResult csrfResult;
         if((csrfResult = CSRF.mainFlow(ctx)) == CSRFResult.SUCCESS && csrfResult.getJWT().isPresent()){

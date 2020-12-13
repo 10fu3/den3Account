@@ -1,4 +1,4 @@
-package net.den3.den3Account.Router;
+package net.den3.den3Account.Router.Account;
 
 import net.den3.den3Account.Config;
 import net.den3.den3Account.Logic.Entry.EntryAccount;
@@ -11,7 +11,7 @@ import net.den3.den3Account.Util.StatusCode;
 import java.util.Map;
 import java.util.Optional;
 
-class URLEntryAccount {
+public class URLEntryAccount {
     /**
      * HTTPリクエストに仮登録に必要なパラメーターの有無を返す
      * @param json JSONオブジェクト
@@ -25,7 +25,7 @@ class URLEntryAccount {
      * HTTPリクエストを受け取って仮登録をする
      * @param ctx io.javalin.http.Context
      */
-    static void mainFlow(io.javalin.http.Context ctx){
+    public static void mainFlow(io.javalin.http.Context ctx){
         ctx.res.setContentType(ContentsType.JSON.get());
         Optional<Map<String,String>> optionalReqJSON = ParseJSON.convertToStringMap(ctx.body());
         //JSONじゃないない何かを送りつけられた場合/そもそもリクエストにmail/passパラメータが含まれてない可能性を排除する

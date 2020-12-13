@@ -1,4 +1,4 @@
-package net.den3.den3Account.Router;
+package net.den3.den3Account.Router.Service;
 
 import net.den3.den3Account.Entity.CSRFResult;
 import net.den3.den3Account.Entity.Service.Service;
@@ -11,7 +11,7 @@ import net.den3.den3Account.Util.StatusCode;
 
 import java.util.*;
 
-public class URLUpdateService {
+public class URLCreateService {
     public static void mainFlow(io.javalin.http.Context ctx){
         CSRFResult csrfResult = CSRF.mainFlow(ctx);
         //CSRF攻撃?
@@ -32,7 +32,7 @@ public class URLUpdateService {
         s.setServiceID(UUID.randomUUID().toString());
         s = readJSON(s, j.get());
         //登録
-        if(IServiceStore.get().updateService(s)){
+        if(IServiceStore.get().addService(s)){
             ctx.status(StatusCode.OK.code());
         }else{
             //失敗

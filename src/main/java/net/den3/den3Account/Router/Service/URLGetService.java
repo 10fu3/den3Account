@@ -1,4 +1,4 @@
-package net.den3.den3Account.Router;
+package net.den3.den3Account.Router.Service;
 
 import net.den3.den3Account.Entity.CSRFResult;
 import net.den3.den3Account.Entity.Service.IService;
