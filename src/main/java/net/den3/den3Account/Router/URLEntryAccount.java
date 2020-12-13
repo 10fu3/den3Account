@@ -27,7 +27,7 @@ class URLEntryAccount {
      */
     static void mainFlow(io.javalin.http.Context ctx){
         ctx.res.setContentType(ContentsType.JSON.get());
-        Optional<Map<String,String>> optionalReqJSON = ParseJSON.convertToMap(ctx.body());
+        Optional<Map<String,String>> optionalReqJSON = ParseJSON.convertToStringMap(ctx.body());
         //JSONじゃないない何かを送りつけられた場合/そもそもリクエストにmail/passパラメータが含まれてない可能性を排除する
         if(!optionalReqJSON.isPresent() || !containsNeedKey(optionalReqJSON.get())){
             ctx.status(StatusCode.BadRequest.code());

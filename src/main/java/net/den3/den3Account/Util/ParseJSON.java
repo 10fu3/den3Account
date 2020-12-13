@@ -23,22 +23,27 @@ public class ParseJSON{
 
     }
 
-    public static StringBuilder buildWord(String key,String value){
-        return new StringBuilder()
-                .append("\"")
-                .append(key)
-                .append("\"")
-                .append(" : ")
-                .append("\"")
-                .append(value)
-                .append("\"");
-    }
-
-    public static Optional<Map<String,String>> convertToMap(String json){
+    public static Optional<Map<String,String>> convertToStringMap(String json){
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> map;
         try {
             map = mapper.readValue(json, new TypeReference<Map<String, String>>(){});
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+        if(map.size() == 0){
+            return Optional.empty();
+        }else{
+            return Optional.of(map);
+        }
+    }
+
+    public static Optional<Map<String,Object>> convertToMap(String json){
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> map;
+        try {
+            map = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return Optional.empty();

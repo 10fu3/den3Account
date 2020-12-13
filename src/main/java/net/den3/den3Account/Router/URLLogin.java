@@ -31,7 +31,7 @@ class URLLogin {
      * @param ctx HTTPリクエスト/レスポンス
      */
     static void mainFlow(io.javalin.http.Context ctx){
-        Optional<Map<String, String>> wrapJson = ParseJSON.convertToMap(ctx.body());
+        Optional<Map<String, String>> wrapJson = ParseJSON.convertToStringMap(ctx.body());
         CSRFResult csrfResult;
         if((csrfResult = CSRF.mainFlow(ctx)) == CSRFResult.SUCCESS && csrfResult.getJWT().isPresent()){
             String newCSRF = ICSRFTokenStore.get().updateToken(csrfResult.getJWT().get().getSubject()).orElse("");
