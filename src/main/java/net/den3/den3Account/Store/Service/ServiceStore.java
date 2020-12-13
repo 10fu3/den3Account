@@ -148,6 +148,35 @@ public class ServiceStore implements IServiceStore{
     }
 
     @Override
+    public Optional<List<IService>> getServices(String adminID) {
+        List<String> columns = Arrays.asList("uuid","name","admin_id","url","icon","description","read_uuid","read_mail","read_profile","read_last_login_time");
+        Optional<List<Map<String, String>>> lineBySQL = store.getLineBySQL(columns,(con) -> {
+            try {
+                PreparedStatement ps = con.prepareStatement("SELECT * FROM service where admin_id = ?");
+                ps.setString(1,adminID);
+                return Optional.of(ps);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                return Optional.empty();
+            }
+        });
+        return lineBySQL.map(maps -> maps
+                .stream()
+                .map(map -> {
+                    Service s = new Service()
+                            .setServiceID(map.get("uuid"))
+                            .setServiceName(map.get("name"))
+                            .setAdminID(map.get("admin_id"))
+                            .setRedirectURL(map.get("url"))
+                            .setServiceIconURL(map.get("icon"))
+                            .setServiceDescription(map.get("description"));
+                    Arrays.stream(ServicePermission.values()).filter(p->"true".equalsIgnoreCase(p.getName())).forEach(s::setUsedPermission);
+                    return s;
+                })
+                .collect(Collectors.toList()));
+    }
+
+    @Override
     public boolean addService(IService service) {
         return store.controlSQL((con)->{
             try {
