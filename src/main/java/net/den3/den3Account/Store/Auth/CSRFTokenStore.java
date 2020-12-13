@@ -10,9 +10,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class CSRFTokenStore implements ICSRFTokenStore {
-
     private final static ICSRFTokenStore SINGLE = new CSRFTokenStore();
     private final IInMemoryDB store = IStore.getInstance().getMemory();
+
+    //一か月を秒数で定義
+    private final static Integer MONTH = 60*60*24*30;
 
     static ICSRFTokenStore getInstance() {
         return SINGLE;
@@ -54,14 +56,14 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
-     * CSRFトークンを登録する
+     * CSRFトークンを登録する 一か月で削除される
      *
      * @param uuid  アカウントに紐付けされたUUID
      * @param token CSRFトークン
      */
     @Override
     public void putToken(String uuid, String token) {
-        store.putValue(PREFIX+token,uuid);
+        store.putTimeValue(PREFIX+token,uuid,MONTH);
     }
 
     /**
