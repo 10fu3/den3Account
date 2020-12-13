@@ -73,4 +73,14 @@ public class ParseJSON{
             return Optional.empty();
         }
     }
+
+    public static Optional<String> convertToFromList(List<String> list){
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return Optional.of(mapper.writeValueAsString(list));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
 }
