@@ -1,4 +1,4 @@
-package net.den3.den3Account.Router;
+package net.den3.den3Account.Router.Account;
 
 import net.den3.den3Account.Entity.CSRFResult;
 import net.den3.den3Account.Logic.CSRF;
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class URLLogout {
     public static void mainFlow(io.javalin.http.Context ctx){
-        Optional<Map<String, String>> jsonOptional = ParseJSON.convertToMap(ctx.body());
+        Optional<Map<String, String>> jsonOptional = ParseJSON.convertToStringMap(ctx.body());
         CSRFResult csrfCheck = CSRF.mainFlow(ctx);
         if (csrfCheck != CSRFResult.SUCCESS || !jsonOptional.isPresent() || !jsonOptional.get().containsKey("csrf")) {
             ctx.status(StatusCode.BadRequest.code());

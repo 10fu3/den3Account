@@ -20,6 +20,7 @@ public interface IServiceStore {
 
     boolean addService(IService service);
 
+    Optional<List<IService>> getServices(String adminID);
 
 
 }

@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class CSRF {
     public static CSRFResult mainFlow(io.javalin.http.Context ctx){
-        Optional<Map<String,String>> optionalReqJSON = ParseJSON.convertToMap(ctx.body());
+        Optional<Map<String,String>> optionalReqJSON = ParseJSON.convertToStringMap(ctx.body());
         //JWTなしCookieとCSRFトークンなしを追い返す
         if(!optionalReqJSON.isPresent() || !optionalReqJSON.get().containsKey("csrf") || ctx.cookie("user") == null){
             //ctx.status(StatusCode.BadRequest.code());
@@ -59,10 +59,6 @@ public class CSRF {
     }
 
     private static boolean hasPermission(String uuid, String csrf, ICSRFTokenStore csrfStore, IAccountStore accountStore){
-        //アカウントがない
-        if(accountStore.getAccountByUUID(uuid).isPresent()){
-            return false;
-        }
         //アカウントとトークンが紐づけされてない
         if(!csrfStore.getAccountUUID(csrf).isPresent()){
             return false;

@@ -3,6 +3,7 @@ package net.den3.den3Account.Entity.Service;
 import net.den3.den3Account.Entity.ServicePermission;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IService {
     static Service create(){
@@ -62,4 +63,9 @@ public interface IService {
      * @return 使用する権限のリスト
      */
     List<ServicePermission> getUsedPermission();
+
+    /**
+     * 自分自身の情報をMapにするする
+     */
+    Map<String,Object> toMap();
 }

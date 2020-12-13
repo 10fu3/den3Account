@@ -105,7 +105,7 @@ public class AccountStore implements IAccountStore{
                 //SQL文の1個めの?にmailを代入する
                 pS.setString(6, String.valueOf(tempAccount.getLastLoginTime()));
 
-                pS.setString(7,(tempAccount.getPermission()== Permission.ADMIN)?"ADMIN":"NORMAL");
+                pS.setString(7,tempAccount.getPermission().getName());
                 return Optional.of(Arrays.asList(pS));
             } catch (SQLException sqlex) {
                 sqlex.printStackTrace();

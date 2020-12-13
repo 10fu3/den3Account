@@ -4,7 +4,6 @@ import net.den3.den3Account.Entity.Account.IAccount;
 import net.den3.den3Account.Entity.Account.TemporaryAccountEntity;
 import net.den3.den3Account.Store.Account.ITempAccountStore;
 import net.den3.den3Account.Util.ParseJSON;
-import net.den3.den3Account.Store.Account.AccountStore;
 import net.den3.den3Account.Store.Account.IAccountStore;
 
 import java.security.MessageDigest;
@@ -31,8 +30,8 @@ public class CommandAccountCURD implements ICommand{
             System.out.println("--- Accounts ヘルプ ---");
         }else if(option.length == 1 && option[0].equalsIgnoreCase("list")){
             System.out.println("--- Accounts ヘルプ ---");
-            AccountStore.getInstance().getAccountsAll().orElse(new ArrayList<>())
-                    .forEach(a-> System.out.println(ParseJSON.parse(AccountStore.getInstance().getAccountsAll().orElse(new ArrayList<>()))));
+            IAccountStore.get().getAccountsAll().orElse(new ArrayList<>())
+                    .forEach(a-> System.out.println(ParseJSON.parse(IAccountStore.get().getAccountsAll().orElse(new ArrayList<>()))));
             System.out.println("--- Accounts リスト 終わり ---");
         }else if(option.length == 1 && option[0].equalsIgnoreCase("create")){
             TemporaryAccountEntity e = new TemporaryAccountEntity();
@@ -53,16 +52,16 @@ public class CommandAccountCURD implements ICommand{
             }
 
         }else if(option.length == 2 && option[0].equalsIgnoreCase("del")){
-            Optional<IAccount> account = AccountStore.getInstance().getAccountByUUID(option[1]);
+            Optional<IAccount> account = IAccountStore.get().getAccountByUUID(option[1]);
             if(account.isPresent()){
-                AccountStore.getInstance().deleteAccountInSQL(account.get().getUUID());
+                IAccountStore.get().deleteAccountInSQL(account.get().getUUID());
                 System.out.println("指定されたユーザーを削除しました ID: "+option[1]);
             }else{
                 System.out.println("指定されたユーザーが存在しません ID: "+option[1]);
             }
         }else if(option.length >= 4){
             if(option[0].equalsIgnoreCase("edit")){
-                Optional<IAccount> account = AccountStore.getInstance().getAccountByUUID(option[1]);
+                Optional<IAccount> account = IAccountStore.get().getAccountByUUID(option[1]);
                 if(!account.isPresent()){
                     System.out.println("指定されたユーザーが存在しません ID: "+option[1]);
                     return true;
@@ -70,28 +69,28 @@ public class CommandAccountCURD implements ICommand{
                 switch (option[2]){
                     case "pass":
                         String pass = option.length == 4 ? option[3] : getHash(option[3]).orElse(option[3]);
-                        if(AccountStore.getInstance().updateAccountInSQL(account.get().setPasswordHash(pass))){
+                        if(IAccountStore.get().updateAccountInSQL(account.get().setPasswordHash(pass))){
                             System.out.println("ID: "+option[1]+" のパスワードを "+pass+" に変更しました");
                         }else{
                             System.out.println("パスワードの変更に失敗しました");
                         }
                         break;
                     case "icon":
-                        if(AccountStore.getInstance().updateAccountInSQL(account.get().setIconURL(option[3]))){
+                        if(IAccountStore.get().updateAccountInSQL(account.get().setIconURL(option[3]))){
                             System.out.println("ID: "+option[1]+" のアイコンURLを "+option[3]+" に変更しました");
                         }else{
                             System.out.println("アイコンURLの変更に失敗しました");
                         }
                         break;
                     case "nick":
-                        if(AccountStore.getInstance().updateAccountInSQL(account.get().setNickName(option[3]))){
+                        if(IAccountStore.get().updateAccountInSQL(account.get().setNickName(option[3]))){
                             System.out.println("ID: "+option[1]+" のニックネームを "+option[3]+" に変更しました");
                         }else{
                             System.out.println("ニックネームの変更に失敗しました");
                         }
                         break;
                     case "last_login_time":
-                        if(AccountStore.getInstance().updateAccountInSQL(account.get().setLastLogin(option[3]))){
+                        if(IAccountStore.get().updateAccountInSQL(account.get().setLastLogin(option[3]))){
                             System.out.println("ID: "+option[1]+" の最終ログイン時刻を "+option[3]+" に変更しました");
                         }else{
                             System.out.println("最終ログイン時刻の変更に失敗しました");

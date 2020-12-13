@@ -1,10 +1,14 @@
 package net.den3.den3Account.Entity.Service;
 
 import net.den3.den3Account.Entity.ServicePermission;
+import net.den3.den3Account.Util.MapBuilder;
+import net.den3.den3Account.Util.ParseJSON;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Service implements IService {
     private String ServiceID = "";
@@ -166,5 +170,23 @@ public class Service implements IService {
     public Service setUsedPermission(ServicePermission usedPermission) {
         UsedPermission.add(usedPermission);
         return this;
+    }
+
+    @Override
+    public Map<String,Object> toMap() {
+        return MapBuilder.New()
+                .put("admin-id", this.getAdminID())
+                .put("service-id", this.getServiceID())
+                .put("redirect-url", this.getRedirectURL())
+                .put("service-name", this.getServiceName())
+                .put("redirect-url", this.getRedirectURL())
+                .put("icon-url", this.getServiceIconURL())
+                .put("description", this.getServiceDescription())
+                .put("permissions", ParseJSON.convertToFromList(
+                        this.getUsedPermission()
+                                .stream()
+                                .map(ServicePermission::getName)
+                                .collect(Collectors.toList())))
+                .build();
     }
 }
