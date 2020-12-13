@@ -4,7 +4,7 @@ package net.den3.den3Account.Entity;
  * アカウントエンティティにつくロール
  */
 public enum Permission{
-    ADMIN("ADMIN"),NORMAL("NORMAL"),DEVELOPER("DEVELOPER"),SUSPEND("SUSPEND"),ERROR("ERROR");
+    ADMIN("ADMIN"),NORMAL("NORMAL"),SUSPEND("SUSPEND"),ERROR("ERROR");
     private final String name;
     private static Permission[] ps = Permission.values();
     Permission(final String name){
