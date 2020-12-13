@@ -12,4 +12,13 @@ public class StringChecker {
     public static boolean containsNotAllowCharacter(String words){
         return (words.contains("{") || words.contains("}") || words.contains(",") || words.contains("\""));
     }
+
+    public static boolean hasNull(Object... param){
+        for (int i = 0; i < param.length; i++) {
+            if(param[i] == null){
+                return true;
+            }
+        }
+        return false;
+    }
 }

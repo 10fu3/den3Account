@@ -42,7 +42,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
      */
     @Override
     public Optional<String> getAccountUUID(String token) {
-        return store.getValue(token);
+        return store.getValue(PREFIX,token);
     }
 
     /**
@@ -52,7 +52,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
      */
     @Override
     public boolean containsToken(String token) {
-        return store.containsKey(PREFIX+token);
+        return store.containsKey(PREFIX,token);
     }
 
     /**
@@ -63,7 +63,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
      */
     @Override
     public void putToken(String uuid, String token) {
-        store.putTimeValue(PREFIX+token,uuid,MONTH);
+        store.putTimeValue(PREFIX,token,PREFIX+uuid,MONTH);
     }
 
     /**
@@ -74,7 +74,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
      */
     @Override
     public boolean deleteTokenByAccount(String uuid) {
-        return store.delete(PREFIX+uuid);
+        return store.delete(PREFIX,uuid);
     }
 
     /**
@@ -84,7 +84,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
      */
     @Override
     public boolean deleteToken(String token) {
-        Optional<String> key = store.searchKey(token);
+        Optional<String> key = store.searchKey(PREFIX,token);
         if (!key.isPresent()){
             return false;
         }else{

@@ -41,9 +41,12 @@ public class InMemoryRedis implements IInMemoryDB{
      * @return 保存した値
      */
     @Override
-    public Optional<String> getValue(String key) {
+    public Optional<String> getValue(String prefix,String key) {
         final Optional<String>[] a = new Optional[1];
-        doIt((r)-> a[0] = Optional.ofNullable(r.get(key)));
+        if(!containsKey(prefix,key)){
+            return Optional.empty();
+        }
+        doIt((r)-> a[0] = Optional.of(r.get(prefix+key).replaceFirst(prefix,"")));
         return a[0];
     }
 
@@ -53,8 +56,8 @@ public class InMemoryRedis implements IInMemoryDB{
      * @param value 保存した値
      */
     @Override
-    public void putValue(String key, String value) {
-        doIt((r)-> r.set(key,value));
+    public void putValue(String prefix,String key, String value) {
+        doIt((r)-> r.set(prefix+key,value));
     }
 
     /**
@@ -65,10 +68,10 @@ public class InMemoryRedis implements IInMemoryDB{
      * @param seconds 登録してから消滅するまでの時間(秒)
      */
     @Override
-    public void putTimeValue(String key, String value, int seconds) {
+    public void putTimeValue(String prefix,String key, String value, int seconds) {
         doIt((r)->{
-            r.set(key,value);
-            r.expire(key,seconds);
+            r.set(prefix+key,value);
+            r.expire(prefix+key,seconds);
         });
     }
 
@@ -79,9 +82,9 @@ public class InMemoryRedis implements IInMemoryDB{
      * @return true → 存在する /  false → 存在しない
      */
     @Override
-    public boolean containsKey(String key) {
+    public boolean containsKey(String prefix,String key) {
         AtomicReference<Boolean> flag = new AtomicReference<>();
-        doIt((r)-> flag.set(r.exists(key)));
+        doIt((r)-> flag.set(r.exists(prefix+key)));
         return flag.get();
     }
 
@@ -93,8 +96,8 @@ public class InMemoryRedis implements IInMemoryDB{
      * @return true->成功 false->失敗
      */
     @Override
-    public boolean delete(String key) {
-        if(!containsKey(key)){
+    public boolean delete(String prefix,String key) {
+        if(!containsKey(prefix,key)){
             return false;
         }
         doIt((r)-> r.del(key));
@@ -107,7 +110,7 @@ public class InMemoryRedis implements IInMemoryDB{
      * @return キー
      */
     @Override
-    public Optional<String> searchKey(String value) {
+    public Optional<String> searchKey(String prefix,String value) {
         if(value == null || value.length() == 0){
             return Optional.empty();
         }
