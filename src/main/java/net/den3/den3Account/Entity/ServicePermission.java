@@ -3,6 +3,7 @@ package net.den3.den3Account.Entity;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public enum  ServicePermission {
@@ -23,5 +24,14 @@ public enum  ServicePermission {
 
     public String getName() {
         return name;
+    }
+
+    public static Optional<ServicePermission> getPermission(String name){
+        for (int i = 0; i < ServicePermission.values().length; i++) {
+            if(ServicePermission.values()[i].getName().equalsIgnoreCase(name)){
+                return Optional.of(ServicePermission.values()[i]);
+            }
+        }
+        return Optional.empty();
     }
 }
