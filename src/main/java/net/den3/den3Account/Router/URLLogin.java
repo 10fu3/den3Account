@@ -34,8 +34,7 @@ class URLLogin {
         Optional<Map<String, String>> wrapJson = ParseJSON.convertToStringMap(ctx.body());
         CSRFResult csrfResult;
         if((csrfResult = CSRF.mainFlow(ctx)) == CSRFResult.SUCCESS && csrfResult.getJWT().isPresent()){
-            String newCSRF = ICSRFTokenStore.get().updateToken(csrfResult.getJWT().get().getSubject()).orElse("");
-            ctx.status(200).json(MapBuilder.New().put("csrf",newCSRF).build());
+            return;
         }
         Map<String,Object> mes = new HashMap<>();
         mes.put("STATUS","ERROR");
