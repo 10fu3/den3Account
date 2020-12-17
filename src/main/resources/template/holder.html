@@ -1,0 +1,58 @@
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <!--<script th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>-->
+        <title>Den3Account authorization service</title>
+        <meta name="name" th:content="${name}">
+        <meta name="icon" th:content="${icon}">
+        <meta name="description" th:content="${description}">
+        <meta name="permission_description" th:content="${permission_description}">
+    </head>
+    <body>
+        <div id="app">
+            <v-app>
+                <v-card width="400px" class="mx-auto mt-5">
+                    <v-card-title>
+                        <h1 class="display-1">ログイン</h1>
+                    </v-card-title>
+                    <v-card-text>
+
+                    </v-card-text>
+                </v-card>
+                <v-card width="400px" class="mx-auto mt-5">
+                    <v-card-title>
+                        <center>
+                            <h1 class="display-1">ログイン</h1>
+                        </center>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-form>
+                            <v-text-field prepend-icon="mdi-account-circle" label="ユーザ名" />
+                        </v-form>
+                        <v-form>
+                            <v-text-field type="password" prepend-icon="mdi-lock" label="パスワード" />
+                        </v-form>
+                        <v-card-actions>
+                            <v-btn class="info">ログイン</v-btn>
+                        </v-card-actions>
+                    </v-card-text>
+                </v-card>
+            </v-app>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+        <script>
+            new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            })
+        </script>
+    </body>
+</html>
