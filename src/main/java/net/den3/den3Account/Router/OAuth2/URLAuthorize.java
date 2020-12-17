@@ -77,7 +77,7 @@ public class URLAuthorize {
                         .json(MapBuilder.New().put("status","Service hasn't permission").build());
                 return;
             }
-            //認可認証画面に遷移する
+            //TODO 認可認証画面に遷移する
 
 
         });
