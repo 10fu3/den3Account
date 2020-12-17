@@ -71,9 +71,9 @@
             <version>2.6.10</version>
         </dependency>
         <dependency>
-            <groupId>org.webjars.npm</groupId>
-            <artifactId>vuetify</artifactId>
-            <version>2.2.23</version>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.0.11.RELEASE</version>
         </dependency>
     </dependencies>
     <build>
