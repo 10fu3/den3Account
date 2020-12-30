@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8"/>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+        <meta name="username" th:content="${username}">
+        <meta name="usericon" th:content="${usericon}">
+        <title>den3 account login</title>
+    </head>
+    <body>
+        <div id="app">
+            <v-app>
+                <v-row justify="center" align-content="center">
+                    <v-col>
+                        <v-card width="450px" class="mx-auto mt-5" elevation="12">
+                            <v-card-title class="justify-center">
+                                <v-img src="http://den3.net/wp-content/themes/den3HP/set/image/logo.png"></v-img>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-layout justify-center>
+                                    <v-avatar class="justify-center" size="110">
+                                        <img :src="usericon">
+                                    </v-avatar>
+                                </v-layout>
+                                <h2 style="text-align: center">{{username}}として</h2>
+                                <h2 style="text-align: center">ログインします</h2>
+                            </v-card-text>
+                            <v-divider></v-divider>
+                            <v-card-actions>
+                                <v-btn block color="info">ログイン</v-btn>
+                            </v-card-actions>
+                            <v-card-actions>
+                                <v-btn block color="success">違うアカウントでログインする</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-app>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+        <script>
+            new Vue({
+                el: '#app',
+                vuetify: new Vuetify(),
+                data: function () {
+                    return {
+                      username: '',
+                      usericon: ''
+                    };
+                  },
+                  created: function () {
+                      this.username = document.getElementsByName('username')[0].getAttribute('content');
+                      this.usericon = document.getElementsByName('usericon')[0].getAttribute('content');
+                  }
+            })
+        </script>
+        <script>
+        </script>
+    </body>
+</html>
