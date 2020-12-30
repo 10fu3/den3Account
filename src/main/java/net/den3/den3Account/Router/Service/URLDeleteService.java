@@ -1,8 +1,7 @@
 package net.den3.den3Account.Router.Service;
 
-import net.den3.den3Account.Entity.CSRFResult;
 import net.den3.den3Account.Entity.Service.IService;
-import net.den3.den3Account.Logic.CSRF;
+import net.den3.den3Account.Store.Auth.ITokenStore;
 import net.den3.den3Account.Store.Service.IServiceStore;
 import net.den3.den3Account.Util.ParseJSON;
 import net.den3.den3Account.Util.StatusCode;
@@ -12,12 +11,6 @@ import java.util.Optional;
 
 public class URLDeleteService {
     public static void mainFlow(io.javalin.http.Context ctx){
-        CSRFResult csrfResult = CSRF.mainFlow(ctx);
-        //CSRF攻撃?
-        if(csrfResult != CSRFResult.SUCCESS){
-            ctx.status(StatusCode.Unauthorized.code());
-            return;
-        }
         Optional<Map<String, Object>> j = ParseJSON.convertToMap(ctx.body());
         //JSON文字列をMapにコンバートできない
         if((!j.isPresent()) || !j.get().containsKey("service-id")){
@@ -31,7 +24,7 @@ public class URLDeleteService {
             return;
         }
         //削除しようとしたアカウントのUUID取得
-        String uuid = csrfResult.getJWT().get().getSubject();
+        String uuid = ITokenStore.get().getAccountUUID(String.valueOf(j.get().get("token"))).orElse("");
         s.ifPresent(service -> {
             //権限なしユーザーが削除を試そうとした場合
             if(!service.getAdminID().equalsIgnoreCase(uuid)){
