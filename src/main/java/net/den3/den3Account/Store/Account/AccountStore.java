@@ -4,7 +4,6 @@ import net.den3.den3Account.Entity.*;
 import net.den3.den3Account.Entity.Account.AccountEntity;
 import net.den3.den3Account.Entity.Account.IAccount;
 import net.den3.den3Account.Entity.Account.ITempAccount;
-import net.den3.den3Account.Store.Auth.IAuthorizationStore;
 import net.den3.den3Account.Store.IDBAccess;
 import net.den3.den3Account.Store.IStore;
 
@@ -106,7 +105,7 @@ public class AccountStore implements IAccountStore{
                 pS.setString(6, String.valueOf(tempAccount.getLastLoginTime()));
 
                 pS.setString(7,tempAccount.getPermission().getName());
-                return Optional.of(Arrays.asList(pS));
+                return Optional.of(Collections.singletonList(pS));
             } catch (SQLException sqlex) {
                 sqlex.printStackTrace();
                 return Optional.empty();
@@ -136,10 +135,6 @@ public class AccountStore implements IAccountStore{
                 statement = con.prepareStatement("DELETE FROM account_repository WHERE uuid = ?;");
                 statement.setString(1,deleteAccount);
                 psL.add(statement);
-
-                //外部連携サービスの紐づけも外す
-                IAuthorizationStore.get().deleteAuthorizationUser(deleteAccount);
-
                 return Optional.of(psL);
             }catch (SQLException ignore){
                 return Optional.empty();
@@ -212,7 +207,7 @@ public class AccountStore implements IAccountStore{
     /**
      * 発行したSQLに合致するアカウントを取得する
      * @param query Connectionを引数に持ち戻り値がPreparedStatement>のラムダ式/クロージャ
-     * @return
+     * @return List[IAccount]
      */
     @Override
     public Optional<List<IAccount>> getAccountBySQL(Function<Connection, Optional<PreparedStatement>> query) {
