@@ -9,24 +9,24 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class CSRFTokenStore implements ICSRFTokenStore {
-    private final static ICSRFTokenStore SINGLE = new CSRFTokenStore();
+public class TokenStore implements ITokenStore {
+    private final static ITokenStore SINGLE = new TokenStore();
     private final IInMemoryDB store = IStore.getInstance().getMemory();
 
     //一か月を秒数で定義
     private final static Integer MONTH = 60*60*24*30;
 
-    static ICSRFTokenStore getInstance() {
+    static ITokenStore getInstance() {
         return SINGLE;
     }
 
-    private static final String PREFIX = "CSRF: ";
+    private static final String PREFIX = "ACCOUNT_TOKEN: ";
 
     /**
-     * アカウントのUUIDから登録されたCSRFトークンを取得する
+     * アカウントのUUIDから登録されたトークンを取得する
      *
      * @param accountUUID アカウントに紐付けされたUUID
-     * @return Optional String->CSRFトークン empty->存在しない
+     * @return Optional String->トークン empty->存在しない
      */
     @Override
     public List<String> getTokens(String accountUUID) {
@@ -46,7 +46,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
-     * CSRFトークンの登録を確認する
+     * トークンの登録を確認する
      * @param token アカウントに紐付けされたUUID
      * @return true->存在する false->存在しない
      */
@@ -56,18 +56,18 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
-     * CSRFトークンを登録する 一か月で削除される
+     * トークンを登録する 一か月で削除される
      *
      * @param uuid  アカウントに紐付けされたUUID
-     * @param token CSRFトークン
+     * @param token トークン
      */
     @Override
-    public void putToken(String uuid, String token) {
+    public void putToken(String token, String uuid) {
         store.putTimeValue(PREFIX,token,PREFIX+uuid,MONTH);
     }
 
     /**
-     * CSRFトークンを削除する
+     * トークンを削除する
      *
      * @param uuid アカウントに紐付けされたUUID
      * @return true->成功 false->失敗
@@ -78,7 +78,7 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
-     * CSRFトークンを削除する
+     * トークンを削除する
      * @param token
      * @return true->成功 false->失敗
      */
@@ -94,9 +94,9 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
-     * 登録されたアカウントのUUIDとCSRFトークンを返す
+     * 登録されたアカウントのUUIDとトークンを返す
      *
-     * @return List<Map < アカウントのUUID:String, CSRFトークン:String>>
+     * @return List<Map < アカウントのUUID:String, トークン:String>>
      */
     @Override
     public Map<String, String> getAllTokens() {
@@ -104,9 +104,9 @@ public class CSRFTokenStore implements ICSRFTokenStore {
     }
 
     /**
-     * アカウントに紐づけられたCSRFトークンを更新する
+     * アカウントに紐づけられたトークンを更新する
      * @param token アカウントに紐付けされたUUID
-     * @return 更新後のCSRFトークン
+     * @return 更新後のトークン
      */
     @Override
     public Optional<String> updateToken(String token) {
