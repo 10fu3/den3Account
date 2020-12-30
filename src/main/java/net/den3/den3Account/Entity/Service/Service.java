@@ -10,15 +10,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Service implements IService {
-    private String ServiceID = "";
-    private String ServiceSecret = UUID.randomUUID().toString();
-    private String AdminID = "";
-    private String ServiceName = "";
-    private String RedirectURL = "";
-    private String ServiceIconURL = "";
-    private String ServiceDescription = "";
-    private List<ServicePermission> UsedPermission = new ArrayList<>();
+class Service implements IService {
+    String ServiceID = "";
+    String ServiceSecret = UUID.randomUUID().toString();
+    String AdminID = "";
+    String ServiceName = "";
+    String RedirectURL = "";
+    String ServiceIconURL = "";
+    String ServiceDescription = "";
+    List<ServicePermission> UsedPermission = new ArrayList<>();
 
     /**
      * シークレットIDを返す
@@ -48,15 +48,6 @@ public class Service implements IService {
         return ServiceID;
     }
 
-    /**
-     * 外部連携サービスのIDをクラスに割り当てる
-     * @param serviceID 外部連携サービスのID
-     * @return 外部連携サービスクラスのインスタンス
-     */
-    public Service setServiceID(String serviceID) {
-        ServiceID = serviceID;
-        return this;
-    }
 
     /**
      * 外部連携サービスの管理者IDを返すメソッド AccountEntityで使うIDと同一
@@ -67,15 +58,6 @@ public class Service implements IService {
         return AdminID;
     }
 
-    /**
-     * 外部連携サービスの管理者IDをクラスに設定するメソッド
-     * @param adminID 外部連携サービスの管理者ID
-     * @return 外部連携サービスクラスのインスタンス
-     */
-    public Service setAdminID(String adminID) {
-        AdminID = adminID;
-        return this;
-    }
 
     /**
      * 外部連携サービスの名前を返すメソッド
@@ -84,16 +66,6 @@ public class Service implements IService {
     @Override
     public String getServiceName() {
         return ServiceName;
-    }
-
-    /**
-     * 外部連携サービスの名前をクラスに設定するメソッド
-     * @param serviceName 外部連携サービスの名前
-     * @return 外部連携サービスクラスのインスタンス
-     */
-    public Service setServiceName(String serviceName) {
-        ServiceName = serviceName;
-        return this;
     }
 
     /**
@@ -106,32 +78,12 @@ public class Service implements IService {
     }
 
     /**
-     * 認証後にリダイレクトするURLを設定するメソッド
-     * @param redirectURL 認証後にリダイレクトするURL
-     * @return 外部連携サービスクラスのインスタンス
-     */
-    public Service setRedirectURL(String redirectURL) {
-        RedirectURL = redirectURL;
-        return this;
-    }
-
-    /**
      * 外部連携サービスのアイコン(画像)のURLを返すメソッド
      * @return 外部連携サービスのアイコン(画像)のURL
      */
     @Override
     public String getServiceIconURL() {
         return ServiceIconURL;
-    }
-
-    /**
-     * 外部連携サービスのアイコン(画像)のURLを設定する
-     * @param serviceIconURL 外部連携サービスのアイコン(画像)のURL
-     * @return 外部連携サービスクラスのインスタンス
-     */
-    public Service setServiceIconURL(String serviceIconURL) {
-        ServiceIconURL = serviceIconURL;
-        return this;
     }
 
     /**
@@ -144,32 +96,12 @@ public class Service implements IService {
     }
 
     /**
-     * 外部連携サービスの説明文をクラスに設定するメソッド
-     * @param serviceDescription 外部連携サービスの説明文
-     * @return 外部連携サービスクラスのインスタンス
-     */
-    public Service setServiceDescription(String serviceDescription) {
-        ServiceDescription = serviceDescription;
-        return this;
-    }
-
-    /**
      * 外部連携サービスの使用する権限をリストで返すメソッド
      * @return 使用する権限のリスト
      */
     @Override
     public List<ServicePermission> getUsedPermission() {
         return UsedPermission;
-    }
-
-    /**
-     * 外部連携アプリの使用する権限を追加するメソッド
-     * @param usedPermission 認証されたアカウントに要求する権限
-     * @return 外部連携サービスクラスのインスタンス
-     */
-    public Service setUsedPermission(ServicePermission usedPermission) {
-        UsedPermission.add(usedPermission);
-        return this;
     }
 
     @Override
