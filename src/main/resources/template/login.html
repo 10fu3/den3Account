@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8"/>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+    </head>
+        <body>
+    <div id="app">
+        <v-app>
+
+            <v-row justify="center" align-content="center">
+                <v-col>
+                    <v-card width="450px" class="mx-auto mt-5" elevation="12">
+                        <v-card-title class="justify-center">
+                            <v-img src="http://den3.net/wp-content/themes/den3HP/set/image/logo.png"></v-img>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-spacer />
+                            <v-form>
+                                <v-text-field
+                                    v-model="mail"
+                                    label="E-mail address"
+                                    prepend-icon="mdi-account-circle"
+                                />
+                            </v-form>
+                            <v-form>
+                                <v-text-field
+                                    v-model="pass"
+                                    type="Password"
+                                    label="Password"
+                                    prepend-icon="mdi-lock"
+                                />
+                            </v-form>
+                        </v-card-text>
+                        <v-divider></v-divider>
+                        <v-card-actions>
+                            <v-btn block color="info" @click="login">ログイン</v-btn>
+                        </v-card-actions>
+                        <v-card-actions>
+                            <v-btn block color="success">新規登録</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: function () {
+                return {
+                     mail: null,
+                     pass: null
+                };
+            },
+            methods: {
+                login: function () {
+                    alert(this.mail+" "+this.pass);
+                }
+            }
+        })
+      </script>
+    </body>
+</html>
