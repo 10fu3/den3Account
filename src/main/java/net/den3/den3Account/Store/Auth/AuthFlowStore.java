@@ -22,7 +22,7 @@ public class AuthFlowStore implements IAuthFlowStore{
     }
 
     private final List<String> fieldName =
-            Arrays.asList("flow_id","authorization_code","account_id","client_id","state","nonce","access_token","refresh_token","access_time","refresh_time");
+            Arrays.asList("flow_id","authorization_code","account_id","client_id","state");
 
     private AuthFlowStore(){
         //DBにauth_flowテーブルがなければ作成するSQL文を実行する
@@ -45,16 +45,6 @@ public class AuthFlowStore implements IAuthFlowStore{
                                 +"client_id VARCHAR(256), "
                                 //認可前なのか認可後なのか
                                 +"state VARCHAR(256), "
-                                //nonce値
-                                +"nonce VARCHAR(256), "
-                                //アクセストークン
-                                +"access_token VARCHAR(256), "
-                                //リフレッシュトークン
-                                +"refresh_token VARCHAR(256)"
-                                //アクセストークンの生存時間 UNIX時間
-                                +"access_time VARCHAR(256), "
-                                //リフレッシュトークンの生存時間 UNIX時間
-                                +"refresh_time VARCHAR(256), "
                                 +");")));
             }catch (SQLException ex){
                 ex.printStackTrace();
@@ -93,11 +83,6 @@ public class AuthFlowStore implements IAuthFlowStore{
                         .setAuthorizationCode("authorization_code")
                         .setClientID(line.get("client_id"))
                         .setState(line.get("state"))
-                        .setNonce(line.get("nonce"))
-                        .setAccessToken(line.get("access_token"))
-                        .setRefreshToken(line.get("refresh_token"))
-                        .setLifeTimeAccessToken(line.get("access_time"))
-                        .setLifeTimeRefreshToken(line.get("refresh_time"))
                         .build()
         ).collect(Collectors.toList()));
     }
@@ -190,12 +175,7 @@ public class AuthFlowStore implements IAuthFlowStore{
                 ps.setString(3,flow.getAcceptID());
                 ps.setString(4,flow.getClientID());
                 ps.setString(5,flow.getState().name);
-                ps.setString(6,flow.getNonce().orElse("NULL"));
-                ps.setString(7,flow.getAccessToken());
-                ps.setString(8,flow.getRefreshToken());
-                ps.setString(9,String.valueOf(flow.getLifeTimeAccessToken()));
-                ps.setString(10,String.valueOf(flow.getLifeTimeRefreshToken()));
-                ps.setString(11,flow.getFlowCode());
+                ps.setString(6,flow.getFlowCode());
                 return Optional.of(Collections.singletonList(ps));
             }catch (SQLException ex){
                 ex.printStackTrace();
@@ -229,18 +209,13 @@ public class AuthFlowStore implements IAuthFlowStore{
     public void addAuthFlow(IAuthFlow flow) {
         db.controlSQL((con)->{
             try {
-                PreparedStatement ps = con.prepareStatement("INSERT INTO account_repository VALUES (?,?,?,?,?,?,?,?,?,?,?) ;");
+                PreparedStatement ps = con.prepareStatement("INSERT INTO account_repository VALUES (?,?,?,?,?,?) ;");
                 ps.setString(1,flow.getFlowCode());
                 ps.setString(2,flow.getAuthorizationCode());
                 ps.setString(4,flow.getAcceptID());
                 ps.setString(3,flow.getAccountID());
                 ps.setString(5,flow.getClientID());
                 ps.setString(6,flow.getState().name);
-                ps.setString(7,flow.getNonce().orElse("NULL"));
-                ps.setString(8,flow.getAccessToken());
-                ps.setString(9,flow.getRefreshToken());
-                ps.setString(10,String.valueOf(flow.getLifeTimeAccessToken()));
-                ps.setString(11,String.valueOf(flow.getLifeTimeRefreshToken()));
                 return Optional.of(Collections.singletonList(ps));
             } catch (SQLException ex) {
                 ex.printStackTrace();
