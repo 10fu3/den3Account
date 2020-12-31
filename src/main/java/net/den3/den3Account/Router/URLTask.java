@@ -4,11 +4,13 @@ import net.den3.den3Account.Router.Account.URLConfirmedEntry;
 import net.den3.den3Account.Router.Account.URLEntryAccount;
 import net.den3.den3Account.Router.Account.URLLogin;
 import net.den3.den3Account.Router.Account.URLLogout;
+import net.den3.den3Account.Router.OAuth2.LoginPage;
 import net.den3.den3Account.Router.OAuth2.URLAuthorize;
 import net.den3.den3Account.Router.Service.URLCreateService;
 import net.den3.den3Account.Router.Service.URLDeleteService;
 import net.den3.den3Account.Router.Service.URLGetService;
 import net.den3.den3Account.Router.Service.URLUpdateService;
+import net.den3.den3Account.Util.MapBuilder;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
@@ -43,10 +45,9 @@ public class URLTask {
         webApp.routes(()->{
             path("/oauth2/v1",()->{
                 get("/authorize", URLAuthorize::mainFlow);
-
             });
         });
-
+        webApp.get("/login", LoginPage::mainFlow);
         webApp.get("/account/register/goal/:key",URLConfirmedEntry::mainFlow);
         webApp.get("/account/register/invalid",URLConfirmedEntry::invalid);
 
