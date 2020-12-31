@@ -33,12 +33,6 @@ public interface IAuthFlow {
     AuthFlowState setState(AuthFlowState state);
 
     /**
-     * 認可リクエスト時に振られるnonce値
-     * @return nonce値
-     */
-    Optional<String> getNonce();
-
-    /**
      * 認可コードを取得する
      * @return 認可コード
      */
@@ -56,41 +50,7 @@ public interface IAuthFlow {
      */
     String getFlowCode();
 
-    /**
-     * アクセストークンを取得する
-     * @return リフレッシュトークン
-     */
-    String getAccessToken();
 
-    /**
-     * リフレッシュトークンを取得する
-     * @return リフレッシュトークン
-     */
-    String getRefreshToken();
-
-    /**
-     * アクセストークンを更新する
-     * @return 更新後のアクセストークン
-     */
-    String updateAccessToken();
-
-    /**
-     * リフレッシュトークンを更新する
-     * @return 更新後のリフレッシュトークン
-     */
-    String updateRefreshToken();
-
-    /**
-     * アクセストークンの生存時間を取得する
-     * @return アクセストークンの生存時間
-     */
-    Long getLifeTimeAccessToken();
-
-    /**
-     * リフレッシュトークンの生存時間を取得する
-     * @return リフレッシュトークンの生存時間
-     */
-    Long getLifeTimeRefreshToken();
 
 
 }
